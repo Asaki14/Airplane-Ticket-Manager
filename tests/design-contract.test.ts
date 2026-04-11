@@ -1,0 +1,24 @@
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { describe, expect, it } from 'vitest'
+
+describe('design-contract', () => {
+  it('globals define mandatory 2px focus ring with 2px offset', () => {
+    const css = readFileSync(resolve('src/styles/globals.css'), 'utf-8')
+    expect(css).toContain('0 0 0 2px var(--color-accent)')
+    expect(css).toContain('outline-offset: 2px')
+  })
+
+  it('public and admin pages consume same token prefix', () => {
+    const publicPage = readFileSync(resolve('src/app/page.tsx'), 'utf-8')
+    const adminPage = readFileSync(resolve('src/app/admin/page.tsx'), 'utf-8')
+
+    expect(publicPage).toContain('var(--color-')
+    expect(adminPage).toContain('var(--color-')
+  })
+
+  it('admin page excludes public hero decorative block', () => {
+    const adminPage = readFileSync(resolve('src/app/admin/page.tsx'), 'utf-8')
+    expect(adminPage).not.toContain('public-hero')
+  })
+})
