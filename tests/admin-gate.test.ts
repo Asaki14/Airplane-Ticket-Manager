@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { spawnSync } from 'node:child_process'
 import { NextRequest } from 'next/server'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
@@ -81,5 +82,42 @@ describe('admin-gate', () => {
   it('admin page explicitly labels MVP internal entry', () => {
     const content = readFileSync(resolve('src/app/admin/page.tsx'), 'utf-8')
     expect(content).toContain('内部运营入口（MVP）')
+  })
+
+  it('admin gate env check passes when both vars are non-empty', () => {
+    const result = spawnSync('node', [resolve('scripts/check-admin-gate-env.mjs')], {
+      env: {
+        ...process.env,
+        ADMIN_GATE_USERNAME: 'uat',
+        ADMIN_GATE_PASSWORD: 'secret'
+      },
+      encoding: 'utf-8'
+    })
+
+    expect(result.status).toBe(0)
+  })
+
+  it('admin gate env check fails and reports missing vars', () => {
+    const result = spawnSync('node', [resolve('scripts/check-admin-gate-env.mjs')], {
+      env: {
+        ...process.env,
+        ADMIN_GATE_USERNAME: '',
+        ADMIN_GATE_PASSWORD: ''
+      },
+      encoding: 'utf-8'
+    })
+
+    expect(result.status).not.toBe(0)
+    expect(`${result.stdout}\n${result.stderr}`).toContain('ADMIN_GATE_USERNAME')
+    expect(`${result.stdout}\n${result.stderr}`).toContain('ADMIN_GATE_PASSWORD')
+  })
+
+  it('package scripts run admin gate env check before dev', () => {
+    const pkg = JSON.parse(readFileSync(resolve('package.json'), 'utf-8')) as {
+      scripts?: Record<string, string>
+    }
+
+    expect(pkg.scripts?.['check:admin-gate-env']).toBeDefined()
+    expect(pkg.scripts?.dev).toContain('check:admin-gate-env')
   })
 })
