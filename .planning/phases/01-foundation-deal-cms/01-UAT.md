@@ -6,8 +6,27 @@ source:
   - 01-02-SUMMARY.md
   - 01-03-SUMMARY.md
 started: 2026-04-11T15:07:38Z
-updated: 2026-04-11T16:37:15Z
+updated: 2026-04-12T01:02:30Z
 ---
+
+## Admin 访问契约（Phase 1）
+
+- Phase 1 的 `/admin` 访问采用 **Basic Auth gate**，不是应用内登录页（不引入 session/cookie 登录流程）。
+- 未携带或携带错误凭证访问 `/admin/deals`、`/admin/deals/{id}` 时，必须返回 401 并带 `WWW-Authenticate: Basic realm="Admin Gate"` challenge。
+- 当 `ADMIN_GATE_USERNAME` / `ADMIN_GATE_PASSWORD` 配置缺失或为空时，仍保持 401 challenge 契约，并通过可观测标记提示配置错误（`x-admin-gate-misconfigured: true`）。
+
+## 执行前检查与复验步骤
+
+1. 先确认环境变量已配置且非空：
+   - `ADMIN_GATE_USERNAME=<your-user> ADMIN_GATE_PASSWORD=<your-pass> npm run check:admin-gate-env`
+2. 启动本地服务（已串联预检）：
+   - `ADMIN_GATE_USERNAME=<your-user> ADMIN_GATE_PASSWORD=<your-pass> npm run dev`
+3. 复验后台入口：
+   - 访问 `/admin/deals`：浏览器应触发 Basic challenge；输入正确凭证后进入 Deal 列表
+   - 访问 `/admin/deals/{id}`：走同一 gate 契约；输入正确凭证后进入编辑页
+4. 自动化回归命令：
+   - `npm run test:quick -- admin-gate`
+   - `npm run test:quick -- admin-gate-auth-success`
 
 ## Current Test
 
