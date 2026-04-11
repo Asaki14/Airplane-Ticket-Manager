@@ -1,15 +1,18 @@
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
-const ADMIN_USER = process.env.ADMIN_GATE_USERNAME
-const ADMIN_PASS = process.env.ADMIN_GATE_PASSWORD
+function unauthorizedResponse(misconfigured = false) {
+  const headers: Record<string, string> = {
+    'WWW-Authenticate': 'Basic realm="Admin Gate"'
+  }
 
-function unauthorizedResponse() {
-  return new NextResponse('Unauthorized', {
+  if (misconfigured) {
+    headers['x-admin-gate-misconfigured'] = 'true'
+  }
+
+  return new NextResponse(misconfigured ? 'Unauthorized (admin gate misconfigured)' : 'Unauthorized', {
     status: 401,
-    headers: {
-      'WWW-Authenticate': 'Basic realm="Admin Gate"'
-    }
+    headers
   })
 }
 
@@ -19,8 +22,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  if (!ADMIN_USER || !ADMIN_PASS) {
-    return new NextResponse('Admin gate is not configured', { status: 503 })
+  const adminUser = process.env.ADMIN_GATE_USERNAME
+  const adminPass = process.env.ADMIN_GATE_PASSWORD
+
+  if (!adminUser || !adminPass) {
+    return unauthorizedResponse(true)
   }
 
   const authHeader = request.headers.get('authorization')
@@ -32,7 +38,7 @@ export function middleware(request: NextRequest) {
   const decoded = Buffer.from(encoded, 'base64').toString('utf-8')
   const [username, password] = decoded.split(':')
 
-  if (username !== ADMIN_USER || password !== ADMIN_PASS) {
+  if (username !== adminUser || password !== adminPass) {
     return unauthorizedResponse()
   }
 
