@@ -1,0 +1,21 @@
+:root {
+  --color-dominant: #F7F4ED;
+  --color-secondary: #E5EDE8;
+  --color-accent: #0B7A75;
+  --color-destructive: #C44936;
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  --font-body: 'Noto Sans SC', system-ui, sans-serif;
+  --font-display: 'Barlow Condensed', var(--font-body);
+  --font-size-body: 16px;
+  --font-size-label: 14px;
+  --font-size-heading: 20px;
+  --font-size-display: 28px;
+}
