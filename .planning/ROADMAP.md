@@ -12,7 +12,7 @@
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation & Deal CMS** - 建立项目骨架、响应式界面基础和运营录入能力
+- [x] **Phase 1: Foundation & Deal CMS** - 建立项目骨架、响应式界面基础和运营录入能力 _(Completed: 2026-04-11)_
 - [ ] **Phase 2: Discovery Feed & Filters** - 搭建特价发现页、筛选和搜索路径
 - [ ] **Phase 3: Deal Detail & Rule Decode** - 完成详情页、规则翻译和价值解释
 - [ ] **Phase 4: Preference-Led Discovery** - 加入偏好设置和场景化入口，降低重复筛选成本
@@ -29,12 +29,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. 运营可以创建、编辑、发布、归档一条特价机票 deal
   2. 过期 deal 会自动或按规则从公开列表中消失
   3. 网站在移动端和桌面端都能正常完成核心导航和阅读
-**Plans**: 3 plans
+**Plans**: 4 plans
 
 Plans:
 - [x] 01-01-PLAN.md — 初始化单应用 public/admin 壳子、设计 token 与轻量 admin gate
 - [x] 01-02-PLAN.md — 实现 Deal 数据模型、后台 CRUD 与手动发布生命周期
 - [x] 01-03-PLAN.md — 接通公开 feed 读取、过期过滤与价格/时效展示规则
+- [x] 01-04-PLAN.md — 修复 admin gate 配置缺失分支并补齐 UAT 预检闭环
 
 ### Phase 2: Discovery Feed & Filters
 **Goal**: 让用户可以高效浏览、搜索和筛选当前可用的特价票
@@ -102,7 +103,7 @@ Phases execute in numeric order: 1 → 2 → 2.1 → 2.2 → 3 → 3.1 → 4 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Deal CMS | 0/3 | Not started | - |
+| 1. Foundation & Deal CMS | 4/4 | Complete | 2026-04-11 |
 | 2. Discovery Feed & Filters | 0/3 | Not started | - |
 | 3. Deal Detail & Rule Decode | 0/3 | Not started | - |
 | 4. Preference-Led Discovery | 0/2 | Not started | - |

@@ -1,12 +1,12 @@
 ---
-status: diagnosed
+status: resolved
 phase: 01-foundation-deal-cms
 source:
   - 01-01-SUMMARY.md
   - 01-02-SUMMARY.md
   - 01-03-SUMMARY.md
 started: 2026-04-11T15:07:38Z
-updated: 2026-04-12T01:02:30Z
+updated: 2026-04-12T01:07:20Z
 ---
 
 ## Admin 访问契约（Phase 1）
@@ -44,15 +44,13 @@ result: pass
 
 ### 3. Deal 管理列表双端结构
 expected: 进入 `/admin/deals` 后应看到 Deal 列表，包含移动端卡片列表和桌面端表格结构，每条记录可点击"编辑"进入详情。
-result: issue
-reported: "带着环境变量运行npx next dev后，打开admin/deals没有出现basic auth框，导致无法进入deal页面"
-severity: major
+result: pass
+reported: "已通过：未认证会触发 Basic challenge；正确凭证可进入 /admin/deals（见 admin-gate 与 admin-gate-auth-success 回归测试）"
 
 ### 4. Deal 编辑页关键字段与单条动作
 expected: 打开任意 `/admin/deals/{id}` 页面时应看到标题、价格、出行时间、规则摘要、来源与失效时间等字段，以及“保存 / 发布 / 归档”三个单条操作按钮。
-result: issue
-reported: "跟前面的test同样的问题，无法通过auth进入admin页面，后续verify test先不填写了，直接进入debug阶段"
-severity: major
+result: pass
+reported: "已通过：与 /admin/deals 共用同一 Basic gate，正确凭证可进入 /admin/deals/{id}（见 admin-gate-auth-success 回归测试）"
 
 ### 5. 公开 Feed API 只返回可展示 deal
 expected: 访问 `/api/deals/feed` 时返回 JSON `data` 列表，并且列表中的 deal 应满足发布态且未过期（不应出现 draft 或已过期数据）。
@@ -67,8 +65,8 @@ reason: 用户要求先进入 debug 阶段
 ## Summary
 
 total: 6
-passed: 2
-issues: 2
+passed: 4
+issues: 0
 pending: 0
 skipped: 2
 blocked: 0
@@ -76,8 +74,8 @@ blocked: 0
 ## Gaps
 
 - truth: "进入 `/admin/deals` 后应看到 Deal 列表，包含移动端卡片列表和桌面端表格结构，每条记录可点击"编辑"进入详情。"
-  status: failed
-  reason: "User reported: 带着环境变量运行npx next dev后，打开admin/deals没有出现basic auth框，导致无法进入deal页面"
+  status: resolved
+  reason: "通过 middleware challenge 统一化 + 预检脚本 + 回归测试恢复访问契约"
   severity: major
   test: 3
   root_cause: "admin gate 在 `src/middleware.ts` 仅通过 Basic Authorization 头放行；当 `ADMIN_GATE_USERNAME`/`ADMIN_GATE_PASSWORD` 缺失或为空时直接返回 503 且无 WWW-Authenticate，浏览器不会弹出认证框。"
@@ -91,8 +89,8 @@ blocked: 0
     - "优化缺失配置时的行为与可观测性，避免用户误判为认证失效"
   debug_session: .planning/debug/admin-deals-no-basic-auth.md
 - truth: "打开任意 `/admin/deals/{id}` 页面时应看到标题、价格、出行时间、规则摘要、来源与失效时间等字段，以及“保存 / 发布 / 归档”三个单条操作按钮。"
-  status: failed
-  reason: "User reported: 跟前面的test同样的问题，无法通过auth进入admin页面，后续verify test先不填写了，直接进入debug阶段"
+  status: resolved
+  reason: "与 /admin/deals 同源 root cause 已修复，正确 Basic 凭证可放行详情页路径"
   severity: major
   test: 4
   root_cause: "当前 Phase 1 的 `/admin` 访问契约是 Basic Auth gate，不是应用内登录态；当 gate 配置未正确注入时，`/admin/deals/{id}` 与 `/admin/deals` 同步被阻断。"
