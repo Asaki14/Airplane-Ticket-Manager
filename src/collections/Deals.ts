@@ -1,6 +1,7 @@
+import type { CollectionConfig } from 'payload'
 import { dealStatusOptions, validateDealInput } from '../lib/deals/validation'
 
-export const DealsCollection = {
+export const DealsCollection: CollectionConfig = {
   slug: 'deals',
   labels: {
     singular: 'Deal',
@@ -13,7 +14,14 @@ export const DealsCollection = {
     { name: 'headlinePrice', type: 'number', required: true },
     { name: 'referenceTotalPrice', type: 'number' },
     { name: 'currency', type: 'text', defaultValue: 'CNY' },
-    { name: 'tripType', type: 'select', options: ['one-way', 'round-trip'] },
+    {
+      name: 'tripType',
+      type: 'select',
+      options: [
+        { label: 'One-way', value: 'one-way' },
+        { label: 'Round-trip', value: 'round-trip' }
+      ]
+    },
     { name: 'travelStartDate', type: 'date' },
     { name: 'travelEndDate', type: 'date' },
     { name: 'travelWindowLabel', type: 'text' },
@@ -26,8 +34,17 @@ export const DealsCollection = {
     { name: 'updatedAt', type: 'date' },
     { name: 'expiresAt', type: 'date', required: true },
     { name: 'recommendationCopy', type: 'textarea' },
-    { name: 'valueTags', type: 'array' },
-    { name: 'status', type: 'select', options: [...dealStatusOptions], defaultValue: 'draft' }
+    {
+      name: 'valueTags',
+      type: 'array',
+      fields: [{ name: 'tag', type: 'text', required: true }]
+    },
+    {
+      name: 'status',
+      type: 'select',
+      options: dealStatusOptions.map((status) => ({ label: status, value: status })),
+      defaultValue: 'draft'
+    }
   ],
   hooks: {
     beforeValidate: [

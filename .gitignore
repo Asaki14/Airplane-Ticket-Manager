@@ -1,0 +1,4 @@
+node_modules/
+payload.db
+payload-types.ts
+.env
