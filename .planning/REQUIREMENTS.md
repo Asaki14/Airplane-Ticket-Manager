@@ -30,12 +30,12 @@
 
 - [ ] **PREF-01**: User can set a default departure city for faster future browsing
 - [ ] **PREF-02**: User can browse curated entry sections such as weekend escapes, holiday windows, islands, and nearby international trips
-- [ ] **PREF-03**: User can complete key browse, filter, detail, and compare flows on both mobile and desktop layouts
+- [x] **PREF-03**: User can complete key browse, filter, detail, and compare flows on both mobile and desktop layouts
 
 ### Operations
 
-- [ ] **OPS-01**: Operator can create, edit, publish, archive, and tag deal entries with structured fields
-- [ ] **OPS-02**: Operator can set freshness metadata and expired deals stop appearing in the public discovery feed
+- [x] **OPS-01**: Operator can create, edit, publish, archive, and tag deal entries with structured fields
+- [x] **OPS-02**: Operator can set freshness metadata and expired deals stop appearing in the public discovery feed
 
 ## v2 Requirements
 
@@ -67,9 +67,9 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| OPS-01 | Phase 1 | Pending |
-| OPS-02 | Phase 1 | Pending |
-| PREF-03 | Phase 1 | Pending |
+| OPS-01 | Phase 1 | Complete |
+| OPS-02 | Phase 1 | Complete |
+| PREF-03 | Phase 1 | Complete |
 | DISC-01 | Phase 2 | Pending |
 | DISC-02 | Phase 2 | Pending |
 | DISC-03 | Phase 2 | Pending |

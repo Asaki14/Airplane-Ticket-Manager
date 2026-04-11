@@ -32,9 +32,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: 初始化应用框架、路由、设计变量和响应式页面壳子
-- [ ] 01-02: 设计 deal 数据模型、后台表单和基本 CRUD 流程
-- [ ] 01-03: 接通公开 feed 数据读取、时效处理和示例内容
+- [x] 01-01-PLAN.md — 初始化单应用 public/admin 壳子、设计 token 与轻量 admin gate
+- [x] 01-02-PLAN.md — 实现 Deal 数据模型、后台 CRUD 与手动发布生命周期
+- [x] 01-03-PLAN.md — 接通公开 feed 读取、过期过滤与价格/时效展示规则
 
 ### Phase 2: Discovery Feed & Filters
 **Goal**: 让用户可以高效浏览、搜索和筛选当前可用的特价票
