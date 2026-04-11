@@ -1,12 +1,12 @@
 ---
-status: complete
+status: diagnosed
 phase: 01-foundation-deal-cms
 source:
   - 01-01-SUMMARY.md
   - 01-02-SUMMARY.md
   - 01-03-SUMMARY.md
 started: 2026-04-11T15:07:38Z
-updated: 2026-04-11T16:27:07Z
+updated: 2026-04-11T16:37:15Z
 ---
 
 ## Current Test
@@ -61,12 +61,28 @@ blocked: 0
   reason: "User reported: 带着环境变量运行npx next dev后，打开admin/deals没有出现basic auth框，导致无法进入deal页面"
   severity: major
   test: 3
-  artifacts: []
-  missing: []
+  root_cause: "admin gate 在 `src/middleware.ts` 仅通过 Basic Authorization 头放行；当 `ADMIN_GATE_USERNAME`/`ADMIN_GATE_PASSWORD` 缺失或为空时直接返回 503 且无 WWW-Authenticate，浏览器不会弹出认证框。"
+  artifacts:
+    - path: "src/middleware.ts"
+      issue: "环境变量缺失分支返回 503，不触发 Basic challenge"
+    - path: "tests/admin-gate.test.ts"
+      issue: "仅验证中间件静态行为，未覆盖 dev 启动态配置缺失与提示路径"
+  missing:
+    - "在启动与验收流程中强制校验 ADMIN_GATE_USERNAME/ADMIN_GATE_PASSWORD 已注入且非空"
+    - "优化缺失配置时的行为与可观测性，避免用户误判为认证失效"
+  debug_session: .planning/debug/admin-deals-no-basic-auth.md
 - truth: "打开任意 `/admin/deals/{id}` 页面时应看到标题、价格、出行时间、规则摘要、来源与失效时间等字段，以及“保存 / 发布 / 归档”三个单条操作按钮。"
   status: failed
   reason: "User reported: 跟前面的test同样的问题，无法通过auth进入admin页面，后续verify test先不填写了，直接进入debug阶段"
   severity: major
   test: 4
-  artifacts: []
-  missing: []
+  root_cause: "当前 Phase 1 的 `/admin` 访问契约是 Basic Auth gate，不是应用内登录态；当 gate 配置未正确注入时，`/admin/deals/{id}` 与 `/admin/deals` 同步被阻断。"
+  artifacts:
+    - path: "src/middleware.ts"
+      issue: "`/admin/:path*` 统一受 Basic gate 控制，未提供 session/cookie 放行分支"
+    - path: ".planning/debug/admin-deals-auth-blocked.md"
+      issue: "诊断确认该问题与 test 3 为同一根因链"
+  missing:
+    - "明确并文档化 admin 访问契约（Basic gate 或应用内 auth 二选一）"
+    - "若继续用 Basic gate，补充本地启动与UAT操作指引，确保认证可复现"
+  debug_session: .planning/debug/admin-deals-auth-blocked.md
