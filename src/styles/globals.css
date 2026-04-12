@@ -194,34 +194,85 @@ select:focus-visible {
 .compare-save,
 .detail-grid,
 .value-explain {
-  background: var(--surface-card);
-  border: 1px solid rgba(18, 33, 31, 0.14);
-  border-radius: 14px;
-  padding: var(--space-md);
-  box-shadow: 0 6px 18px rgba(19, 33, 31, 0.04);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(248, 242, 229, 0.9) 100%),
+    var(--surface-card);
+  border: 1px solid rgba(18, 33, 31, 0.16);
+  border-radius: 16px;
+  padding: var(--space-lg) var(--space-md);
+  box-shadow: 0 12px 28px rgba(19, 33, 31, 0.08);
 }
 
 .home-modes {
   display: grid;
-  gap: var(--space-sm);
+  gap: var(--space-md);
+}
+
+.section-header {
+  display: grid;
+  gap: var(--space-xs);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid rgba(18, 33, 31, 0.12);
+}
+
+.section-header--compact {
+  gap: 6px;
+}
+
+.section-header__kicker {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-snug);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(11, 122, 117, 0.9);
+}
+
+.section-header__title {
+  margin: 0;
+  font-size: clamp(var(--font-size-title-sm), 3.6vw, var(--font-size-title-md));
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-bold);
+  color: #0f2f2c;
+}
+
+.section-header__description {
+  margin: 0;
+  max-width: 60ch;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: rgba(19, 33, 31, 0.8);
 }
 
 .mode-card {
   display: grid;
   gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: 12px;
+  border: 1px solid rgba(18, 33, 31, 0.12);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 8px 18px rgba(19, 33, 31, 0.05);
 }
 
 .mode-card__title {
   font-size: clamp(var(--font-size-body-lg), 3.4vw, var(--font-size-title-sm));
   line-height: var(--line-height-tight);
+  color: #123432;
 }
 
 .mode-card__description {
   font-size: var(--font-size-body);
   line-height: var(--line-height-normal);
+  color: rgba(19, 33, 31, 0.86);
 }
 
 .quick-scenes {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.quick-scenes__chips {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-sm);
@@ -234,11 +285,13 @@ select:focus-visible {
   padding: 0 var(--space-md);
   border-radius: 999px;
   text-decoration: none;
-  background: var(--color-secondary);
+  border: 1px solid rgba(11, 122, 117, 0.18);
+  background: linear-gradient(180deg, #ffffff 0%, #f1f7f3 100%);
   color: inherit;
   font-size: var(--font-size-label);
   line-height: var(--line-height-snug);
   font-weight: var(--font-weight-medium);
+  box-shadow: 0 4px 10px rgba(19, 33, 31, 0.08);
 }
 
 .hero-carousel {
@@ -418,6 +471,11 @@ select:focus-visible {
   gap: var(--space-sm);
 }
 
+.feed-filters__intro,
+.public-deal-feed__intro {
+  grid-column: 1 / -1;
+}
+
 .feed-filters label,
 .preference-controls label {
   display: grid;
@@ -425,6 +483,10 @@ select:focus-visible {
   font-size: var(--font-size-label);
   line-height: var(--line-height-snug);
   font-weight: var(--font-weight-medium);
+  padding: var(--space-sm);
+  border-radius: 12px;
+  border: 1px solid rgba(18, 33, 31, 0.12);
+  background: rgba(255, 255, 255, 0.78);
 }
 
 .feed-filters input,
@@ -473,6 +535,17 @@ select:focus-visible {
   gap: var(--space-md);
 }
 
+.preference-panel > h2,
+.compare-save__title,
+.value-explain__title {
+  color: #113330;
+}
+
+.preference-panel > p,
+.compare-save__description {
+  color: rgba(19, 33, 31, 0.84);
+}
+
 .deal-card {
   border-radius: 14px;
   padding: var(--space-md);
@@ -495,9 +568,9 @@ select:focus-visible {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
   border-radius: 14px;
-  opacity: 0.34;
+  opacity: 0.18;
   background:
     radial-gradient(circle at 84% 18%, rgba(255, 255, 255, 0.64) 0%, rgba(255, 255, 255, 0) 48%),
     radial-gradient(circle at 14% 88%, rgba(220, 232, 222, 0.48) 0%, rgba(220, 232, 222, 0) 64%),
@@ -514,7 +587,7 @@ select:focus-visible {
 
 .deal-card--scenic .deal-card__scene-layer {
   z-index: 0;
-  opacity: 0.42;
+  opacity: 0.92;
   transform: scale(1.02);
   transition: opacity 180ms ease;
 }
@@ -523,14 +596,14 @@ select:focus-visible {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: saturate(0.86);
+  filter: saturate(1.2) contrast(1.16);
 }
 
 .deal-card--scenic .deal-card__scene-overlay {
   z-index: 1;
   background:
-    linear-gradient(180deg, rgba(255, 253, 250, 0.82) 0%, rgba(250, 246, 238, 0.88) 46%, rgba(245, 238, 227, 0.92) 100%),
-    radial-gradient(circle at 88% 16%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 52%);
+    linear-gradient(180deg, rgba(255, 253, 250, 0.26) 0%, rgba(250, 246, 238, 0.34) 46%, rgba(245, 238, 227, 0.42) 100%),
+    radial-gradient(circle at 88% 16%, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 52%);
 }
 
 .deal-card-shell__header,
@@ -768,7 +841,7 @@ select:focus-visible {
 
 .detail-hero--scenic .detail-hero__scene-layer {
   z-index: 0;
-  opacity: 0.34;
+  opacity: 0.9;
   transform: scale(1.015);
 }
 
@@ -776,14 +849,14 @@ select:focus-visible {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: saturate(0.88);
+  filter: saturate(1.18) contrast(1.12);
 }
 
 .detail-hero--scenic .detail-hero__scene-overlay {
   z-index: 1;
   background:
-    linear-gradient(180deg, rgba(255, 253, 250, 0.78) 0%, rgba(248, 243, 235, 0.86) 50%, rgba(244, 237, 226, 0.9) 100%),
-    radial-gradient(circle at 84% 18%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 52%);
+    linear-gradient(180deg, rgba(255, 253, 250, 0.22) 0%, rgba(248, 243, 235, 0.3) 50%, rgba(244, 237, 226, 0.38) 100%),
+    radial-gradient(circle at 84% 18%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 52%);
 }
 
 .detail-hero__content {

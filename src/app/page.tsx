@@ -92,21 +92,32 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
       <HeroDealCarousel deals={deals.slice(0, 5)} />
 
       <section className="home-modes" aria-label="双模式浏览">
+        <header className="section-header">
+          <p className="section-header__kicker">探索方式</p>
+          <h2 className="section-header__title">先定约束，再找灵感</h2>
+          <p className="section-header__description">根据当前目标选择不同浏览路径，减少无效比较，提升决策效率。</p>
+        </header>
         <article className="mode-card">
-          <h2 className="mode-card__title">任务导向</h2>
+          <h3 className="mode-card__title">任务导向</h3>
           <p className="mode-card__description">先定约束：出发地、预算、时间窗口，快速收敛候选。</p>
         </article>
         <article className="mode-card">
-          <h2 className="mode-card__title">灵感导向</h2>
+          <h3 className="mode-card__title">灵感导向</h3>
           <p className="mode-card__description">从周末捡漏、节假日前后、海岛和周边国际入口启发下一次出行。</p>
         </article>
       </section>
 
       <section className="quick-scenes" aria-label="高频探索入口">
-        <a href="/?travelWindowLabel=周末捡漏">周末捡漏</a>
-        <a href="/?travelWindowLabel=节假日前后">节假日前后</a>
-        <a href="/?region=海岛/东南亚">海岛</a>
-        <a href="/?region=周边国际">周边国际</a>
+        <header className="section-header section-header--compact">
+          <p className="section-header__kicker">高频场景</p>
+          <h2 className="section-header__title">一键进入常见捡漏路径</h2>
+        </header>
+        <div className="quick-scenes__chips">
+          <a href="/?travelWindowLabel=周末捡漏">周末捡漏</a>
+          <a href="/?travelWindowLabel=节假日前后">节假日前后</a>
+          <a href="/?region=海岛/东南亚">海岛</a>
+          <a href="/?region=周边国际">周边国际</a>
+        </div>
       </section>
 
       <nav className="public-nav" aria-label="主导航" style={{ borderColor: 'var(--color-secondary)' }}>
@@ -118,6 +129,11 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
       <DiscoveryPreferences departureOptions={departureOptions} currentDepartureCity={filters.departureCity} />
 
       <form className="feed-filters" aria-label="发现筛选" action="/" method="get">
+        <header className="section-header section-header--compact feed-filters__intro">
+          <p className="section-header__kicker">筛选面板</p>
+          <h2 className="section-header__title">逐步缩小候选范围</h2>
+          <p className="section-header__description">先选硬约束，再按关键词补充，最后按发布时间或价格排序。</p>
+        </header>
         <label>
           出发地
           <select name="departureCity" defaultValue={filters.departureCity ?? ''}>
@@ -182,6 +198,10 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
       </form>
 
       <section className="public-deal-feed" aria-label="公开 deal 列表">
+        <header className="section-header section-header--compact public-deal-feed__intro">
+          <p className="section-header__kicker">可用候选</p>
+          <h2 className="section-header__title">当前筛选下的特价列表</h2>
+        </header>
         {deals.length === 0 ? <p className="feed-empty">当前筛选下暂无可用特价，试试放宽条件或切换出发地/日期窗口。</p> : null}
         {deals.map((deal) => (
           <DealCard
