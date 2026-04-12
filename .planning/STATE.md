@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 06-04-PLAN.md
-last_updated: "2026-04-12T03:02:02.461Z"
+stopped_at: Completed 06-05-PLAN.md
+last_updated: "2026-04-12T03:10:02.930Z"
 last_activity: 2026-04-12
 progress:
   total_phases: 6
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 5
-  completed_plans: 4
-  percent: 80
+  completed_plans: 5
+  percent: 100
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-12)
 ## Current Position
 
 Phase: 06 (ui-ui-phase-front-design-ui-ux-skills-bug) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 Status: Ready to execute
 Last activity: 2026-04-12
 
@@ -41,6 +41,8 @@ Progress: ██████████ 100%
 - [Phase 02-05]: discovery -> detail -> preference -> compare/share 公共决策链路闭环打通
 - [Phase 06]: 采用低饱和渐变+轻描边阴影提升春日感知度，同时保持决策信息可读性优先
 - [Phase 06]: 将 public-hero/detail-hero 与关键 CTA 文案纳入源码级合同测试，防止回退
+- [Phase 06]: 详情页规则分组桌面端采用双列并让最后规则卡跨列，避免窄高信息块回退
+- [Phase 06]: 后台deals页面采用移动卡片三段式与桌面表格兜底，确保编辑入口持续可见
 
 ### Roadmap Evolution
 
@@ -56,6 +58,6 @@ Progress: ██████████ 100%
 
 ## Session Continuity
 
-Last session: 2026-04-12T03:02:02.455Z
-Stopped at: Completed 06-04-PLAN.md
+Last session: 2026-04-12T03:10:02.923Z
+Stopped at: Completed 06-05-PLAN.md
 Resume file: None
