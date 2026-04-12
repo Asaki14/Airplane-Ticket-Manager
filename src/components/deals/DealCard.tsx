@@ -35,7 +35,8 @@ export function DealCard({
   expiresAt
 }: DealCardProps) {
   return (
-    <article className="deal-card deal-card-shell">
+    <article className="deal-card deal-card-shell deal-card--atmosphere">
+      <span className="deal-card__atmosphere-layer" aria-hidden="true" />
       <header className="deal-card-shell__header">
         <p className="deal-card-label">特价 #{id}</p>
         <h2 className="deal-card-shell__title text-clamp-2">
@@ -47,9 +48,9 @@ export function DealCard({
       </header>
 
       <div className="deal-card-shell__body">
-        <p className="deal-card-meta">
-          <span className="text-clamp-2">{travelWindowLabel}</span>
-          <span className="text-clamp-2">{airline}</span>
+        <p className="deal-card-meta deal-card-shell__meta">
+          <span className="deal-card-shell__meta-item text-clamp-2">{travelWindowLabel}</span>
+          <span className="deal-card-shell__meta-item text-clamp-2">{airline}</span>
         </p>
 
         <p className="deal-price-main">¥{headlinePrice}</p>

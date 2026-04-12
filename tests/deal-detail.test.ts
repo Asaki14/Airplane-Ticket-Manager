@@ -16,6 +16,7 @@ describe('deal-detail', () => {
     expect(content).toContain('rel="noreferrer"')
     expect(content).toContain('detail-grid detail-grid--primary')
     expect(content).toContain('detail-grid detail-grid--rules')
+    expect(content).not.toContain('detail-grid--three-column')
     expect(content.match(/展开完整规则/g)?.length ?? 0).toBeGreaterThanOrEqual(2)
     expect(content.match(/<details>/g)?.length ?? 0).toBeGreaterThanOrEqual(2)
   })

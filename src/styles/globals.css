@@ -480,6 +480,8 @@ select:focus-visible {
 }
 
 .deal-card-shell {
+  position: relative;
+  isolation: isolate;
   display: grid;
   grid-template-rows: auto 1fr auto;
   min-height: 320px;
@@ -489,10 +491,33 @@ select:focus-visible {
   overflow: hidden;
 }
 
+.deal-card--atmosphere .deal-card__atmosphere-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 14px;
+  opacity: 0.34;
+  background:
+    radial-gradient(circle at 84% 18%, rgba(255, 255, 255, 0.64) 0%, rgba(255, 255, 255, 0) 48%),
+    radial-gradient(circle at 14% 88%, rgba(220, 232, 222, 0.48) 0%, rgba(220, 232, 222, 0) 64%),
+    linear-gradient(145deg, rgba(242, 228, 200, 0.24), rgba(242, 228, 200, 0));
+}
+
 .deal-card-shell__header,
 .deal-card-shell__body,
 .deal-card-shell__footer {
+  position: relative;
+  z-index: 2;
   padding: var(--space-md);
+}
+
+.deal-card-shell__meta {
+  align-items: flex-start;
+}
+
+.deal-card-shell__meta-item {
+  min-inline-size: 0;
 }
 
 .deal-card-shell__header {
@@ -1150,7 +1175,8 @@ select:focus-visible {
 @media (max-width: 375px) {
   .spring-atmosphere::before,
   .spring-atmosphere::after,
-  .hero-carousel--atmosphere .hero-carousel__atmosphere-layer {
+  .hero-carousel--atmosphere .hero-carousel__atmosphere-layer,
+  .deal-card--atmosphere .deal-card__atmosphere-layer {
     max-width: 100%;
   }
 
