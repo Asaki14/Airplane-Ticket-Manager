@@ -11,3 +11,11 @@ Resolved debug sessions. Used by `gsd-debugger` to surface known-pattern hypothe
 - **Fix:** 更新 `scripts/check-admin-gate-env.mjs`：在变量校验前加载 Next env 文件（`.env*`），并使用兼容 ESM 的 CJS default import 解构方式。
 - **Files changed:** scripts/check-admin-gate-env.mjs
 ---
+
+## detail-card-narrow-tall — 详情页 deal 卡片窄高失衡
+- **Date:** 2026-04-12
+- **Error patterns:** 详情卡片, 又窄又高, 样式异常, 版式失衡, 详情页
+- **Root cause:** 详情页根容器复用 `.public-shell`（默认 `display:grid` 且小屏未定义列轨道）触发隐式 auto 轨道收缩，导致详情区块宽度被压窄。
+- **Fix:** 在详情页 `<main>` 增加 `detail-shell` 类，并在全局样式将 `.detail-shell` 设为 `display:block`，解除隐式栅格轨道约束。
+- **Files changed:** src/app/deals/[id]/page.tsx, src/styles/globals.css
+---
