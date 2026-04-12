@@ -79,7 +79,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     <main className="public-shell spring-atmosphere" style={{ backgroundColor: 'var(--color-dominant)' }}>
       <section className="public-hero" aria-label="travel-hero">
         <div className="hero-main">
-          <p className="eyebrow">飞易</p>
+          <p className="eyebrow">航易</p>
           <h1 className="hero-title">更快判断这张机票值不值得买</h1>
           <p className="hero-description">从分散票价中快速看到核心信息：价格、时效、规则和下一步，并通过「查看详情与票规」进入决策页。</p>
         </div>
