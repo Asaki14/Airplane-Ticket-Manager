@@ -67,6 +67,15 @@ describe('design-contract', () => {
     expect(css).toContain('transition: transform 180ms ease')
   })
 
+  it('deal card atmosphere classes and reduced-motion guard remain in place', () => {
+    const card = readFileSync(resolve('src/components/deals/DealCard.tsx'), 'utf-8')
+    const css = readFileSync(resolve('src/styles/globals.css'), 'utf-8')
+    expect(card).toContain('deal-card--atmosphere')
+    expect(card).toContain('deal-card__atmosphere-layer')
+    expect(css).toContain('.deal-card--atmosphere .deal-card__atmosphere-layer')
+    expect(css).toContain('@media (prefers-reduced-motion: reduce)')
+  })
+
   describe('typography', () => {
     it('globals keep key typography selectors and token-based font-size mapping', () => {
       const css = readFileSync(resolve('src/styles/globals.css'), 'utf-8')
