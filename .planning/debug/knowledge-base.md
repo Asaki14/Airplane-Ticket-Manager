@@ -19,3 +19,11 @@ Resolved debug sessions. Used by `gsd-debugger` to surface known-pattern hypothe
 - **Fix:** 在详情页 `<main>` 增加 `detail-shell` 类，并在全局样式将 `.detail-shell` 设为 `display:block`，解除隐式栅格轨道约束。
 - **Files changed:** src/app/deals/[id]/page.tsx, src/styles/globals.css
 ---
+
+## default-departure-card-tall-narrow — 首页默认出发地卡片在锚点跳转后窄高异常
+- **Date:** 2026-04-12
+- **Error patterns:** 首页, 我的默认出发地, 卡片又高又窄, 布局异常, 锚点跳转, 先按预算找低价
+- **Root cause:** 锚点 id 放在未定义 `grid-column` 的 wrapper div 上；在 12 列 `.public-shell` 中该 wrapper 落入隐式 auto 列，导致内部 `.preference-panel` 宽度被压缩。
+- **Fix:** 将 `default-departure-panel` 锚点从外层 wrapper div 挪到 `DiscoveryPreferences` 根 section（`.preference-panel`）并移除 wrapper，使目标元素直接复用既有 `grid-column: 1 / span 12` 规则。
+- **Files changed:** src/app/page.tsx, src/components/deals/DiscoveryPreferences.tsx
+---
