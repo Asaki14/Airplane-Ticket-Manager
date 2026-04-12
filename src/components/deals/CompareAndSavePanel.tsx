@@ -62,7 +62,10 @@ export function CompareAndSavePanel({ deals }: CompareAndSavePanelProps) {
   return (
     <section className="compare-save" aria-label="比较收藏分享">
       <h2 className="compare-save__title">比较、收藏与分享</h2>
-      <p className="compare-save__description">最多选择 3 条进行并排比较，并可收藏后稍后决策。</p>
+      <p className="compare-save__description">
+        犹豫不决？把候选加入比较，并排看价格、时效、规则和购买建议，决策更清晰。
+        收藏后可稍后再看，链接可复制分享给他人参考。
+      </p>
 
       <div className="compare-actions">
         {deals.map((deal) => {
