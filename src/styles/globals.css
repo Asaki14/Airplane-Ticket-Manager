@@ -168,6 +168,27 @@ select:focus-visible {
   border-top: 1px solid #e2e8e3;
 }
 
+.deal-card-shell__body {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+}
+
+.deal-card-shell__title {
+  margin: 0 0 6px;
+}
+
+.deal-card-shell__route {
+  margin: 0;
+}
+
+.text-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .deal-card h2 {
   margin: 0 0 6px;
 }
