@@ -49,6 +49,194 @@ select:focus-visible {
   gap: var(--space-sm);
 }
 
+.home-modes,
+.quick-scenes,
+.feed-filters,
+.preference-panel,
+.compare-save,
+.detail-grid,
+.value-explain {
+  background: #fffdf9;
+  border: 1px solid #d5ded7;
+  border-radius: 14px;
+  padding: var(--space-md);
+}
+
+.home-modes {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.quick-scenes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.quick-scenes a {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--space-md);
+  border-radius: 999px;
+  text-decoration: none;
+  background: var(--color-secondary);
+  color: inherit;
+}
+
+.feed-filters {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-sm);
+}
+
+.feed-filters label,
+.preference-controls label {
+  display: grid;
+  gap: 6px;
+  font-size: var(--font-size-label);
+}
+
+.feed-filters input,
+.feed-filters select,
+.preference-controls select,
+.preference-controls button {
+  min-height: 44px;
+  border: 1px solid #c4d0c8;
+  border-radius: 10px;
+  padding: 0 12px;
+  background: #fff;
+}
+
+.feed-filters button,
+.preference-controls button,
+.compare-action-item button,
+.buy-link,
+.deal-detail-link {
+  min-height: 44px;
+  border: none;
+  border-radius: 10px;
+  padding: 0 var(--space-md);
+  background: var(--color-accent);
+  color: #fff;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preference-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: end;
+}
+
+.public-deal-feed {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+}
+
+.deal-card {
+  border-radius: 14px;
+  padding: var(--space-md);
+  border: 1px solid #cdd8d1;
+}
+
+.deal-card-shell {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 320px;
+  border-radius: 14px;
+  border: 1px solid #cdd8d1;
+  background: #fffdf9;
+  overflow: hidden;
+}
+
+.deal-card-shell__header,
+.deal-card-shell__body,
+.deal-card-shell__footer {
+  padding: var(--space-md);
+}
+
+.deal-card-shell__header {
+  border-bottom: 1px solid #e2e8e3;
+}
+
+.deal-card-shell__footer {
+  border-top: 1px solid #e2e8e3;
+}
+
+.deal-card h2 {
+  margin: 0 0 6px;
+}
+
+.deal-card-label,
+.deal-card-meta,
+.deal-score,
+.preference-current,
+.favorites-summary {
+  margin: 6px 0;
+  font-size: 14px;
+}
+
+.deal-card-meta {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.deal-freshness {
+  margin: var(--space-sm) 0;
+  padding-left: 18px;
+}
+
+.compare-actions {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.compare-action-item {
+  border: 1px solid #d5ded7;
+  border-radius: 12px;
+  padding: var(--space-sm);
+}
+
+.compare-action-item > div {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.compare-grid {
+  margin-top: var(--space-md);
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.compare-column {
+  border: 1px solid #d5ded7;
+  border-radius: 12px;
+  padding: var(--space-sm);
+  background: #fff;
+}
+
+.detail-hero {
+  background: linear-gradient(135deg, var(--color-secondary), #d6ece8);
+  border-radius: 16px;
+  padding: var(--space-xl) var(--space-lg);
+}
+
+.detail-grid {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.feed-empty {
+  margin: 0;
+}
+
 .public-nav a,
 .admin-actions a {
   min-height: 44px;
@@ -59,6 +247,37 @@ select:focus-visible {
   background: var(--color-secondary);
   color: inherit;
   text-decoration: none;
+}
+
+.deal-card-shell,
+.deal-card,
+.compare-column,
+.feed-filters button,
+.preference-controls button,
+.compare-action-item button,
+.buy-link,
+.deal-detail-link,
+.public-nav a,
+.admin-actions a {
+  transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.deal-card-shell:hover,
+.deal-card:hover,
+.compare-column:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(19, 33, 31, 0.08);
+}
+
+.feed-filters button:hover,
+.preference-controls button:hover,
+.compare-action-item button:hover,
+.buy-link:hover,
+.deal-detail-link:hover,
+.public-nav a:hover,
+.admin-actions a:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(11, 122, 117, 0.2);
 }
 
 .admin-shell {
@@ -78,6 +297,16 @@ select:focus-visible {
   .admin-shell {
     padding: var(--space-xl) var(--space-lg);
   }
+
+  .feed-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-modes,
+  .compare-grid,
+  .detail-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (min-width: 1024px) {
@@ -93,6 +322,35 @@ select:focus-visible {
 
   .public-nav {
     grid-column: 1 / span 12;
+  }
+
+  .home-modes,
+  .quick-scenes,
+  .feed-filters,
+  .preference-panel,
+  .public-deal-feed,
+  .compare-save,
+  .detail-grid,
+  .value-explain,
+  .buy-link {
+    grid-column: 1 / span 12;
+  }
+
+  .feed-filters {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .home-modes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .public-deal-feed {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .compare-grid,
+  .detail-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .admin-shell > header {
