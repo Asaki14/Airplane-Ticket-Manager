@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react'
 
+import { buildDealAdvice } from '@/lib/dealAdvice'
+
 type DealLite = {
   id: string
   title: string
@@ -66,6 +68,7 @@ export function CompareAndSavePanel({ deals }: CompareAndSavePanelProps) {
         {deals.map((deal) => {
           const inCompare = selected.includes(deal.id)
           const inFavorites = favorites.includes(deal.id)
+          const advice = buildDealAdvice(deal)
           const compareActionLabel = inCompare
             ? '移出比较：该候选将从当前比较面板移除。'
             : `加入比较：将 ${deal.title} 加入当前比较面板。`
@@ -79,8 +82,12 @@ export function CompareAndSavePanel({ deals }: CompareAndSavePanelProps) {
                 <p className="compare-card-shell__deal-title text-clamp-2">{deal.title}</p>
               </header>
 
+              <p className="compare-card-shell__advice" aria-label="航班特点与购买建议">
+                {advice}
+              </p>
+
               <div className="compare-card-shell__body">
-                <div>
+                <div className="compare-card-shell__actions">
                   <button
                     type="button"
                     aria-label={compareActionLabel}
@@ -98,10 +105,10 @@ export function CompareAndSavePanel({ deals }: CompareAndSavePanelProps) {
                 </div>
               </div>
 
-            <footer className="compare-card-shell__footer">
-              <a className="compare-card-shell__share-link" href={`/deals/${deal.id}`}>分享链接</a>
-              <p>{inCompare ? '已加入比较列表' : '未加入比较列表'}</p>
-            </footer>
+              <footer className="compare-card-shell__footer">
+                <a className="compare-card-shell__share-link" href={`/deals/${deal.id}`}>分享链接</a>
+                <p>{inCompare ? '已加入比较列表' : '未加入比较列表'}</p>
+              </footer>
             </article>
           )
         })}

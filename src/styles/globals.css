@@ -686,6 +686,18 @@ select:focus-visible {
   gap: var(--space-sm);
 }
 
+.compare-card-shell__advice {
+  margin: 0;
+  padding: 0 var(--space-md);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
+  color: rgba(19, 33, 31, 0.9);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .compare-card-shell__footer {
   border-top: 1px solid #e2e8e3;
   display: grid;
@@ -714,7 +726,7 @@ select:focus-visible {
   font-weight: var(--font-weight-semibold);
 }
 
-.compare-action-item > div {
+.compare-card-shell__actions {
   display: flex;
   gap: var(--space-sm);
   flex-wrap: wrap;
