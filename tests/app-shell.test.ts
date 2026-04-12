@@ -15,4 +15,19 @@ describe('app-shell', () => {
     expect(content).toContain('admin')
     expect(content).toContain('运营入口')
   })
+
+  it('admin deals list binds mobile and desktop layout classes with edit entry', () => {
+    const dealsPage = readFileSync(resolve('src/app/admin/deals/page.tsx'), 'utf-8')
+    expect(dealsPage).toContain('mobile-card-list')
+    expect(dealsPage).toContain('deal-card-mobile')
+    expect(dealsPage).toContain('desktop-table')
+    expect(dealsPage).toContain('编辑')
+  })
+
+  it('admin deal edit page uses deal-form grouped sections', () => {
+    const dealEditPage = readFileSync(resolve('src/app/admin/deals/[id]/page.tsx'), 'utf-8')
+    expect(dealEditPage).toContain('className="deal-form"')
+    expect(dealEditPage).toContain('deal-form__section')
+    expect(dealEditPage).toContain('deal-form__section--full')
+  })
 })

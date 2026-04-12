@@ -13,7 +13,7 @@ export default async function DealEditPage({ params }: DealEditPageProps) {
       </header>
 
       <form className="deal-form" aria-label="deal edit form">
-        <section>
+        <section className="deal-form__section">
           <h2>fare basics</h2>
           <label>
             标题
@@ -29,7 +29,7 @@ export default async function DealEditPage({ params }: DealEditPageProps) {
           </label>
         </section>
 
-        <section>
+        <section className="deal-form__section">
           <h2>travel timing</h2>
           <label>
             travelStartDate
@@ -45,18 +45,18 @@ export default async function DealEditPage({ params }: DealEditPageProps) {
           </label>
         </section>
 
-        <section>
+        <section className="deal-form__section deal-form__section--full">
           <h2>rule summary</h2>
           <textarea name="refundChangeSummary" defaultValue="改签收取手续费" />
         </section>
 
-        <section>
+        <section className="deal-form__section">
           <h2>source+freshness</h2>
           <input name="sourceLink" defaultValue="https://example.com/deal" />
           <input name="expiresAt" type="datetime-local" />
         </section>
 
-        <section>
+        <section className="deal-form__section deal-form__section--full">
           <h2>recommendation</h2>
           <textarea name="recommendationCopy" defaultValue="适合周末短途休假" />
         </section>

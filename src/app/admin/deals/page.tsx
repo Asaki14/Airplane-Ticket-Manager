@@ -28,13 +28,19 @@ export default function AdminDealsPage() {
       <section className="mobile-card-list" aria-label="mobile card list">
         {mockDeals.map((deal) => (
           <article key={deal.id} className="deal-card-mobile">
-            <h2>{deal.title}</h2>
-            <p>
-              {deal.departureCity} → {deal.destination}
-            </p>
-            <p>¥{deal.headlinePrice}</p>
-            <p>状态：{deal.status}</p>
-            <a href={`/admin/deals/${deal.id}`}>编辑</a>
+            <header className="deal-card-mobile__header">
+              <h2>{deal.title}</h2>
+              <p className="deal-card-mobile__status">状态：{deal.status}</p>
+            </header>
+            <div className="deal-card-mobile__body">
+              <p>
+                {deal.departureCity} → {deal.destination}
+              </p>
+              <p>¥{deal.headlinePrice}</p>
+            </div>
+            <footer className="deal-card-mobile__footer">
+              <a href={`/admin/deals/${deal.id}`}>编辑</a>
+            </footer>
           </article>
         ))}
       </section>

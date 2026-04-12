@@ -46,4 +46,12 @@ describe('design-contract', () => {
     expect(publicPage).toContain('查看详情与票规')
     expect(detailPage).toContain('去来源页继续购买')
   })
+
+  it('admin deals layout contract classes exist in globals', () => {
+    const css = readFileSync(resolve('src/styles/globals.css'), 'utf-8')
+    expect(css).toContain('.mobile-card-list')
+    expect(css).toContain('.deal-card-mobile')
+    expect(css).toContain('.desktop-table')
+    expect(css).toContain('.deal-form')
+  })
 })
