@@ -6,6 +6,7 @@
   "scripts": {
     "check:admin-gate-env": "node scripts/check-admin-gate-env.mjs",
     "dev": "npm run check:admin-gate-env && next dev",
+    "build": "next build",
     "lint": "eslint \"src/**/*.{ts,tsx}\" \"tests/**/*.ts\"",
     "test": "vitest run",
     "test:quick": "vitest run"

@@ -48,8 +48,12 @@ export const DealsCollection: CollectionConfig = {
   ],
   hooks: {
     beforeValidate: [
-      ({ data }: { data: Record<string, unknown> }) => {
-        const result = validateDealInput(data)
+      ({ data }) => {
+        if (!data || typeof data !== 'object') {
+          return data
+        }
+
+        const result = validateDealInput(data as Record<string, unknown>)
         if (!result.ok) {
           throw new Error(`Invalid deal input: ${result.errors.join(',')}`)
         }
