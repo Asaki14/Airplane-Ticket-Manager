@@ -1,3 +1,9 @@
+import nextEnv from '@next/env'
+
+const { loadEnvConfig } = nextEnv
+
+loadEnvConfig(process.cwd())
+
 const required = ['ADMIN_GATE_USERNAME', 'ADMIN_GATE_PASSWORD']
 
 const missing = required.filter((name) => !process.env[name] || process.env[name].trim().length === 0)
