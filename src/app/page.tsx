@@ -79,7 +79,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
       <section className="public-hero" aria-label="travel-hero">
         <p className="eyebrow">特价机票发现平台</p>
         <h1>更快判断这张机票值不值得买</h1>
-        <p>从分散票价中快速看到核心信息：价格、时效、规则和下一步。</p>
+        <p>从分散票价中快速看到核心信息：价格、时效、规则和下一步，并通过「查看详情与票规」进入决策页。</p>
       </section>
 
       <section className="home-modes" aria-label="双模式浏览">

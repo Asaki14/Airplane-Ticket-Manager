@@ -22,6 +22,13 @@ describe('design-contract', () => {
     expect(publicPage).toContain('当前筛选下暂无可用特价，试试放宽条件或切换出发地/日期窗口。')
   })
 
+  it('public and detail hero class contracts are present', () => {
+    const publicPage = readFileSync(resolve('src/app/page.tsx'), 'utf-8')
+    const detailPage = readFileSync(resolve('src/app/deals/[id]/page.tsx'), 'utf-8')
+    expect(publicPage).toContain('public-hero')
+    expect(detailPage).toContain('detail-hero')
+  })
+
   it('admin page excludes public hero decorative block', () => {
     const adminPage = readFileSync(resolve('src/app/admin/page.tsx'), 'utf-8')
     expect(adminPage).not.toContain('public-hero')
@@ -31,5 +38,12 @@ describe('design-contract', () => {
     const detailPage = readFileSync(resolve('src/app/deals/[id]/page.tsx'), 'utf-8')
     expect(detailPage).toContain('detail-grid--primary')
     expect(detailPage).toContain('detail-grid--rules')
+  })
+
+  it('primary cta copy contracts remain stable', () => {
+    const publicPage = readFileSync(resolve('src/app/page.tsx'), 'utf-8')
+    const detailPage = readFileSync(resolve('src/app/deals/[id]/page.tsx'), 'utf-8')
+    expect(publicPage).toContain('查看详情与票规')
+    expect(detailPage).toContain('去来源页继续购买')
   })
 })
