@@ -15,6 +15,7 @@ type DealLite = {
   baggageInfo: string
   refundChangeSummary: string
   stopSummary: string
+  travelWindowLabel: string
 }
 
 type CompareAndSavePanelProps = {
