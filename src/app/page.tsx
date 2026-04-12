@@ -95,15 +95,44 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         <header className="section-header">
           <p className="section-header__kicker">探索方式</p>
           <h2 className="section-header__title">先定约束，再找灵感</h2>
-          <p className="section-header__description">根据当前目标选择不同浏览路径，减少无效比较，提升决策效率。</p>
+          <p className="section-header__description">借鉴旅行平台的信息分层逻辑，先让你判断策略，再进入具体筛选与场景入口。</p>
         </header>
-        <article className="mode-card">
+        <article className="mode-card mode-card--goal">
+          <div className="mode-card__top">
+            <span className="mode-card__badge">效率优先</span>
+            <span className="mode-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M12 3a9 9 0 1 0 9 9" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                <path d="M12 7v5l3 2" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </div>
+          <p className="mode-card__signal">推荐指数：适合预算敏感型</p>
           <h3 className="mode-card__title">任务导向</h3>
           <p className="mode-card__description">先定约束：出发地、预算、时间窗口，快速收敛候选。</p>
+          <p className="mode-card__trend">近 7 天中，低价票在工作日 10:00-15:00 更常出现。</p>
+          <a className="mode-card__action" href="/?sort=priceAsc">
+            先按预算找低价
+            <span className="mode-card__action-arrow" aria-hidden="true">&gt;</span>
+          </a>
         </article>
-        <article className="mode-card">
+        <article className="mode-card mode-card--inspire">
+          <div className="mode-card__top">
+            <span className="mode-card__badge">灵感发现</span>
+            <span className="mode-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M12 4 14.7 9.3 20.5 10.1 16.2 14.2 17.2 20 12 17.3 6.8 20 7.8 14.2 3.5 10.1 9.3 9.3z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </div>
+          <p className="mode-card__signal">推荐指数：适合弹性出行型</p>
           <h3 className="mode-card__title">灵感导向</h3>
           <p className="mode-card__description">从周末捡漏、节假日前后、海岛和周边国际入口启发下一次出行。</p>
+          <p className="mode-card__trend">近 7 天中，海岛与周边国际目的地的折扣波动更明显。</p>
+          <a className="mode-card__action" href="/?travelWindowLabel=周末捡漏">
+            看看本周末灵感
+            <span className="mode-card__action-arrow" aria-hidden="true">&gt;</span>
+          </a>
         </article>
       </section>
 
