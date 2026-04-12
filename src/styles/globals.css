@@ -153,32 +153,51 @@ select:focus-visible {
 }
 
 .hero-mvp-guide {
-  margin-top: var(--space-md);
+  margin-top: calc(var(--space-md) + 2px);
   padding-top: var(--space-sm);
   border-top: 1px dashed rgba(11, 122, 117, 0.24);
   display: grid;
   gap: var(--space-xs);
   max-width: 58ch;
+  opacity: 0.78;
 }
 
 .hero-mvp-guide h2 {
   font-size: var(--font-size-base);
   line-height: var(--line-height-snug);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-title);
+  color: rgba(18, 33, 31, 0.78);
 }
 
 .hero-mvp-guide p {
   margin: 0;
   font-size: var(--font-size-sm);
   line-height: var(--line-height-normal);
-  color: var(--color-text);
+  color: rgba(19, 33, 31, 0.72);
 }
 
 .hero-mvp-guide code {
   font-family: var(--font-mono, monospace);
   font-size: var(--font-size-label);
   color: var(--color-accent);
+}
+
+.hero-mvp-guide strong {
+  color: rgba(11, 122, 117, 0.86);
+  font-weight: var(--font-weight-semibold);
+}
+
+.hero-mvp-guide ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.hero-mvp-guide li {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: rgba(19, 33, 31, 0.66);
 }
 
 .public-nav {
@@ -1430,12 +1449,13 @@ select:focus-visible {
 }
 
 .eyebrow {
-  font-size: var(--font-size-label);
-  line-height: var(--line-height-snug);
-  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-title-md);
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-bold);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   margin: 0;
+  color: var(--color-accent);
 }
 
 @media (min-width: 768px) {
