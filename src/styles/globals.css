@@ -286,6 +286,35 @@ select:focus-visible {
   gap: var(--space-sm);
 }
 
+.detail-grid--primary,
+.detail-grid--rules {
+  grid-template-columns: 1fr;
+}
+
+.detail-card {
+  min-height: 220px;
+  border: 1px solid #d5ded7;
+  border-radius: 14px;
+  padding: var(--space-md);
+  background: #fffdf9;
+  display: grid;
+  align-content: start;
+  gap: var(--space-sm);
+}
+
+.detail-card h2 {
+  margin: 0;
+}
+
+.detail-card p,
+.detail-card ul {
+  margin: 0;
+}
+
+.detail-card ul {
+  padding-left: 18px;
+}
+
 .feed-empty {
   margin: 0;
 }
@@ -356,8 +385,7 @@ select:focus-visible {
   }
 
   .home-modes,
-  .compare-grid,
-  .detail-grid {
+  .compare-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -401,9 +429,13 @@ select:focus-visible {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .compare-grid,
-  .detail-grid {
+  .compare-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .detail-grid--primary,
+  .detail-grid--rules {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .admin-shell > header {
