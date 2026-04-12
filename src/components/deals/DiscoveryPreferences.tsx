@@ -5,9 +5,10 @@ import { useState } from 'react'
 type DiscoveryPreferencesProps = {
   departureOptions: string[]
   currentDepartureCity?: string
+  id?: string
 }
 
-export function DiscoveryPreferences({ departureOptions, currentDepartureCity }: DiscoveryPreferencesProps) {
+export function DiscoveryPreferences({ departureOptions, currentDepartureCity, id }: DiscoveryPreferencesProps) {
   const [value, setValue] = useState(currentDepartureCity ?? '')
   const [status, setStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
 
@@ -23,7 +24,7 @@ export function DiscoveryPreferences({ departureOptions, currentDepartureCity }:
   }
 
   return (
-    <section className="preference-panel" aria-label="偏好设置">
+    <section id={id} className="preference-panel" aria-label="偏好设置">
       <h2>我的默认出发地</h2>
       <p>设置后会自动带入发现筛选，减少重复操作。</p>
       <div className="preference-controls">

@@ -161,9 +161,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         </div>
       </section>
 
-      <div id="default-departure-panel">
-        <DiscoveryPreferences departureOptions={departureOptions} currentDepartureCity={filters.departureCity} />
-      </div>
+      <DiscoveryPreferences id="default-departure-panel" departureOptions={departureOptions} currentDepartureCity={filters.departureCity} />
 
       <form className="feed-filters" aria-label="发现筛选" action="/" method="get">
         <header className="section-header section-header--compact feed-filters__intro">
