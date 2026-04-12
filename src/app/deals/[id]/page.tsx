@@ -25,15 +25,15 @@ export default async function DealDetailPage({ params }: DealDetailPageProps) {
     <main className="public-shell" style={{ backgroundColor: 'var(--color-dominant)' }}>
       <section className="detail-hero">
         <p className="eyebrow">Deal 详情</p>
-        <h1>{deal.title}</h1>
-        <p>
+        <h1 className="detail-title">{deal.title}</h1>
+        <p className="detail-subtitle">
           {deal.departureCity} → {deal.destination} · {deal.airline}
         </p>
       </section>
 
       <section className="detail-grid detail-grid--primary" aria-label="来源与时效">
         <article className="detail-card">
-          <h2>来源与时效</h2>
+          <h2 className="detail-card__title">来源与时效</h2>
           <ul>
             <li>来源：{deal.sourceName || '-'}</li>
             <li>发布时间：{toDateLabel(deal.publishedAt)}</li>
@@ -43,7 +43,7 @@ export default async function DealDetailPage({ params }: DealDetailPageProps) {
         </article>
 
         <article className="detail-card">
-          <h2>价格与舱位</h2>
+          <h2 className="detail-card__title">价格与舱位</h2>
           <ul>
             <li>主价格：¥{deal.headlinePrice}</li>
             <li>参考总成本：¥{deal.referenceTotalPrice}</li>
@@ -55,11 +55,11 @@ export default async function DealDetailPage({ params }: DealDetailPageProps) {
 
       <section className="detail-grid detail-grid--rules" aria-label="票规翻译">
         <article className="detail-card">
-          <h2>行李规则</h2>
+          <h2 className="detail-card__title">行李规则</h2>
           <p>{deal.baggageInfo || '-'}</p>
         </article>
         <article className="detail-card">
-          <h2>退改规则</h2>
+          <h2 className="detail-card__title">退改规则</h2>
           <div className="rule-card">
             <p className="rule-card__summary text-clamp-3">{deal.refundChangeSummary || '-'}</p>
             <details>
@@ -69,7 +69,7 @@ export default async function DealDetailPage({ params }: DealDetailPageProps) {
           </div>
         </article>
         <article className="detail-card">
-          <h2>经停与限制</h2>
+          <h2 className="detail-card__title">经停与限制</h2>
           <p>{deal.stopSummary || '-'}</p>
           <div className="rule-card">
             <p className="rule-card__summary text-clamp-3">{deal.restrictions || '-'}</p>
@@ -82,8 +82,8 @@ export default async function DealDetailPage({ params }: DealDetailPageProps) {
       </section>
 
       <section className="value-explain" aria-label="值得买解释">
-        <h2>为什么值得买</h2>
-        <p>价值分：{deal.valueScore}</p>
+        <h2 className="value-explain__title">为什么值得买</h2>
+        <p className="value-explain__score">价值分：{deal.valueScore}</p>
         <ul>
           {(deal.valueReasons ?? []).map((reason) => (
             <li key={reason}>{reason}</li>

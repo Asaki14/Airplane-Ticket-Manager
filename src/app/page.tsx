@@ -76,12 +76,12 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   const airlineOptions = buildOptions(mockDeals.map((deal) => deal.airline))
 
   return (
-    <main className="public-shell" style={{ backgroundColor: 'var(--color-dominant)' }}>
+    <main className="public-shell spring-atmosphere" style={{ backgroundColor: 'var(--color-dominant)' }}>
       <section className="public-hero" aria-label="travel-hero">
         <div className="hero-main">
           <p className="eyebrow">飞易</p>
-          <h1>更快判断这张机票值不值得买</h1>
-          <p>从分散票价中快速看到核心信息：价格、时效、规则和下一步，并通过「查看详情与票规」进入决策页。</p>
+          <h1 className="hero-title">更快判断这张机票值不值得买</h1>
+          <p className="hero-description">从分散票价中快速看到核心信息：价格、时效、规则和下一步，并通过「查看详情与票规」进入决策页。</p>
         </div>
         <div className="hero-admin-info">
           <span className="admin-info-label">运营入口</span>
@@ -93,12 +93,12 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 
       <section className="home-modes" aria-label="双模式浏览">
         <article className="mode-card">
-          <h2>任务导向</h2>
-          <p>先定约束：出发地、预算、时间窗口，快速收敛候选。</p>
+          <h2 className="mode-card__title">任务导向</h2>
+          <p className="mode-card__description">先定约束：出发地、预算、时间窗口，快速收敛候选。</p>
         </article>
         <article className="mode-card">
-          <h2>灵感导向</h2>
-          <p>从周末捡漏、节假日前后、海岛和周边国际入口启发下一次出行。</p>
+          <h2 className="mode-card__title">灵感导向</h2>
+          <p className="mode-card__description">从周末捡漏、节假日前后、海岛和周边国际入口启发下一次出行。</p>
         </article>
       </section>
 

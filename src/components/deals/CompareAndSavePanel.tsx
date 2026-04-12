@@ -59,8 +59,8 @@ export function CompareAndSavePanel({ deals }: CompareAndSavePanelProps) {
 
   return (
     <section className="compare-save" aria-label="比较收藏分享">
-      <h2>比较、收藏与分享</h2>
-      <p>最多选择 3 条进行并排比较，并可收藏后稍后决策。</p>
+      <h2 className="compare-save__title">比较、收藏与分享</h2>
+      <p className="compare-save__description">最多选择 3 条进行并排比较，并可收藏后稍后决策。</p>
 
       <div className="compare-actions">
         {deals.map((deal) => {
@@ -76,7 +76,7 @@ export function CompareAndSavePanel({ deals }: CompareAndSavePanelProps) {
           return (
             <article key={deal.id} className="compare-action-item compare-card-shell">
               <header className="compare-card-shell__header">
-                <p>{deal.title}</p>
+                <p className="compare-card-shell__deal-title text-clamp-2">{deal.title}</p>
               </header>
 
               <div className="compare-card-shell__body">
@@ -98,10 +98,10 @@ export function CompareAndSavePanel({ deals }: CompareAndSavePanelProps) {
                 </div>
               </div>
 
-              <footer className="compare-card-shell__footer">
-                <a href={`/deals/${deal.id}`}>分享链接</a>
-                <p>{inCompare ? '已加入比较列表' : '未加入比较列表'}</p>
-              </footer>
+            <footer className="compare-card-shell__footer">
+              <a className="compare-card-shell__share-link" href={`/deals/${deal.id}`}>分享链接</a>
+              <p>{inCompare ? '已加入比较列表' : '未加入比较列表'}</p>
+            </footer>
             </article>
           )
         })}
@@ -127,14 +127,14 @@ export function CompareAndSavePanel({ deals }: CompareAndSavePanelProps) {
             </div>
 
             <footer className="compare-card-shell__footer">
-              <a href={`/deals/${deal.id}`}>查看详情与票规</a>
+              <a className="compare-card-shell__detail-link" href={`/deals/${deal.id}`}>查看详情与票规</a>
               <p>字段顺序已按决策优先展示</p>
             </footer>
           </article>
         ))}
       </div>
 
-      <p className="favorites-summary">已收藏 {favorites.length} 条，可在后续版本加入专门回看页。</p>
+      <p className="favorites-summary compare-save__favorites-summary">已收藏 {favorites.length} 条，可在后续版本加入专门回看页。</p>
     </section>
   )
 }
