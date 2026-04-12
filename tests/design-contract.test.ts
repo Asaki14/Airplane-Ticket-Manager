@@ -54,4 +54,13 @@ describe('design-contract', () => {
     expect(css).toContain('.desktop-table')
     expect(css).toContain('.deal-form')
   })
+
+  it('home hero carousel visual and motion contracts exist in globals', () => {
+    const css = readFileSync(resolve('src/styles/globals.css'), 'utf-8')
+    expect(css).toContain('.hero-carousel')
+    expect(css).toContain('.hero-carousel__slide')
+    expect(css).toContain('.hero-carousel__controls')
+    expect(css).toContain('@media (prefers-reduced-motion: reduce)')
+    expect(css).toContain('transition: transform 280ms ease')
+  })
 })
