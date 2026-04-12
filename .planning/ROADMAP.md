@@ -13,10 +13,10 @@
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation & Deal CMS** - 建立项目骨架、响应式界面基础和运营录入能力 _(Completed: 2026-04-11)_
-- [ ] **Phase 2: Discovery Feed & Filters** - 搭建特价发现页、筛选和搜索路径
-- [ ] **Phase 3: Deal Detail & Rule Decode** - 完成详情页、规则翻译和价值解释
-- [ ] **Phase 4: Preference-Led Discovery** - 加入偏好设置和场景化入口，降低重复筛选成本
-- [ ] **Phase 5: Compare, Save & Share** - 补齐比较、收藏和分享，形成完整决策闭环
+- [x] **Phase 2: Discovery Feed & Filters** - 搭建特价发现页、筛选和搜索路径 (completed 2026-04-11)
+- [x] **Phase 3: Deal Detail & Rule Decode** - 完成详情页、规则翻译和价值解释 (completed 2026-04-11)
+- [x] **Phase 4: Preference-Led Discovery** - 加入偏好设置和场景化入口，降低重复筛选成本 (completed 2026-04-11)
+- [x] **Phase 5: Compare, Save & Share** - 补齐比较、收藏和分享，形成完整决策闭环 (completed 2026-04-11)
 
 ## Phase Details
 
@@ -48,9 +48,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: 实现发现页卡片流、列表布局和空状态
-- [ ] 02-02: 实现筛选器、排序器和查询参数同步
-- [ ] 02-03: 实现关键词搜索和高频探索入口
+- [x] 02-01: 实现发现页卡片流、列表布局和空状态
+- [x] 02-02: 实现筛选器、排序器和查询参数同步
+- [x] 02-03: 实现关键词搜索和高频探索入口
 
 ### Phase 3: Deal Detail & Rule Decode
 **Goal**: 把复杂票规翻译成用户能快速判断的详情体验
@@ -63,9 +63,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: 搭建详情页信息架构和来源/时效模块
-- [ ] 03-02: 实现票规结构化展示和中文规则翻译卡片
-- [ ] 03-03: 实现价值解释模块和来源平台跳转
+- [x] 03-01: 搭建详情页信息架构和来源/时效模块
+- [x] 03-02: 实现票规结构化展示和中文规则翻译卡片
+- [x] 03-03: 实现价值解释模块和来源平台跳转
 
 ### Phase 4: Preference-Led Discovery
 **Goal**: 让用户基于个人出发地和旅行偏好更快进入适合自己的特价集合
@@ -78,8 +78,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: 实现默认出发城市和偏好持久化
-- [ ] 04-02: 实现场景化专题入口和首页双入口结构
+- [x] 04-01: 实现默认出发城市和偏好持久化
+- [x] 04-02: 实现场景化专题入口和首页双入口结构
 
 ### Phase 5: Compare, Save & Share
 **Goal**: 让用户完成候选方案比较、稍后决策和外部分享
@@ -92,9 +92,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 05-01: 实现比较面板状态管理和加入/移除交互
-- [ ] 05-02: 实现并排比较视图和关键字段高亮
-- [ ] 05-03: 实现本地收藏、回看入口和分享能力
+- [x] 05-01: 实现比较面板状态管理和加入/移除交互
+- [x] 05-02: 实现并排比较视图和关键字段高亮
+- [x] 05-03: 实现本地收藏、回看入口和分享能力
 
 ## Progress
 
@@ -104,7 +104,19 @@ Phases execute in numeric order: 1 → 2 → 2.1 → 2.2 → 3 → 3.1 → 4 →
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Deal CMS | 4/4 | Complete | 2026-04-11 |
-| 2. Discovery Feed & Filters | 0/3 | Not started | - |
-| 3. Deal Detail & Rule Decode | 0/3 | Not started | - |
-| 4. Preference-Led Discovery | 0/2 | Not started | - |
-| 5. Compare, Save & Share | 0/3 | Not started | - |
+| 2. Discovery Feed & Filters | 3/3 | Complete   | 2026-04-11 |
+| 3. Deal Detail & Rule Decode | 3/3 | Complete   | 2026-04-11 |
+| 4. Preference-Led Discovery | 2/2 | Complete   | 2026-04-11 |
+| 5. Compare, Save & Share | 3/3 | Complete   | 2026-04-11 |
+
+### Phase 6: 我想全面优化现在的网页UI表现，目前的网页卡片大小不一样、整体布局不美观，且点进某个机票卡片跳转到的页面中卡片变得高度很高长度很窄。这是一个全面的UI phase，使用front design以及UI-UX 等可用skills对网页进行美化、统一化并解决一些小的显示bug，要求是有春天的旅游气氛，整体布局和谐优美
+
+**Goal:** 统一发现页/详情页/比较模块的卡片与布局体系，修复详情页高窄显示问题，并在不新增业务能力前提下建立清新克制的春日视觉与交互节奏
+**Requirements**: [PREF-03]
+**Depends on:** Phase 5
+**Plans:** 3 plans
+
+Plans:
+- [ ] 06-01-PLAN.md — 固化春日 token、全局骨架与首页文案合同
+- [ ] 06-02-PLAN.md — 统一发现流与比较区卡片结构和信息密度
+- [ ] 06-03-PLAN.md — 重排详情页为单列/双列并落地票规短卡折叠
