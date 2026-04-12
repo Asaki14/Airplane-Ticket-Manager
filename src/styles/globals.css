@@ -302,16 +302,17 @@ select:focus-visible {
 
 .detail-grid {
   display: grid;
-  gap: var(--space-sm);
+  gap: var(--space-md);
 }
 
 .detail-grid--primary,
 .detail-grid--rules {
   grid-template-columns: 1fr;
+  align-items: start;
 }
 
 .detail-card {
-  min-height: 220px;
+  min-height: 0;
   border: 1px solid rgba(18, 33, 31, 0.14);
   border-radius: 14px;
   padding: var(--space-md);
@@ -319,6 +320,8 @@ select:focus-visible {
   display: grid;
   align-content: start;
   gap: var(--space-sm);
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
 }
 
 .detail-card h2 {
@@ -337,6 +340,7 @@ select:focus-visible {
 .rule-card {
   display: grid;
   gap: var(--space-sm);
+  min-inline-size: 0;
 }
 
 .rule-card__summary {
@@ -348,6 +352,7 @@ select:focus-visible {
   border-radius: 10px;
   background: #f6efe0;
   padding: var(--space-sm);
+  overflow-wrap: anywhere;
 }
 
 .rule-card summary {
@@ -358,6 +363,8 @@ select:focus-visible {
 
 .rule-card details p {
   margin-top: var(--space-sm);
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .feed-empty {
@@ -482,6 +489,10 @@ select:focus-visible {
   .detail-grid--primary,
   .detail-grid--rules {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .detail-grid--rules > .detail-card:last-child {
+    grid-column: 1 / -1;
   }
 
   .admin-shell > header {
