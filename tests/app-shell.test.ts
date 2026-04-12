@@ -10,6 +10,17 @@ describe('app-shell', () => {
     expect(content).toContain('当前筛选下暂无可用特价，试试放宽条件或切换出发地/日期窗口。')
   })
 
+  it('home imports hero carousel and keeps carousel a11y copy contract', () => {
+    const homePage = readFileSync(resolve('src/app/page.tsx'), 'utf-8')
+    const carousel = readFileSync(resolve('src/components/home/HeroDealCarousel.tsx'), 'utf-8')
+
+    expect(homePage).toContain('HeroDealCarousel')
+    expect(carousel).toContain('aria-label="首页特价轮换"')
+    expect(carousel).toContain('暂停轮播')
+    expect(carousel).toContain('继续轮播')
+    expect(carousel).toContain('4500')
+  })
+
   it('admin shell page exists with admin marker', () => {
     const content = readFileSync(resolve('src/app/admin/page.tsx'), 'utf-8')
     expect(content).toContain('admin')

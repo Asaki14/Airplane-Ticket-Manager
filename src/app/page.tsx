@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { DealCard } from '@/components/deals/DealCard'
 import { CompareAndSavePanel } from '@/components/deals/CompareAndSavePanel'
 import { DiscoveryPreferences } from '@/components/deals/DiscoveryPreferences'
+import { HeroDealCarousel } from '@/components/home/HeroDealCarousel'
 import { filterPublicFeedDeals, mapPublicFeedResponse, sortPublicFeedDeals, type FeedFilters, type FeedSort } from '@/lib/deals/feed-query'
 import { mockDeals } from '@/lib/deals/mock-data'
 
@@ -81,6 +82,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         <h1>更快判断这张机票值不值得买</h1>
         <p>从分散票价中快速看到核心信息：价格、时效、规则和下一步，并通过「查看详情与票规」进入决策页。</p>
       </section>
+
+      <HeroDealCarousel deals={deals.slice(0, 5)} />
 
       <section className="home-modes" aria-label="双模式浏览">
         <article className="mode-card">
