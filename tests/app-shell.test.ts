@@ -15,9 +15,13 @@ describe('app-shell', () => {
     const carousel = readFileSync(resolve('src/components/home/HeroDealCarousel.tsx'), 'utf-8')
 
     expect(homePage).toContain('HeroDealCarousel')
+    expect(homePage).toContain('spring-atmosphere')
+    expect(carousel).toContain('hero-carousel--atmosphere')
+    expect(carousel).toContain('hero-carousel__atmosphere-layer')
     expect(carousel).toContain('aria-label="首页特价轮换"')
     expect(carousel).toContain('暂停轮播')
     expect(carousel).toContain('继续轮播')
+    expect(carousel).toContain('查看详情与票规')
     expect(carousel).toContain('4500')
   })
 

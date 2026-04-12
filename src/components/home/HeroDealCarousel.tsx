@@ -74,7 +74,8 @@ export function HeroDealCarousel({ deals }: HeroDealCarouselProps) {
   const current = items[activeIndex]
 
   return (
-    <section className="hero-carousel" aria-label="首页特价轮换">
+    <section className="hero-carousel hero-carousel--atmosphere" aria-label="首页特价轮换">
+      <span className="hero-carousel__atmosphere-layer" aria-hidden="true" />
       <div className="hero-carousel__track" style={{ transform: `translateX(-${activeIndex * 100}%)` }}>
         {items.map((deal, index) => (
           <article className="hero-carousel__slide" key={deal.id} aria-current={index === activeIndex ? 'true' : undefined}>
