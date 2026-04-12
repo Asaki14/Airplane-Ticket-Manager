@@ -17,6 +17,11 @@ describe('design-contract', () => {
     expect(adminPage).toContain('var(--color-')
   })
 
+  it('home empty state copy stays aligned with ui spec contract', () => {
+    const publicPage = readFileSync(resolve('src/app/page.tsx'), 'utf-8')
+    expect(publicPage).toContain('当前筛选下暂无可用特价，试试放宽条件或切换出发地/日期窗口。')
+  })
+
   it('admin page excludes public hero decorative block', () => {
     const adminPage = readFileSync(resolve('src/app/admin/page.tsx'), 'utf-8')
     expect(adminPage).not.toContain('public-hero')

@@ -7,6 +7,7 @@ describe('app-shell', () => {
     const content = readFileSync(resolve('src/app/page.tsx'), 'utf-8')
     expect(content).toContain('public-hero')
     expect(content).toContain('主导航')
+    expect(content).toContain('当前筛选下暂无可用特价，试试放宽条件或切换出发地/日期窗口。')
   })
 
   it('admin shell page exists with admin marker', () => {
