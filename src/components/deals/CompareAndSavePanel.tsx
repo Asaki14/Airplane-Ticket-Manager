@@ -68,7 +68,7 @@ export function CompareAndSavePanel({ deals }: CompareAndSavePanelProps) {
       </p>
 
       <div className="compare-actions">
-        {deals.map((deal) => {
+        {deals.map((deal, idx) => {
           const inCompare = selected.includes(deal.id)
           const inFavorites = favorites.includes(deal.id)
           const advice = buildDealAdvice(deal)
@@ -79,10 +79,27 @@ export function CompareAndSavePanel({ deals }: CompareAndSavePanelProps) {
             ? '取消收藏：确认后将从本地收藏中移除，可稍后再次收藏。'
             : `收藏：将 ${deal.title} 加入本地收藏。`
 
+          const priceTag = deal.headlinePrice <= 500 ? '低价票' : deal.headlinePrice <= 1000 ? '常规价' : '高端票'
+          const dateTag = deal.travelWindowLabel ?? '近期出发'
+          const hasStop = deal.stopSummary?.includes('经停') ?? deal.stopSummary?.includes('中转')
+          const routeTag = hasStop ? '需中转' : '直飞'
+
+          const cardElements = [
+            `💰 价格 ¥${deal.headlinePrice}`,
+            `📅 ${dateTag}`,
+            `✈️ ${routeTag}`,
+            `⭐ 价值分 ${deal.valueScore}`
+          ]
+          const showElements = cardElements.slice(idx % 2, (idx % 2) + 2)
+
           return (
             <article key={deal.id} className="compare-action-item compare-card-shell">
               <header className="compare-card-shell__header">
                 <p className="compare-card-shell__deal-title text-clamp-2">{deal.title}</p>
+                <div className="compare-card-shell__tags">
+                  <span className="compare-card-shell__tag">{priceTag}</span>
+                  <span className="compare-card-shell__tag">{routeTag}</span>
+                </div>
               </header>
 
               <p className="compare-card-shell__advice" aria-label="航班特点与购买建议">
@@ -90,6 +107,11 @@ export function CompareAndSavePanel({ deals }: CompareAndSavePanelProps) {
               </p>
 
               <div className="compare-card-shell__body">
+                <ul className="compare-card-shell__meta">
+                  {showElements.map((el, i) => (
+                    <li key={i}>{el}</li>
+                  ))}
+                </ul>
                 <div className="compare-card-shell__actions">
                   <button
                     type="button"
@@ -110,7 +132,7 @@ export function CompareAndSavePanel({ deals }: CompareAndSavePanelProps) {
 
               <footer className="compare-card-shell__footer">
                 <a className="compare-card-shell__share-link" href={`/deals/${deal.id}`}>分享链接</a>
-                <p>{inCompare ? '已加入比较列表' : '未加入比较列表'}</p>
+                <p>{inCompare ? '已加入比较' : '待比较'}</p>
               </footer>
             </article>
           )

@@ -982,6 +982,38 @@ select:focus-visible {
 
 .compare-card-shell__header {
   border-bottom: 1px solid #e2e8e3;
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.compare-card-shell__tags {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.compare-card-shell__tag {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-snug);
+  padding: 2px 8px;
+  background: rgba(11, 122, 117, 0.1);
+  color: var(--color-accent);
+  border-radius: 4px;
+  font-weight: var(--font-weight-medium);
+}
+
+.compare-card-shell__meta {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+}
+
+.compare-card-shell__meta li {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+  color: rgba(19, 33, 31, 0.72);
 }
 
 .compare-card-shell__body {
