@@ -79,9 +79,9 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     <main className="public-shell spring-atmosphere" style={{ backgroundColor: 'var(--color-dominant)' }}>
       <section className="public-hero" aria-label="travel-hero">
         <div className="hero-main">
-          <p className="eyebrow">航易</p>
+          <p className="eyebrow">航易-找航班，更容易</p>
           <h1 className="hero-title">更快判断这张机票值不值得买</h1>
-          <p className="hero-description">从分散票价中快速看到核心信息：价格、时效、规则和下一步，并通过「查看详情与票规」进入决策页。</p>
+          <p className="hero-description">找航班，更容易</p>
           <section className="hero-mvp-guide" aria-label="MVP 审核使用说明">
             <h2>审核使用说明（MVP）</h2>
             <p>
@@ -91,8 +91,16 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               使用方式：先浏览轮播和下方列表获取候选，再点击「查看详情与票规」进入决策页，最后结合时效与规则决定是否下单。
             </p>
             <p>
-              进入运营后台：<code>admin / 123456</code>。
+              <strong>对比功能重点：</strong>可将候选加入「对比/收藏」，并排比较价格、时效、规则和购买建议后再决策。
             </p>
+            <p>
+              <strong>运营后台入口在页面底部导航</strong>，请通过底部「运营后台」进入；口令：<code>admin / 123456</code>。
+            </p>
+            <ul>
+              <li>未来计划增加价格变动提醒，减少错过低价的风险。</li>
+              <li>持续优化票规结构化展示，提升规则理解效率。</li>
+              <li>补充历史趋势与更多对比维度，支持更稳健的购买判断。</li>
+            </ul>
           </section>
         </div>
       </section>
