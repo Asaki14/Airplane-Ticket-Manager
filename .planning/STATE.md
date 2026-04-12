@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: verifying
-stopped_at: Completed 06-08-PLAN.md
-last_updated: "2026-04-12T04:36:30.244Z"
+stopped_at: Completed 06-09-PLAN.md
+last_updated: "2026-04-12T04:55:39.149Z"
 last_activity: 2026-04-12
 progress:
   total_phases: 6
   completed_phases: 1
-  total_plans: 8
-  completed_plans: 8
+  total_plans: 9
+  completed_plans: 9
   percent: 100
 ---
 
@@ -28,7 +28,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-12)
 Phase: 06 (ui-ui-phase-front-design-ui-ux-skills-bug) — EXECUTING
 Plan: 5 of 5
 Status: Phase complete — ready for verification
-Last activity: 2026-04-12 - Completed quick task 260412-hj2: 比较、收藏与分享中的卡片太单调了，在卡片中间加入一些文案，体现这个航班的特点以及购买建议，放在航班名和“加入比较”与“收藏”按钮的中间，如在深圳-香港快线中转联运与“加入比较”与“收藏”的中间写入：这个时间点去香港性价比超高，景点人少航班还便宜...）
+Last activity: 2026-04-12
 
 Progress: ██████████ 100%
 
@@ -49,6 +49,8 @@ Progress: ██████████ 100%
 - [Phase 06]: 06-07: 轮换轨道过渡合同统一为 180ms 并保留 prefers-reduced-motion 兼容
 - [Phase 06-ui-ui-phase-front-design-ui-ux-skills-bug]: 06-08: DealCard 场景图采用本地轻量 AVIF + lazy/async 渐进加载，不引入重型视觉库
 - [Phase 06-ui-ui-phase-front-design-ui-ux-skills-bug]: 06-08: 场景装饰层统一 pointer-events:none + 内容层 z-index:2，保障价格/时效/CTA 可读可点
+- [Phase 06]: 06-09: 场景映射合同统一收敛到 scene-image-map.ts，首页卡片与详情 Hero 共用 pickSceneImageByDeal。
+- [Phase 06]: 06-09: 详情 Hero 采用 scene-layer/overlay/content 三层并锁定 pointer-events:none 与 z-index 保护 CTA 可读可点。
 
 ### Roadmap Evolution
 
@@ -71,6 +73,6 @@ Progress: ██████████ 100%
 
 ## Session Continuity
 
-Last session: 2026-04-12T04:36:30.235Z
-Stopped at: Completed 06-08-PLAN.md
+Last session: 2026-04-12T04:55:39.141Z
+Stopped at: Completed 06-09-PLAN.md
 Resume file: None
