@@ -22,7 +22,7 @@ export default async function DealDetailPage({ params }: DealDetailPageProps) {
   }
 
   return (
-    <main className="public-shell" style={{ backgroundColor: 'var(--color-dominant)' }}>
+    <main className="public-shell detail-shell" style={{ backgroundColor: 'var(--color-dominant)' }}>
       <section className="detail-hero">
         <p className="eyebrow">Deal 详情</p>
         <h1 className="detail-title">{deal.title}</h1>

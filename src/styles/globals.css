@@ -714,6 +714,10 @@ select:focus-visible {
   padding: var(--space-xl) var(--space-lg);
 }
 
+.detail-shell {
+  display: block;
+}
+
 .detail-grid {
   display: grid;
   gap: var(--space-md);
