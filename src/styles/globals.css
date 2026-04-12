@@ -189,6 +189,13 @@ select:focus-visible {
   overflow: hidden;
 }
 
+.text-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .deal-card h2 {
   margin: 0 0 6px;
 }
@@ -313,6 +320,32 @@ select:focus-visible {
 
 .detail-card ul {
   padding-left: 18px;
+}
+
+.rule-card {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.rule-card__summary {
+  margin: 0;
+}
+
+.rule-card details {
+  border: 1px solid #d5ded7;
+  border-radius: 10px;
+  background: #f7f4ed;
+  padding: var(--space-sm);
+}
+
+.rule-card summary {
+  cursor: pointer;
+  font-size: var(--font-size-label);
+  font-weight: 600;
+}
+
+.rule-card details p {
+  margin-top: var(--space-sm);
 }
 
 .feed-empty {

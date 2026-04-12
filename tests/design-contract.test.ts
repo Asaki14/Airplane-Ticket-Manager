@@ -26,4 +26,10 @@ describe('design-contract', () => {
     const adminPage = readFileSync(resolve('src/app/admin/page.tsx'), 'utf-8')
     expect(adminPage).not.toContain('public-hero')
   })
+
+  it('deal detail page uses grouped detail grid variants', () => {
+    const detailPage = readFileSync(resolve('src/app/deals/[id]/page.tsx'), 'utf-8')
+    expect(detailPage).toContain('detail-grid--primary')
+    expect(detailPage).toContain('detail-grid--rules')
+  })
 })

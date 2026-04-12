@@ -60,12 +60,24 @@ export default async function DealDetailPage({ params }: DealDetailPageProps) {
         </article>
         <article className="detail-card">
           <h2>退改规则</h2>
-          <p>{deal.refundChangeSummary || '-'}</p>
+          <div className="rule-card">
+            <p className="rule-card__summary text-clamp-3">{deal.refundChangeSummary || '-'}</p>
+            <details>
+              <summary>展开完整规则</summary>
+              <p>{deal.refundChangeSummary || '-'}</p>
+            </details>
+          </div>
         </article>
         <article className="detail-card">
           <h2>经停与限制</h2>
           <p>{deal.stopSummary || '-'}</p>
-          <p>{deal.restrictions || '-'}</p>
+          <div className="rule-card">
+            <p className="rule-card__summary text-clamp-3">{deal.restrictions || '-'}</p>
+            <details>
+              <summary>展开完整规则</summary>
+              <p>{deal.restrictions || '-'}</p>
+            </details>
+          </div>
         </article>
       </section>
 
