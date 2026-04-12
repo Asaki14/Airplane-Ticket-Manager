@@ -81,7 +81,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         <div className="hero-main">
           <p className="eyebrow">航易-找航班，更容易</p>
           <h1 className="hero-title">更快判断这张机票值不值得买</h1>
-          <p className="hero-description">找航班，更容易</p>
+
           <section className="hero-mvp-guide" aria-label="MVP 审核使用说明">
             <h2>审核使用说明（MVP）</h2>
             <p>
