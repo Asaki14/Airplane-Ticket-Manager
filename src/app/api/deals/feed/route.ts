@@ -1,25 +1,54 @@
-import { filterPublicFeedDeals, mapPublicFeedResponse, type DealFeedRecord } from '@/lib/deals/feed-query'
+import { filterPublicFeedDeals, mapPublicFeedResponse, sortPublicFeedDeals, type FeedFilters, type FeedSort } from '@/lib/deals/feed-query'
+import { mockDeals } from '@/lib/deals/mock-data'
 
-const sampleDeals: DealFeedRecord[] = [
-  {
-    id: 'published-valid',
-    title: '上海-首尔周末往返',
-    departureCity: '上海',
-    destination: '首尔',
-    headlinePrice: 1399,
-    referenceTotalPrice: 1680,
-    status: 'published',
-    publishedAt: '2026-04-10T08:00:00.000Z',
-    updatedAt: '2026-04-11T06:00:00.000Z',
-    expiresAt: '2026-04-30T23:59:59.000Z'
+const ALLOWED_SORTS: FeedSort[] = ['publishedAtDesc', 'priceAsc', 'valueDesc']
+
+function parseFilters(searchParams: URLSearchParams): FeedFilters {
+  const maxPriceRaw = searchParams.get('maxPrice')
+  const maxPrice = maxPriceRaw ? Number(maxPriceRaw) : undefined
+
+  return {
+    departureCity: searchParams.get('departureCity') ?? undefined,
+    region: searchParams.get('region') ?? undefined,
+    travelWindowLabel: searchParams.get('travelWindowLabel') ?? undefined,
+    airline: searchParams.get('airline') ?? undefined,
+    maxPrice: Number.isFinite(maxPrice) ? maxPrice : undefined,
+    q: searchParams.get('q') ?? undefined
   }
-]
+}
 
-export async function GET() {
-  const visibleDeals = filterPublicFeedDeals(sampleDeals)
-  const data = mapPublicFeedResponse(visibleDeals)
+function parseSort(searchParams: URLSearchParams): FeedSort {
+  const raw = searchParams.get('sort')
+  if (raw && ALLOWED_SORTS.includes(raw as FeedSort)) {
+    return raw as FeedSort
+  }
+  return 'publishedAtDesc'
+}
+
+export async function GET(request: Request) {
+  const url = new URL(request.url)
+  const filters = parseFilters(url.searchParams)
+  const sort = parseSort(url.searchParams)
+
+  const visibleDeals = filterPublicFeedDeals(mockDeals, new Date(), filters)
+  const sortedDeals = sortPublicFeedDeals(visibleDeals, sort)
+  const data = mapPublicFeedResponse(sortedDeals)
+
+  const filterMeta = {
+    departureCity: filters.departureCity ?? null,
+    region: filters.region ?? null,
+    travelWindowLabel: filters.travelWindowLabel ?? null,
+    airline: filters.airline ?? null,
+    maxPrice: filters.maxPrice ?? null,
+    q: filters.q ?? null,
+    sort
+  }
 
   return Response.json({
-    data
+    data,
+    meta: {
+      total: data.length,
+      filters: filterMeta
+    }
   })
 }
