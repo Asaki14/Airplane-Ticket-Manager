@@ -7,7 +7,7 @@ type DealAdviceInput = {
   stopSummary?: string
 }
 
-const SAFE_FALLBACK = '该票信息待补充，先核对行李退改与中转时间，再决定是否下单。'
+const SAFE_FALLBACK = '该票信息待补充，建议先核对行李额度、退改政策和经停时长，评估后再决定是否下单。'
 
 function hasValidNumber(value: number | undefined): value is number {
   return typeof value === 'number' && Number.isFinite(value)
@@ -38,23 +38,25 @@ export function buildDealAdvice(deal: DealAdviceInput): string {
   const highValue = hasValidNumber(valueScore) && valueScore >= 80
 
   if (shenzhenToHongKong && inLowPriceBand(headlinePrice, deal.referenceTotalPrice) && highValue) {
-    return '深圳飞香港这班性价比高、人少，适合短途出行，行程确定建议尽快下单。'
+    return '深圳飞香港性价比高、航班密集，适合说走就走的短途旅行，行程确定建议尽快锁定。'
   }
 
   const reference = deal.referenceTotalPrice
-  let pricePart = '当前价优势一般'
+  let pricePart = '当前价格处于常规区间'
   if (hasValidNumber(reference) && reference > 0) {
     const ratio = headlinePrice / reference
     if (ratio <= 0.75) {
-      pricePart = '当前价明显低于常见水平'
+      pricePart = '当前价明显低于常见水平，性价比突出'
     } else if (ratio <= 0.9) {
-      pricePart = '当前价有一定优势'
+      pricePart = '当前价有一定优势，比常规价格更划算'
     }
   }
 
   const stopSummary = deal.stopSummary ?? ''
-  const stopPart = stopSummary.includes('直飞') ? '直飞节省体力' : '经停方案需留意中转时长'
-  const actionPart = hasValidNumber(valueScore) && valueScore >= 75 ? '建议尽快下单锁定' : '可再观察再决定'
+  const stopPart = stopSummary.includes('直飞')
+    ? '直飞省心省力，不用中转更轻松'
+    : '经停方案需留意中转时长，中转间隔建议预留充足'
+  const actionPart = hasValidNumber(valueScore) && valueScore >= 75 ? '库存有限，建议尽快下单锁定优惠' : '价格尚可，可继续观察对比后再决定'
 
   return `${pricePart}，${stopPart}，${actionPart}。`
 }
