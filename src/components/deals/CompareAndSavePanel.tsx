@@ -1,0 +1,140 @@
+'use client'
+
+import { useEffect, useMemo, useState } from 'react'
+
+type DealLite = {
+  id: string
+  title: string
+  departureCity: string
+  destination: string
+  headlinePrice: number
+  referenceTotalPrice: number
+  valueScore: number
+  baggageInfo: string
+  refundChangeSummary: string
+  stopSummary: string
+}
+
+type CompareAndSavePanelProps = {
+  deals: DealLite[]
+}
+
+const FAV_KEY = 'flight-deals:favorites'
+
+export function CompareAndSavePanel({ deals }: CompareAndSavePanelProps) {
+  const [selected, setSelected] = useState<string[]>([])
+  const [favorites, setFavorites] = useState<string[]>([])
+
+  useEffect(() => {
+    const raw = localStorage.getItem(FAV_KEY)
+    if (!raw) return
+    try {
+      const parsed = JSON.parse(raw) as string[]
+      setFavorites(parsed)
+    } catch {
+      setFavorites([])
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem(FAV_KEY, JSON.stringify(favorites))
+  }, [favorites])
+
+  const selectedDeals = useMemo(
+    () => deals.filter((deal) => selected.includes(deal.id)).slice(0, 3),
+    [deals, selected]
+  )
+
+  function toggleCompare(id: string) {
+    setSelected((prev) => {
+      if (prev.includes(id)) return prev.filter((item) => item !== id)
+      if (prev.length >= 3) return prev
+      return [...prev, id]
+    })
+  }
+
+  function toggleFavorite(id: string) {
+    setFavorites((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]))
+  }
+
+  return (
+    <section className="compare-save" aria-label="比较收藏分享">
+      <h2>比较、收藏与分享</h2>
+      <p>最多选择 3 条进行并排比较，并可收藏后稍后决策。</p>
+
+      <div className="compare-actions">
+        {deals.map((deal) => {
+          const inCompare = selected.includes(deal.id)
+          const inFavorites = favorites.includes(deal.id)
+          const compareActionLabel = inCompare
+            ? '移出比较：该候选将从当前比较面板移除。'
+            : `加入比较：将 ${deal.title} 加入当前比较面板。`
+          const favoriteActionLabel = inFavorites
+            ? '取消收藏：确认后将从本地收藏中移除，可稍后再次收藏。'
+            : `收藏：将 ${deal.title} 加入本地收藏。`
+
+          return (
+            <article key={deal.id} className="compare-action-item compare-card-shell">
+              <header className="compare-card-shell__header">
+                <p>{deal.title}</p>
+              </header>
+
+              <div className="compare-card-shell__body">
+                <div>
+                  <button
+                    type="button"
+                    aria-label={compareActionLabel}
+                    onClick={() => toggleCompare(deal.id)}
+                  >
+                    {inCompare ? '移出比较' : '加入比较'}
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={favoriteActionLabel}
+                    onClick={() => toggleFavorite(deal.id)}
+                  >
+                    {inFavorites ? '取消收藏' : '收藏'}
+                  </button>
+                </div>
+              </div>
+
+              <footer className="compare-card-shell__footer">
+                <a href={`/deals/${deal.id}`}>分享链接</a>
+                <p>{inCompare ? '已加入比较列表' : '未加入比较列表'}</p>
+              </footer>
+            </article>
+          )
+        })}
+      </div>
+
+      <div className="compare-grid" aria-label="并排比较面板">
+        {selectedDeals.length === 0 ? <p>尚未选择比较项。</p> : null}
+        {selectedDeals.map((deal) => (
+          <article key={deal.id} className="compare-column compare-card-shell">
+            <header className="compare-card-shell__header">
+              <h3>{deal.title}</h3>
+            </header>
+
+            <div className="compare-card-shell__body">
+              <ul>
+                <li>价格：¥{deal.headlinePrice}</li>
+                <li>总成本：¥{deal.referenceTotalPrice}</li>
+                <li>行李：{deal.baggageInfo || '-'}</li>
+                <li>退改：{deal.refundChangeSummary || '-'}</li>
+                <li>经停：{deal.stopSummary || '-'}</li>
+                <li>价值分：{deal.valueScore}</li>
+              </ul>
+            </div>
+
+            <footer className="compare-card-shell__footer">
+              <a href={`/deals/${deal.id}`}>查看详情与票规</a>
+              <p>字段顺序已按决策优先展示</p>
+            </footer>
+          </article>
+        ))}
+      </div>
+
+      <p className="favorites-summary">已收藏 {favorites.length} 条，可在后续版本加入专门回看页。</p>
+    </section>
+  )
+}

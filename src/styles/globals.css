@@ -219,9 +219,41 @@ select:focus-visible {
 }
 
 .compare-action-item {
-  border: 1px solid #d5ded7;
-  border-radius: 12px;
+  border: 1px solid #cdd8d1;
+  border-radius: 14px;
   padding: var(--space-sm);
+}
+
+.compare-card-shell {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 320px;
+  border: 1px solid #cdd8d1;
+  border-radius: 14px;
+  background: #fffdf9;
+  overflow: hidden;
+}
+
+.compare-card-shell__header,
+.compare-card-shell__body,
+.compare-card-shell__footer {
+  padding: var(--space-md);
+}
+
+.compare-card-shell__header {
+  border-bottom: 1px solid #e2e8e3;
+}
+
+.compare-card-shell__body {
+  display: grid;
+  align-content: start;
+  gap: var(--space-sm);
+}
+
+.compare-card-shell__footer {
+  border-top: 1px solid #e2e8e3;
+  display: grid;
+  gap: 6px;
 }
 
 .compare-action-item > div {
@@ -237,8 +269,8 @@ select:focus-visible {
 }
 
 .compare-column {
-  border: 1px solid #d5ded7;
-  border-radius: 12px;
+  border: 1px solid #cdd8d1;
+  border-radius: 14px;
   padding: var(--space-sm);
   background: #fff;
 }
