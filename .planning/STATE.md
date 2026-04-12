@@ -28,7 +28,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-12)
 Phase: 06 (ui-ui-phase-front-design-ui-ux-skills-bug) — EXECUTING
 Plan: 5 of 5
 Status: Phase complete — ready for verification
-Last activity: 2026-04-12
+Last activity: 2026-04-12 - Completed quick task 260412-hj2: 比较、收藏与分享中的卡片太单调了，在卡片中间加入一些文案，体现这个航班的特点以及购买建议，放在航班名和“加入比较”与“收藏”按钮的中间，如在深圳-香港快线中转联运与“加入比较”与“收藏”的中间写入：这个时间点去香港性价比超高，景点人少航班还便宜...）
 
 Progress: ██████████ 100%
 
@@ -67,6 +67,7 @@ Progress: ██████████ 100%
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260412-grc | 优化网页字体字号等等，现在网页的字体不好看字号混乱（有些标题太小有些具体内容太大等等） | 2026-04-12 | 0519184 | [260412-grc-optimize-typography](./quick/260412-grc-optimize-typography/) |
+| 260412-hj2 | 在比较/收藏卡片新增“特点+购买建议”文案区，固定在航班标题与操作按钮之间 | 2026-04-12 | 35a97b5 | [260412-hj2-flight-card-advice-copy](./quick/260412-hj2-flight-card-advice-copy/) |
 
 ## Session Continuity
 
