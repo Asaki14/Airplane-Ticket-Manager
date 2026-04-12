@@ -123,11 +123,9 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               </svg>
             </span>
           </div>
-          <p className="mode-card__signal">推荐指数：适合预算敏感型</p>
-          <h3 className="mode-card__title">任务导向</h3>
           <p className="mode-card__description">先定约束：出发地、预算、时间窗口，快速收敛候选。</p>
           <p className="mode-card__trend">近 7 天中，低价票在工作日 10:00-15:00 更常出现。</p>
-          <a className="mode-card__action" href="/?sort=priceAsc">
+          <a className="mode-card__action" href="#default-departure-panel">
             先按预算找低价
             <span className="mode-card__action-arrow" aria-hidden="true">&gt;</span>
           </a>
@@ -141,11 +139,9 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               </svg>
             </span>
           </div>
-          <p className="mode-card__signal">推荐指数：适合弹性出行型</p>
-          <h3 className="mode-card__title">灵感导向</h3>
           <p className="mode-card__description">从周末捡漏、节假日前后、海岛和周边国际入口启发下一次出行。</p>
           <p className="mode-card__trend">近 7 天中，海岛与周边国际目的地的折扣波动更明显。</p>
-          <a className="mode-card__action" href="/?travelWindowLabel=周末捡漏">
+          <a className="mode-card__action" href="/?travelWindowLabel=周末捡漏#deal-feed">
             看看本周末灵感
             <span className="mode-card__action-arrow" aria-hidden="true">&gt;</span>
           </a>
@@ -165,7 +161,9 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         </div>
       </section>
 
-      <DiscoveryPreferences departureOptions={departureOptions} currentDepartureCity={filters.departureCity} />
+      <div id="default-departure-panel">
+        <DiscoveryPreferences departureOptions={departureOptions} currentDepartureCity={filters.departureCity} />
+      </div>
 
       <form className="feed-filters" aria-label="发现筛选" action="/" method="get">
         <header className="section-header section-header--compact feed-filters__intro">
@@ -236,7 +234,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         <button type="submit">应用筛选</button>
       </form>
 
-      <section className="public-deal-feed" aria-label="公开 deal 列表">
+      <section id="deal-feed" className="public-deal-feed" aria-label="公开 deal 列表">
         <header className="section-header section-header--compact public-deal-feed__intro">
           <p className="section-header__kicker">可用候选</p>
           <h2 className="section-header__title">当前筛选下的特价列表</h2>
