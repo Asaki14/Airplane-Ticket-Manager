@@ -45,4 +45,18 @@ describe('app-shell', () => {
     expect(dealEditPage).toContain('deal-form__section')
     expect(dealEditPage).toContain('deal-form__section--full')
   })
+
+  it('deal card keeps scenic decor layer non-interactive with readable content layer', () => {
+    const card = readFileSync(resolve('src/components/deals/DealCard.tsx'), 'utf-8')
+    const css = readFileSync(resolve('src/styles/globals.css'), 'utf-8')
+
+    expect(card).toContain('deal-card--scenic')
+    expect(card).toContain('deal-card__scene-layer')
+    expect(card).toContain('deal-card__scene-overlay')
+    expect(css).toContain('.deal-card--scenic .deal-card__scene-layer')
+    expect(css).toContain('.deal-card--scenic .deal-card__scene-overlay')
+    expect(css).toContain('pointer-events: none')
+    expect(css).toContain('.deal-card-shell__header,')
+    expect(css).toContain('z-index: 2')
+  })
 })
