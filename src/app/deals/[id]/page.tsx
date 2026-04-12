@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { mapPublicFeedResponse } from '@/lib/deals/feed-query'
 import { mockDeals } from '@/lib/deals/mock-data'
+import { pickSceneImageByDeal } from '@/lib/deals/scene-image-map'
 
 type DealDetailPageProps = {
   params: Promise<{ id: string }>
@@ -21,14 +22,22 @@ export default async function DealDetailPage({ params }: DealDetailPageProps) {
     notFound()
   }
 
+  const sceneImageUrl = pickSceneImageByDeal(deal)
+
   return (
     <main className="public-shell detail-shell" style={{ backgroundColor: 'var(--color-dominant)' }}>
-      <section className="detail-hero">
-        <p className="eyebrow">Deal 详情</p>
-        <h1 className="detail-title">{deal.title}</h1>
-        <p className="detail-subtitle">
-          {deal.departureCity} → {deal.destination} · {deal.airline}
-        </p>
+      <section className="detail-hero detail-hero--scenic">
+        <span className="detail-hero__scene-layer" aria-hidden="true" role="presentation">
+          <img src={sceneImageUrl} alt="" loading="lazy" decoding="async" />
+        </span>
+        <span className="detail-hero__scene-overlay" aria-hidden="true" role="presentation" />
+        <div className="detail-hero__content">
+          <p className="eyebrow">Deal 详情</p>
+          <h1 className="detail-title">{deal.title}</h1>
+          <p className="detail-subtitle">
+            {deal.departureCity} → {deal.destination} · {deal.airline}
+          </p>
+        </div>
       </section>
 
       <section className="detail-grid detail-grid--primary" aria-label="来源与时效">

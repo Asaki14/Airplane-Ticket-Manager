@@ -78,14 +78,27 @@ describe('design-contract', () => {
     expect(card).toContain('aria-hidden="true" role="presentation"')
     expect(card).toContain('loading="lazy"')
     expect(card).toContain('decoding="async"')
-    expect(card).toContain('/images/atmosphere/sakura-blur.avif')
-    expect(card).toContain('/images/atmosphere/temple-blur.avif')
+    expect(card).toContain('pickSceneImageByDeal')
     expect(css).toContain('.deal-card--atmosphere .deal-card__atmosphere-layer')
     expect(css).toContain('.deal-card--scenic .deal-card__scene-layer')
     expect(css).toContain('.deal-card--scenic .deal-card__scene-overlay')
     expect(css).toContain('@media (prefers-reduced-motion: reduce)')
     expect(css).toContain('pointer-events: none')
     expect(css).toContain('transition: opacity 180ms ease')
+  })
+
+  it('detail hero scenic contracts and pointer-event safety exist', () => {
+    const detailPage = readFileSync(resolve('src/app/deals/[id]/page.tsx'), 'utf-8')
+    const css = readFileSync(resolve('src/styles/globals.css'), 'utf-8')
+
+    expect(detailPage).toContain('detail-hero--scenic')
+    expect(detailPage).toContain('detail-hero__scene-layer')
+    expect(detailPage).toContain('detail-hero__scene-overlay')
+    expect(detailPage).toContain('detail-hero__content')
+    expect(css).toContain('.detail-hero--scenic .detail-hero__scene-layer')
+    expect(css).toContain('.detail-hero--scenic .detail-hero__scene-overlay')
+    expect(css).toContain('.detail-hero__content')
+    expect(css).toContain('pointer-events: none')
   })
 
   describe('typography', () => {

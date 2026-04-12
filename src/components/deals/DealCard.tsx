@@ -1,3 +1,5 @@
+import { pickSceneImageByDeal } from '@/lib/deals/scene-image-map'
+
 type DealCardProps = {
   id: string
   title: string
@@ -11,22 +13,6 @@ type DealCardProps = {
   publishedAt: string | null
   updatedAt: string | null
   expiresAt: string
-}
-
-const sceneImageMap = {
-  sakura: '/images/atmosphere/sakura-blur.avif',
-  temple: '/images/atmosphere/temple-blur.avif'
-} as const
-
-function pickSceneImage(destination: string, title: string) {
-  const context = `${destination} ${title}`.toLowerCase()
-  const templeKeywords = ['寺', '京都', '大阪', '奈良', 'tokyo', 'kyoto', 'osaka', 'nara']
-
-  if (templeKeywords.some((keyword) => context.includes(keyword))) {
-    return sceneImageMap.temple
-  }
-
-  return sceneImageMap.sakura
 }
 
 function toDateLabel(value: string | null) {
@@ -50,7 +36,7 @@ export function DealCard({
   updatedAt,
   expiresAt
 }: DealCardProps) {
-  const sceneImageUrl = pickSceneImage(destination, title)
+  const sceneImageUrl = pickSceneImageByDeal({ id, destination, title })
 
   return (
     <article className="deal-card deal-card-shell deal-card--atmosphere deal-card--scenic">

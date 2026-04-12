@@ -20,4 +20,15 @@ describe('deal-detail', () => {
     expect(content.match(/展开完整规则/g)?.length ?? 0).toBeGreaterThanOrEqual(2)
     expect(content.match(/<details>/g)?.length ?? 0).toBeGreaterThanOrEqual(2)
   })
+
+  it('detail hero scenic contracts include scene layer and readability guards', () => {
+    const content = readFileSync(resolve('src/app/deals/[id]/page.tsx'), 'utf-8')
+
+    expect(content).toContain('detail-hero detail-hero--scenic')
+    expect(content).toContain('detail-hero__scene-layer')
+    expect(content).toContain('detail-hero__scene-overlay')
+    expect(content).toContain('detail-hero__content')
+    expect(content).toContain('loading="lazy"')
+    expect(content).toContain('decoding="async"')
+  })
 })
