@@ -66,4 +66,44 @@ describe('design-contract', () => {
     expect(css).toContain('@media (prefers-reduced-motion: reduce)')
     expect(css).toContain('transition: transform 180ms ease')
   })
+
+  describe('typography', () => {
+    it('globals keep key typography selectors and token-based font-size mapping', () => {
+      const css = readFileSync(resolve('src/styles/globals.css'), 'utf-8')
+
+      expect(css).toContain('.hero-title')
+      expect(css).toContain('.deal-card-shell__title')
+      expect(css).toContain('.detail-card__title')
+      expect(css).toContain('.compare-save__title')
+      expect(css).toContain('var(--font-size-')
+    })
+
+    it('tokens provide typography scale plus line-height/weight contracts', () => {
+      const tokens = readFileSync(resolve('src/styles/tokens.css'), 'utf-8')
+
+      expect(tokens).toContain('--font-size-xs')
+      expect(tokens).toContain('--font-size-sm')
+      expect(tokens).toContain('--font-size-label')
+      expect(tokens).toContain('--font-size-body')
+      expect(tokens).toContain('--font-size-heading')
+      expect(tokens).toContain('--font-size-display')
+      expect(tokens).toContain('--font-size-price')
+      expect(tokens).toContain('--line-height-tight')
+      expect(tokens).toContain('--line-height-normal')
+      expect(tokens).toContain('--font-weight-semibold')
+      expect(tokens).toContain('--font-weight-bold')
+    })
+
+    it('key page modules retain typography target class hooks', () => {
+      const homePage = readFileSync(resolve('src/app/page.tsx'), 'utf-8')
+      const detailPage = readFileSync(resolve('src/app/deals/[id]/page.tsx'), 'utf-8')
+      const dealCard = readFileSync(resolve('src/components/deals/DealCard.tsx'), 'utf-8')
+      const comparePanel = readFileSync(resolve('src/components/deals/CompareAndSavePanel.tsx'), 'utf-8')
+
+      expect(homePage).toContain('hero-title')
+      expect(dealCard).toContain('deal-card-shell__title')
+      expect(detailPage).toContain('detail-card__title')
+      expect(comparePanel).toContain('compare-save__title')
+    })
+  })
 })
