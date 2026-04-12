@@ -127,4 +127,22 @@ describe('design-contract', () => {
       expect(comparePanel).toContain('compare-save__title')
     })
   })
+
+  describe('compare advice contracts', () => {
+    it('compare panel keeps advice block render hook and operation copy', () => {
+      const comparePanel = readFileSync(resolve('src/components/deals/CompareAndSavePanel.tsx'), 'utf-8')
+
+      expect(comparePanel).toContain('compare-card-shell__advice')
+      expect(comparePanel).toContain('加入比较')
+      expect(comparePanel).toContain('收藏')
+      expect(comparePanel).toContain('分享链接')
+    })
+
+    it('globals define compare advice style hook', () => {
+      const css = readFileSync(resolve('src/styles/globals.css'), 'utf-8')
+
+      expect(css).toContain('.compare-card-shell__advice')
+      expect(css).toContain('-webkit-line-clamp: 3')
+    })
+  })
 })
