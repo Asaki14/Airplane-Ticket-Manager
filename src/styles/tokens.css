@@ -3,6 +3,12 @@
   --color-secondary: #E5EDE8;
   --color-accent: #0B7A75;
   --color-destructive: #C44936;
+  --color-spring-mist: #f4efe2;
+  --color-spring-leaf: #dce8de;
+  --color-spring-warm: #f2e4c8;
+  --surface-card: #fffdf9;
+  --surface-elevated: #f8f2e5;
+  --shadow-soft: 0 12px 30px rgba(19, 33, 31, 0.08);
 
   --space-xs: 4px;
   --space-sm: 8px;
