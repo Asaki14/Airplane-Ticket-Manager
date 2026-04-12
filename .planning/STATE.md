@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 06-05-PLAN.md
-last_updated: "2026-04-12T03:10:02.930Z"
+stopped_at: Completed 06-06-PLAN.md
+last_updated: "2026-04-12T03:43:28.945Z"
 last_activity: 2026-04-12
 progress:
   total_phases: 6
   completed_phases: 1
-  total_plans: 5
-  completed_plans: 5
+  total_plans: 6
+  completed_plans: 6
   percent: 100
 ---
 
@@ -26,7 +26,7 @@ See: `.planning/PROJECT.md` (updated 2026-04-12)
 ## Current Position
 
 Phase: 06 (ui-ui-phase-front-design-ui-ux-skills-bug) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 Status: Ready to execute
 Last activity: 2026-04-12
 
@@ -43,6 +43,8 @@ Progress: ██████████ 100%
 - [Phase 06]: 将 public-hero/detail-hero 与关键 CTA 文案纳入源码级合同测试，防止回退
 - [Phase 06]: 详情页规则分组桌面端采用双列并让最后规则卡跨列，避免窄高信息块回退
 - [Phase 06]: 后台deals页面采用移动卡片三段式与桌面表格兜底，确保编辑入口持续可见
+- [Phase 06]: 首页引入可控 Hero 轮换卡片，自动播放 4500ms 并支持 reduced-motion 默认暂停
+- [Phase 06]: 首页氛围层级采用背景层/内容层/交互层三级结构并通过合同测试防回退
 
 ### Roadmap Evolution
 
@@ -58,6 +60,6 @@ Progress: ██████████ 100%
 
 ## Session Continuity
 
-Last session: 2026-04-12T03:10:02.923Z
-Stopped at: Completed 06-05-PLAN.md
+Last session: 2026-04-12T03:43:28.940Z
+Stopped at: Completed 06-06-PLAN.md
 Resume file: None
