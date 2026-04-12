@@ -152,32 +152,33 @@ select:focus-visible {
   max-width: 48ch;
 }
 
-.hero-admin-info {
-  display: flex;
-  flex-direction: column;
+.hero-mvp-guide {
+  margin-top: var(--space-md);
+  padding-top: var(--space-sm);
+  border-top: 1px dashed rgba(11, 122, 117, 0.24);
+  display: grid;
   gap: var(--space-xs);
-  padding: var(--space-md);
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 8px;
-  border: 1px solid rgba(11, 122, 117, 0.12);
+  max-width: 58ch;
 }
 
-.admin-info-label {
-  font-size: var(--font-size-xs);
+.hero-mvp-guide h2 {
+  font-size: var(--font-size-base);
   line-height: var(--line-height-snug);
-  font-weight: var(--font-weight-medium);
-  color: var(--color-sub);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-title);
 }
 
-.hero-admin-info code {
+.hero-mvp-guide p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+}
+
+.hero-mvp-guide code {
   font-family: var(--font-mono, monospace);
   font-size: var(--font-size-label);
-  line-height: var(--line-height-snug);
-  font-weight: var(--font-weight-medium);
   color: var(--color-accent);
-  background: transparent;
 }
 
 .public-nav {

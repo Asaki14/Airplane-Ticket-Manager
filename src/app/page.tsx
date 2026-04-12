@@ -82,10 +82,18 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           <p className="eyebrow">航易</p>
           <h1 className="hero-title">更快判断这张机票值不值得买</h1>
           <p className="hero-description">从分散票价中快速看到核心信息：价格、时效、规则和下一步，并通过「查看详情与票规」进入决策页。</p>
-        </div>
-        <div className="hero-admin-info">
-          <span className="admin-info-label">运营入口</span>
-          <code>admin / 123456</code>
+          <section className="hero-mvp-guide" aria-label="MVP 审核使用说明">
+            <h2>审核使用说明（MVP）</h2>
+            <p>
+              本站用于集中展示特价机票，帮助快速判断是否值得买。每条特价都会提供价格、发布时间、失效时间、基础票规与购买建议。
+            </p>
+            <p>
+              使用方式：先浏览轮播和下方列表获取候选，再点击「查看详情与票规」进入决策页，最后结合时效与规则决定是否下单。
+            </p>
+            <p>
+              进入运营后台：<code>admin / 123456</code>。
+            </p>
+          </section>
         </div>
       </section>
 
