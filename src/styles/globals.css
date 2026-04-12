@@ -139,10 +139,10 @@ select:focus-visible {
 }
 
 .hero-title {
-  font-size: clamp(var(--font-size-title-lg), 4.8vw, var(--font-size-display));
+  font-size: clamp(var(--font-size-title-sm), 3.2vw, var(--font-size-title-lg));
   line-height: var(--line-height-tight);
   font-weight: var(--font-weight-bold);
-  max-width: 18ch;
+  max-width: 20ch;
 }
 
 .hero-description {
