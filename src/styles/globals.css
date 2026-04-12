@@ -1449,7 +1449,7 @@ select:focus-visible {
 }
 
 .eyebrow {
-  font-size: var(--font-size-title-md);
+  font-size: var(--font-size-display);
   line-height: var(--line-height-tight);
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
