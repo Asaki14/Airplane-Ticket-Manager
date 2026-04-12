@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 06-07-PLAN.md
-last_updated: "2026-04-12T04:17:47.762Z"
-last_activity: "2026-04-12 - Completed quick task 260412-grc: 优化网页字体字号等等，现在网页的字体不好看字号混乱（有些标题太小有些具体内容太大等等）"
+status: verifying
+stopped_at: Completed 06-08-PLAN.md
+last_updated: "2026-04-12T04:36:30.244Z"
+last_activity: 2026-04-12
 progress:
   total_phases: 6
   completed_phases: 1
-  total_plans: 7
-  completed_plans: 7
+  total_plans: 8
+  completed_plans: 8
   percent: 100
 ---
 
@@ -27,8 +27,8 @@ See: `.planning/PROJECT.md` (updated 2026-04-12)
 
 Phase: 06 (ui-ui-phase-front-design-ui-ux-skills-bug) — EXECUTING
 Plan: 5 of 5
-Status: Ready to execute
-Last activity: 2026-04-12 - Completed quick task 260412-grc: 优化网页字体字号等等，现在网页的字体不好看字号混乱（有些标题太小有些具体内容太大等等）
+Status: Phase complete — ready for verification
+Last activity: 2026-04-12
 
 Progress: ██████████ 100%
 
@@ -47,6 +47,8 @@ Progress: ██████████ 100%
 - [Phase 06]: 首页氛围层级采用背景层/内容层/交互层三级结构并通过合同测试防回退
 - [Phase 06]: 06-07: 氛围层采用轻量 CSS 渐变/纹理并统一 pointer-events:none + 低 z-index，确保价格/时效/CTA 可读可点
 - [Phase 06]: 06-07: 轮换轨道过渡合同统一为 180ms 并保留 prefers-reduced-motion 兼容
+- [Phase 06-ui-ui-phase-front-design-ui-ux-skills-bug]: 06-08: DealCard 场景图采用本地轻量 AVIF + lazy/async 渐进加载，不引入重型视觉库
+- [Phase 06-ui-ui-phase-front-design-ui-ux-skills-bug]: 06-08: 场景装饰层统一 pointer-events:none + 内容层 z-index:2，保障价格/时效/CTA 可读可点
 
 ### Roadmap Evolution
 
@@ -68,6 +70,6 @@ Progress: ██████████ 100%
 
 ## Session Continuity
 
-Last session: 2026-04-12T04:17:47.757Z
-Stopped at: Completed 06-07-PLAN.md
+Last session: 2026-04-12T04:36:30.235Z
+Stopped at: Completed 06-08-PLAN.md
 Resume file: None

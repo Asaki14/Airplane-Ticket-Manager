@@ -114,7 +114,7 @@ Phases execute in numeric order: 1 → 2 → 2.1 → 2.2 → 3 → 3.1 → 4 →
 **Goal:** 统一发现页/详情页/比较模块的卡片与布局体系，修复详情页高窄显示问题，并在不新增业务能力前提下建立清新克制的春日视觉与交互节奏
 **Requirements**: [PREF-03]
 **Depends on:** Phase 5
-**Plans:** 7 plans
+**Plans:** 8 plans
 
 Plans:
 - [ ] 06-01-PLAN.md — 固化春日 token、全局骨架与首页文案合同
@@ -124,3 +124,4 @@ Plans:
 - [ ] 06-05-PLAN.md — 修复详情页与 /admin/deals 高窄布局并补齐回归断言
 - [ ] 06-06-PLAN.md — 参考携程轮换卡片优化首页氛围层级、交互可控性与自动化回归断言
 - [ ] 06-07-PLAN.md — gaps-only：补齐背景与卡片虚化图案氛围层并锁定不回退联合回归
+- [ ] 06-08-PLAN.md — gaps-only：为机票卡片接入场景虚化图片（樱花/寺庙）并加可读性与a11y防回退断言
