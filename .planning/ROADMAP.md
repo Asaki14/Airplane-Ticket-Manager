@@ -114,9 +114,11 @@ Phases execute in numeric order: 1 → 2 → 2.1 → 2.2 → 3 → 3.1 → 4 →
 **Goal:** 统一发现页/详情页/比较模块的卡片与布局体系，修复详情页高窄显示问题，并在不新增业务能力前提下建立清新克制的春日视觉与交互节奏
 **Requirements**: [PREF-03]
 **Depends on:** Phase 5
-**Plans:** 3 plans
+**Plans:** 5 plans
 
 Plans:
 - [ ] 06-01-PLAN.md — 固化春日 token、全局骨架与首页文案合同
 - [ ] 06-02-PLAN.md — 统一发现流与比较区卡片结构和信息密度
 - [ ] 06-03-PLAN.md — 重排详情页为单列/双列并落地票规短卡折叠
+- [ ] 06-04-PLAN.md — 补强春日视觉层级并建立视觉合同防回退断言
+- [ ] 06-05-PLAN.md — 修复详情页与 /admin/deals 高窄布局并补齐回归断言
