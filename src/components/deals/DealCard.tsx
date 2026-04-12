@@ -13,6 +13,22 @@ type DealCardProps = {
   expiresAt: string
 }
 
+const sceneImageMap = {
+  sakura: '/images/atmosphere/sakura-blur.avif',
+  temple: '/images/atmosphere/temple-blur.avif'
+} as const
+
+function pickSceneImage(destination: string, title: string) {
+  const context = `${destination} ${title}`.toLowerCase()
+  const templeKeywords = ['寺', '京都', '大阪', '奈良', 'tokyo', 'kyoto', 'osaka', 'nara']
+
+  if (templeKeywords.some((keyword) => context.includes(keyword))) {
+    return sceneImageMap.temple
+  }
+
+  return sceneImageMap.sakura
+}
+
 function toDateLabel(value: string | null) {
   if (!value) return '-'
   const date = new Date(value)
@@ -34,9 +50,15 @@ export function DealCard({
   updatedAt,
   expiresAt
 }: DealCardProps) {
+  const sceneImageUrl = pickSceneImage(destination, title)
+
   return (
-    <article className="deal-card deal-card-shell deal-card--atmosphere">
+    <article className="deal-card deal-card-shell deal-card--atmosphere deal-card--scenic">
       <span className="deal-card__atmosphere-layer" aria-hidden="true" />
+      <span className="deal-card__scene-layer" aria-hidden="true" role="presentation">
+        <img src={sceneImageUrl} alt="" loading="lazy" decoding="async" />
+      </span>
+      <span className="deal-card__scene-overlay" aria-hidden="true" role="presentation" />
       <header className="deal-card-shell__header">
         <p className="deal-card-label">特价 #{id}</p>
         <h2 className="deal-card-shell__title text-clamp-2">
