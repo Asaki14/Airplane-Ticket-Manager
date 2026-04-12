@@ -20,8 +20,44 @@
 
   --font-body: 'Noto Sans SC', system-ui, sans-serif;
   --font-display: 'Barlow Condensed', var(--font-body);
-  --font-size-body: 16px;
+
+  --font-size-xs: 12px;
+  --font-size-sm: 13px;
   --font-size-label: 14px;
-  --font-size-heading: 20px;
-  --font-size-display: 28px;
+  --font-size-body: 15px;
+  --font-size-body-lg: 16px;
+  --font-size-title-sm: 18px;
+  --font-size-title-md: 20px;
+  --font-size-title-lg: 24px;
+  --font-size-display: 30px;
+  --font-size-price: 30px;
+  --font-size-button: 15px;
+
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.35;
+  --line-height-normal: 1.55;
+  --line-height-relaxed: 1.7;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --font-size-body: 16px;
+    --font-size-title-md: 22px;
+    --font-size-title-lg: 26px;
+    --font-size-display: 34px;
+    --font-size-price: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --font-size-title-lg: 28px;
+    --font-size-display: 36px;
+    --font-size-price: 34px;
+  }
 }

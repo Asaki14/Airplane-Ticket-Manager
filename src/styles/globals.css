@@ -5,11 +5,49 @@
 body {
   margin: 0;
   font-family: var(--font-body);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-regular);
    background:
      radial-gradient(circle at 12% 0%, rgba(242, 228, 200, 0.45), transparent 36%),
      radial-gradient(circle at 88% 10%, rgba(220, 232, 222, 0.42), transparent 34%),
      linear-gradient(180deg, var(--color-spring-mist), var(--color-dominant));
   color: #13211f;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-semibold);
+}
+
+h1 {
+  font-size: clamp(var(--font-size-title-lg), 4.8vw, var(--font-size-display));
+}
+
+h2 {
+  font-size: clamp(var(--font-size-title-sm), 3.8vw, var(--font-size-title-md));
+}
+
+h3 {
+  font-size: clamp(var(--font-size-body-lg), 3.2vw, var(--font-size-title-sm));
+}
+
+p,
+li {
+  margin: 0;
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
+}
+
+small {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-relaxed);
 }
 
 a,
@@ -57,6 +95,20 @@ select:focus-visible {
   flex: 1;
 }
 
+.hero-title {
+  font-size: clamp(var(--font-size-title-lg), 4.8vw, var(--font-size-display));
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-bold);
+  max-width: 18ch;
+}
+
+.hero-description {
+  margin-top: var(--space-sm);
+  font-size: var(--font-size-body-lg);
+  line-height: var(--line-height-normal);
+  max-width: 48ch;
+}
+
 .hero-admin-info {
   display: flex;
   flex-direction: column;
@@ -68,7 +120,9 @@ select:focus-visible {
 }
 
 .admin-info-label {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-snug);
+  font-weight: var(--font-weight-medium);
   color: var(--color-sub);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -76,7 +130,9 @@ select:focus-visible {
 
 .hero-admin-info code {
   font-family: var(--font-mono, monospace);
-  font-size: 0.9rem;
+  font-size: var(--font-size-label);
+  line-height: var(--line-height-snug);
+  font-weight: var(--font-weight-medium);
   color: var(--color-accent);
   background: transparent;
 }
@@ -107,6 +163,21 @@ select:focus-visible {
   gap: var(--space-sm);
 }
 
+.mode-card {
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.mode-card__title {
+  font-size: clamp(var(--font-size-body-lg), 3.4vw, var(--font-size-title-sm));
+  line-height: var(--line-height-tight);
+}
+
+.mode-card__description {
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
+}
+
 .quick-scenes {
   display: flex;
   flex-wrap: wrap;
@@ -122,6 +193,9 @@ select:focus-visible {
   text-decoration: none;
   background: var(--color-secondary);
   color: inherit;
+  font-size: var(--font-size-label);
+  line-height: var(--line-height-snug);
+  font-weight: var(--font-weight-medium);
 }
 
 .hero-carousel {
@@ -159,7 +233,7 @@ select:focus-visible {
   min-width: 0;
   display: grid;
   align-content: start;
-  gap: 6px;
+  gap: var(--space-xs);
   padding: var(--space-md);
   border: 1px solid rgba(18, 33, 31, 0.14);
   border-radius: 14px;
@@ -173,6 +247,8 @@ select:focus-visible {
 .hero-carousel__status,
 .hero-carousel__highlight-route {
   margin: 0;
+  font-size: var(--font-size-label);
+  line-height: var(--line-height-snug);
   color: rgba(19, 33, 31, 0.82);
 }
 
@@ -183,9 +259,16 @@ select:focus-visible {
   margin: 0;
 }
 
+.hero-carousel__title,
+.hero-carousel__highlight-title {
+  font-size: clamp(var(--font-size-body-lg), 3.4vw, var(--font-size-title-sm));
+}
+
 .hero-carousel__price,
 .hero-carousel__highlight-price {
-  font-weight: 600;
+  font-size: clamp(var(--font-size-title-md), 4.6vw, var(--font-size-price));
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-bold);
   color: #0b5f5b;
 }
 
@@ -201,6 +284,9 @@ select:focus-visible {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  font-size: var(--font-size-button);
+  line-height: var(--line-height-snug);
+  font-weight: var(--font-weight-semibold);
 }
 
 .hero-carousel__controls {
@@ -270,6 +356,8 @@ select:focus-visible {
   display: grid;
   gap: 6px;
   font-size: var(--font-size-label);
+  line-height: var(--line-height-snug);
+  font-weight: var(--font-weight-medium);
 }
 
 .feed-filters input,
@@ -281,6 +369,8 @@ select:focus-visible {
   border-radius: 10px;
   padding: 0 12px;
   background: #fff;
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-snug);
 }
 
 .feed-filters button,
@@ -298,6 +388,9 @@ select:focus-visible {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  font-size: var(--font-size-button);
+  line-height: var(--line-height-snug);
+  font-weight: var(--font-weight-semibold);
 }
 
 .preference-controls {
@@ -346,15 +439,21 @@ select:focus-visible {
 .deal-card-shell__body {
   display: grid;
   align-content: start;
-  gap: 4px;
+  gap: var(--space-xs);
 }
 
 .deal-card-shell__title {
-  margin: 0 0 6px;
+  margin: 0;
+  font-size: clamp(var(--font-size-title-sm), 3.8vw, var(--font-size-title-md));
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-semibold);
 }
 
 .deal-card-shell__route {
   margin: 0;
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-snug);
+  font-weight: var(--font-weight-medium);
 }
 
 .text-clamp-2 {
@@ -372,7 +471,7 @@ select:focus-visible {
 }
 
 .deal-card h2 {
-  margin: 0 0 6px;
+  margin: 0;
 }
 
 .deal-card-label,
@@ -380,8 +479,9 @@ select:focus-visible {
 .deal-score,
 .preference-current,
 .favorites-summary {
-  margin: 6px 0;
-  font-size: 14px;
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-snug);
 }
 
 .deal-card-meta {
@@ -390,9 +490,29 @@ select:focus-visible {
   flex-wrap: wrap;
 }
 
+.deal-price-main {
+  margin: 0;
+  font-size: clamp(var(--font-size-title-md), 5.2vw, var(--font-size-price));
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-bold);
+  color: #0b5f5b;
+}
+
+.deal-price-reference {
+  margin: 0;
+  font-size: var(--font-size-label);
+  line-height: var(--line-height-snug);
+  color: rgba(19, 33, 31, 0.86);
+}
+
 .deal-freshness {
-  margin: var(--space-sm) 0;
+  margin: var(--space-sm) 0 0;
   padding-left: 18px;
+}
+
+.deal-freshness li {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-snug);
 }
 
 .compare-actions {
@@ -438,6 +558,24 @@ select:focus-visible {
   gap: 6px;
 }
 
+.compare-card-shell__header p,
+.compare-card-shell__header h3 {
+  font-size: clamp(var(--font-size-body-lg), 3.4vw, var(--font-size-title-sm));
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-semibold);
+}
+
+.compare-card-shell__body li,
+.compare-card-shell__footer p,
+.compare-card-shell__footer a {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-snug);
+}
+
+.compare-card-shell__footer a {
+  font-weight: var(--font-weight-semibold);
+}
+
 .compare-action-item > div {
   display: flex;
   gap: var(--space-sm);
@@ -472,6 +610,19 @@ select:focus-visible {
   gap: var(--space-md);
 }
 
+.detail-title {
+  margin-top: var(--space-xs);
+  font-size: clamp(var(--font-size-title-lg), 4.8vw, var(--font-size-display));
+  line-height: var(--line-height-tight);
+  max-width: 20ch;
+}
+
+.detail-subtitle {
+  margin-top: var(--space-sm);
+  font-size: var(--font-size-body-lg);
+  line-height: var(--line-height-normal);
+}
+
 .detail-grid--primary,
 .detail-grid--rules {
   grid-template-columns: 1fr;
@@ -493,11 +644,21 @@ select:focus-visible {
 
 .detail-card h2 {
   margin: 0;
+  font-size: clamp(var(--font-size-title-sm), 3.8vw, var(--font-size-title-md));
+}
+
+.detail-card__title {
+  margin-bottom: var(--space-xs);
 }
 
 .detail-card p,
 .detail-card ul {
   margin: 0;
+}
+
+.detail-card li {
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
 }
 
 .detail-card ul {
@@ -512,6 +673,8 @@ select:focus-visible {
 
 .rule-card__summary {
   margin: 0;
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
 }
 
 .rule-card details {
@@ -525,7 +688,8 @@ select:focus-visible {
 .rule-card summary {
   cursor: pointer;
   font-size: var(--font-size-label);
-  font-weight: 600;
+  line-height: var(--line-height-snug);
+  font-weight: var(--font-weight-semibold);
 }
 
 .rule-card details p {
@@ -536,6 +700,8 @@ select:focus-visible {
 
 .feed-empty {
   margin: 0;
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
 }
 
 .public-nav a,
@@ -613,6 +779,17 @@ select:focus-visible {
   gap: 6px;
 }
 
+.deal-card-mobile__header h2 {
+  font-size: clamp(var(--font-size-title-sm), 4.2vw, var(--font-size-title-md));
+  line-height: var(--line-height-tight);
+}
+
+.deal-card-mobile__status,
+.deal-card-mobile__body p {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-snug);
+}
+
 .deal-card-mobile__header h2,
 .deal-card-mobile__body p,
 .deal-card-mobile__status {
@@ -630,6 +807,53 @@ select:focus-visible {
   text-decoration: none;
   background: var(--color-accent);
   color: #fff;
+  font-size: var(--font-size-button);
+  line-height: var(--line-height-snug);
+  font-weight: var(--font-weight-semibold);
+}
+
+.compare-save__title {
+  font-size: clamp(var(--font-size-title-sm), 3.8vw, var(--font-size-title-md));
+  line-height: var(--line-height-tight);
+}
+
+.compare-save__description {
+  margin-top: var(--space-xs);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
+}
+
+.compare-save__favorites-summary {
+  margin-top: var(--space-sm);
+}
+
+.compare-card-shell__deal-title {
+  margin: 0;
+}
+
+.compare-card-shell__share-link,
+.compare-card-shell__detail-link {
+  display: inline-flex;
+  width: fit-content;
+  text-decoration: none;
+  color: var(--color-accent);
+}
+
+.value-explain__title {
+  font-size: clamp(var(--font-size-title-sm), 3.8vw, var(--font-size-title-md));
+  line-height: var(--line-height-tight);
+}
+
+.value-explain__score {
+  margin-top: var(--space-xs);
+  font-size: var(--font-size-body-lg);
+  line-height: var(--line-height-snug);
+  font-weight: var(--font-weight-semibold);
+}
+
+.value-explain li {
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
 }
 
 .desktop-table {
@@ -650,6 +874,8 @@ select:focus-visible {
   text-align: left;
   padding: 12px;
   border-bottom: 1px solid #e2e8e3;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-snug);
 }
 
 .desktop-table tbody tr:last-child td {
@@ -674,6 +900,9 @@ select:focus-visible {
 .deal-form label {
   display: grid;
   gap: 6px;
+  font-size: var(--font-size-label);
+  line-height: var(--line-height-snug);
+  font-weight: var(--font-weight-medium);
 }
 
 .deal-form input,
@@ -683,6 +912,8 @@ select:focus-visible {
   border-radius: 10px;
   padding: 10px 12px;
   font: inherit;
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-normal);
 }
 
 .deal-form textarea {
@@ -703,14 +934,31 @@ select:focus-visible {
   padding: 0 var(--space-md);
   background: var(--color-accent);
   color: #fff;
+  font-size: var(--font-size-button);
+  line-height: var(--line-height-snug);
+  font-weight: var(--font-weight-semibold);
 }
 
 .eyebrow {
   font-size: var(--font-size-label);
-  font-weight: 600;
+  line-height: var(--line-height-snug);
+  font-weight: var(--font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin: 0;
+}
+
+@media (min-width: 768px) {
+  .deal-card-shell__title {
+    -webkit-line-clamp: 2;
+  }
+
+  .deal-card-shell__route,
+  .deal-price-reference,
+  .deal-card-meta,
+  .deal-freshness li {
+    max-width: 56ch;
+  }
 }
 
 @media (min-width: 768px) {
