@@ -76,7 +76,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   const airlineOptions = buildOptions(mockDeals.map((deal) => deal.airline))
 
   return (
-    <main className="public-shell spring-atmosphere" style={{ backgroundColor: 'var(--color-dominant)' }}>
+    <main className="public-shell spring-atmosphere bg-slate-50 min-h-screen pb-20" style={{ backgroundColor: 'var(--color-dominant, #f8fafc)' }}>
       <section className="public-hero" aria-label="travel-hero">
         <div className="hero-main">
           <p className="eyebrow">航易-找航班，更容易</p>
@@ -107,7 +107,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 
       <HeroDealCarousel deals={deals.slice(0, 5)} />
 
-      <section className="home-modes" aria-label="双模式浏览">
+      <section className="home-modes max-w-5xl mx-auto px-4 py-12" aria-label="双模式浏览">
         <header className="section-header">
           <p className="section-header__kicker">探索方式</p>
           <h2 className="section-header__title">先定约束，再找灵感</h2>
@@ -148,7 +148,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         </article>
       </section>
 
-      <section className="quick-scenes" aria-label="高频探索入口">
+      <section className="quick-scenes max-w-5xl mx-auto px-4 py-12" aria-label="高频探索入口">
         <header className="section-header section-header--compact">
           <p className="section-header__kicker">高频场景</p>
           <h2 className="section-header__title">一键进入常见捡漏路径</h2>
@@ -163,7 +163,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 
       <DiscoveryPreferences id="default-departure-panel" departureOptions={departureOptions} currentDepartureCity={filters.departureCity} />
 
-      <form className="feed-filters" aria-label="发现筛选" action="/" method="get">
+      <form className="feed-filters max-w-5xl mx-auto px-4 py-12 bg-white shadow-sm border border-slate-200 rounded-xl mb-12" aria-label="发现筛选" action="/" method="get">
         <header className="section-header section-header--compact feed-filters__intro">
           <p className="section-header__kicker">筛选面板</p>
           <h2 className="section-header__title">逐步缩小候选范围</h2>
@@ -232,29 +232,31 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         <button type="submit">应用筛选</button>
       </form>
 
-      <section id="deal-feed" className="public-deal-feed" aria-label="公开 deal 列表">
+      <section id="deal-feed" className="public-deal-feed max-w-5xl mx-auto px-4 py-8 grid gap-8" aria-label="公开 deal 列表">
         <header className="section-header section-header--compact public-deal-feed__intro">
           <p className="section-header__kicker">可用候选</p>
           <h2 className="section-header__title">当前筛选下的特价列表</h2>
         </header>
         {deals.length === 0 ? <p className="feed-empty">当前筛选下暂无可用特价，试试放宽条件或切换出发地/日期窗口。</p> : null}
-        {deals.map((deal) => (
-          <DealCard
-            key={deal.id}
-            id={deal.id}
-            title={deal.title}
-            departureCity={deal.departureCity}
-            destination={deal.destination}
-            travelWindowLabel={deal.travelWindowLabel}
-            airline={deal.airline}
-            headlinePrice={deal.headlinePrice}
-            referenceTotalPrice={deal.referenceTotalPrice}
-            valueScore={deal.valueScore}
-            publishedAt={deal.publishedAt}
-            updatedAt={deal.updatedAt}
-            expiresAt={deal.expiresAt}
-          />
-        ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {deals.map((deal) => (
+            <DealCard
+              key={deal.id}
+              id={deal.id}
+              title={deal.title}
+              departureCity={deal.departureCity}
+              destination={deal.destination}
+              travelWindowLabel={deal.travelWindowLabel}
+              airline={deal.airline}
+              headlinePrice={deal.headlinePrice}
+              referenceTotalPrice={deal.referenceTotalPrice}
+              valueScore={deal.valueScore}
+              publishedAt={deal.publishedAt}
+              updatedAt={deal.updatedAt}
+              expiresAt={deal.expiresAt}
+            />
+          ))}
+        </div>
       </section>
 
       <CompareAndSavePanel deals={deals} />
