@@ -261,7 +261,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 
       <CompareAndSavePanel deals={deals} />
 
-      <nav className="public-nav" aria-label="页面底部导航">
+      <nav className="public-nav" aria-label="主导航">
         <a href="/">公开首页</a>
         <a href="/admin">运营后台</a>
         <a href="/admin/deals">Deal 管理</a>

@@ -38,7 +38,7 @@ export function buildDealAdvice(deal: DealAdviceInput): string {
   const highValue = hasValidNumber(valueScore) && valueScore >= 80
 
   if (shenzhenToHongKong && inLowPriceBand(headlinePrice, deal.referenceTotalPrice) && highValue) {
-    return '深圳飞香港性价比高、航班密集，适合说走就走的短途旅行，行程确定建议尽快锁定。'
+    return '深圳飞香港性价比高、航班密集，人少且适合说走就走的短途出行，行程确定建议尽快锁定。'
   }
 
   const reference = deal.referenceTotalPrice
@@ -54,9 +54,9 @@ export function buildDealAdvice(deal: DealAdviceInput): string {
 
   const stopSummary = deal.stopSummary ?? ''
   const stopPart = stopSummary.includes('直飞')
-    ? '直飞省心省力，不用中转更轻松'
-    : '经停方案需留意中转时长，中转间隔建议预留充足'
-  const actionPart = hasValidNumber(valueScore) && valueScore >= 75 ? '库存有限，建议尽快下单锁定优惠' : '价格尚可，可继续观察对比后再决定'
+    ? '直飞省心省力'
+    : '需留意中转时长与间隔'
+  const actionPart = hasValidNumber(valueScore) && valueScore >= 75 ? '库存有限建议尽快下单' : '价格尚可建议可再观察'
 
   return `${pricePart}，${stopPart}，${actionPart}。`
 }
