@@ -27,3 +27,11 @@ Resolved debug sessions. Used by `gsd-debugger` to surface known-pattern hypothe
 - **Fix:** 将 `default-departure-panel` 锚点从外层 wrapper div 挪到 `DiscoveryPreferences` 根 section（`.preference-panel`）并移除 wrapper，使目标元素直接复用既有 `grid-column: 1 / span 12` 规则。
 - **Files changed:** src/app/page.tsx, src/components/deals/DiscoveryPreferences.tsx
 ---
+
+## ui-blank-page-after-filter — Resolve blank page after filter
+- **Date:** 2026-04-14T00:00:00.000Z
+- **Error patterns:** 正常显示筛选页及后续卡片列表，无多余空白, 从筛选页开始显示不全，接着出现非常长的空白页面，直到显示“比较、收藏与分享”卡片
+- **Root cause:** DealCard component was missing the `deal-card-shell` CSS Grid structure and `min-height` constraints, while `.spring-atmosphere` was applying `overflow: hidden`. The combination caused the public feed to collapse vertically or clip, rendering as a massive blank space between the filter and compare sections.
+- **Fix:** 1. Removed `overflow: hidden` from `.spring-atmosphere` in `globals.css`. 2. Rewrote `DealCard.tsx` to adhere to `.deal-card-shell`, restoring standard layout rules. 3. Fixed tests confirming layout integrity.
+- **Files changed:** src/styles/globals.css, src/components/deals/DealCard.tsx, src/lib/dealAdvice.ts, src/app/page.tsx
+---
