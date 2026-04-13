@@ -61,14 +61,14 @@ export function CompareAndSavePanel({ deals }: CompareAndSavePanelProps) {
   }
 
   return (
-    <section className="compare-save" aria-label="比较收藏分享">
+    <section className="compare-save max-w-7xl mx-auto px-4 py-16 bg-slate-50 mt-12 rounded-2xl" aria-label="比较收藏分享">
       <h2 className="compare-save__title">比较、收藏与分享</h2>
       <p className="compare-save__description">
         犹豫不决？把候选加入比较，并排看价格、时效、规则和购买建议，决策更清晰。
         收藏后可稍后再看，链接可复制分享给他人参考。
       </p>
 
-      <div className="compare-actions">
+      <div className="compare-actions flex flex-wrap gap-4 mt-8">
         {deals.map((deal, idx) => {
           const inCompare = selected.includes(deal.id)
           const inFavorites = favorites.includes(deal.id)
@@ -94,7 +94,7 @@ export function CompareAndSavePanel({ deals }: CompareAndSavePanelProps) {
           const showElements = cardElements.slice(idx % 2, (idx % 2) + 2)
 
           return (
-            <article key={deal.id} className="compare-action-item compare-card-shell">
+            <article key={deal.id} className="compare-action-item compare-card-shell flex-1 min-w-[300px] bg-white rounded-xl shadow-sm border border-slate-200 p-5 hover:shadow-md transition-shadow">
               <header className="compare-card-shell__header">
                 <p className="compare-card-shell__deal-title text-clamp-2">{deal.title}</p>
                 <div className="compare-card-shell__tags">
@@ -140,10 +140,10 @@ export function CompareAndSavePanel({ deals }: CompareAndSavePanelProps) {
         })}
       </div>
 
-      <div className="compare-grid" aria-label="并排比较面板">
+      <div className="compare-grid flex gap-6 overflow-x-auto pb-8 pt-8 mt-12" aria-label="并排比较面板">
         {selectedDeals.length === 0 ? <p>尚未选择比较项。</p> : null}
         {selectedDeals.map((deal) => (
-          <article key={deal.id} className="compare-column compare-card-shell">
+          <article key={deal.id} className="compare-column compare-card-shell flex-1 min-w-[300px] bg-white rounded-xl shadow-sm border border-slate-200 p-6">
             <header className="compare-card-shell__header">
               <h3>{deal.title}</h3>
             </header>
