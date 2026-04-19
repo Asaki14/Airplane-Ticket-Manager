@@ -98,6 +98,16 @@
 | deal 详情页必须包含规则翻译、价值解释、来源与时效 | 建立信任，降低用户误判 | — Pending |
 | MVP 先允许本地收藏，账号体系后置 | 保持上线路径轻量，先验证收藏是否真有价值 | — Pending |
 
+## Current Milestone: v2.0 真实可用
+
+**Goal:** 添加真实机票信息，使平台真正可用
+
+**Target features:**
+- 实现机票数据的采集（从OTA或航司）
+- 在首页展示真实的特价机票
+- 在详情页展示完整的机票信息（包括规则、价格、时效等）
+- 确保数据的时效性和准确性
+
 ## Evolution
 
 This document evolves at phase transitions and milestone boundaries.
@@ -116,4 +126,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-11 after initialization*
+*Last updated: 2026-04-19 after starting milestone v2.0*
