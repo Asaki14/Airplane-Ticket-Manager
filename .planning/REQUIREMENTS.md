@@ -63,18 +63,18 @@
 
 ### Alerts
 
-- **ALRT-01**: User can subscribe to price-drop or new-deal alerts for saved routes
-- **ALRT-02**: User can receive notifications by WeChat, email, or browser push
+- [ ] **ALRT-01**: User can subscribe to price-drop or new-deal alerts for saved routes
+- [ ] **ALRT-02**: User can receive notifications by WeChat, email, or browser push
 
 ### Automation
 
-- **AUTO-01**: Operator can ingest deal candidates from configured OTA or airline sources with semi-automated extraction
-- **AUTO-02**: System can flag suspected stale or duplicated deals for review
+- [ ] **AUTO-01**: Operator can ingest deal candidates from configured OTA or airline sources with semi-automated extraction
+- [ ] **AUTO-02**: System can flag suspected stale or duplicated deals for review
 
 ### Accounts
 
-- **AUTH-01**: User can create an account and sync favorites across devices
-- **AUTH-02**: User can manage saved preferences across multiple departure cities
+- [ ] **AUTH-01**: User can create an account and sync favorites across devices
+- [ ] **AUTH-02**: User can manage saved preferences across multiple departure cities
 
 ## Out of Scope
 
@@ -106,19 +106,25 @@
 | COMP-02 | Phase 5 | Complete |
 | COMP-03 | Phase 5 | Complete |
 | COMP-04 | Phase 5 | Complete |
-| DATA-01 | Phase 6 | Pending |
-| DATA-02 | Phase 6 | Pending |
-| DATA-03 | Phase 6 | Pending |
-| DATA-04 | Phase 6 | Pending |
-| FRESH-01 | Phase 6 | Pending |
-| FRESH-02 | Phase 6 | Pending |
-| FRESH-03 | Phase 6 | Pending |
-| FRESH-04 | Phase 6 | Pending |
-| FRESH-05 | Phase 6 | Pending |
-| COMP-05 | Phase 6 | Pending |
-| COMP-06 | Phase 6 | Pending |
-| COMP-07 | Phase 6 | Pending |
-| COMP-08 | Phase 6 | Pending |
+| DATA-01 | Phase 7 | Pending |
+| DATA-02 | Phase 7 | Pending |
+| DATA-03 | Phase 7 | Pending |
+| DATA-04 | Phase 7 | Pending |
+| FRESH-01 | Phase 8 | Pending |
+| FRESH-02 | Phase 8 | Pending |
+| FRESH-03 | Phase 8 | Pending |
+| FRESH-04 | Phase 8 | Pending |
+| FRESH-05 | Phase 7 | Pending |
+| COMP-05 | Phase 9 | Pending |
+| COMP-06 | Phase 9 | Pending |
+| COMP-07 | Phase 9 | Pending |
+| COMP-08 | Phase 9 | Pending |
+| ALRT-01 | Phase 10 | Pending |
+| ALRT-02 | Phase 10 | Pending |
+| AUTO-01 | Phase 11 | Pending |
+| AUTO-02 | Phase 11 | Pending |
+| AUTH-01 | Phase 11 | Pending |
+| AUTH-02 | Phase 11 | Pending |
 
 **Coverage:**
 - v1 requirements: 17 total
