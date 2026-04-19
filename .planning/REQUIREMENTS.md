@@ -39,6 +39,28 @@
 
 ## v2 Requirements
 
+### Real Data Collection
+
+- [ ] **DATA-01**: System can collect real ticket data from at least one major OTA source (Ctrip, Qunar, or Fliggy)
+- [ ] **DATA-02**: Collected data includes essential flight information: airline, flight numbers, departure/arrival times, dates, and price
+- [ ] **DATA-03**: System validates collected data for reasonableness (positive prices, valid dates, etc.)
+- [ ] **DATA-04**: System normalizes data from different sources into a common format
+
+### Data Freshness & Reliability
+
+- [ ] **FRESH-01**: Each deal displays clear collection timestamp indicating when data was fetched
+- [ ] **FRESH-02**: Each deal displays expiry time when data becomes stale
+- [ ] **FRESH-03**: System indicates data source (which OTA/airline provided the information)
+- [ ] **FRESH-04**: Operator can manually trigger data collection for specific sources
+- [ ] **FRESH-05**: System handles collection failures gracefully, showing last known good data with freshness warnings
+
+### Accurate Comparison & Decision
+
+- [ ] **COMP-05**: Comparison panel uses real-time collected prices for accurate sorting and filtering
+- [ ] **COMP-06**: System flags potentially stale data in comparison view with visual indicators
+- [ ] **COMP-07**: Value score calculation incorporates real-time data freshness as a factor
+- [ ] **COMP-08**: Users can verify data freshness when comparing multiple deals
+
 ### Alerts
 
 - **ALRT-01**: User can subscribe to price-drop or new-deal alerts for saved routes
@@ -84,12 +106,27 @@
 | COMP-02 | Phase 5 | Complete |
 | COMP-03 | Phase 5 | Complete |
 | COMP-04 | Phase 5 | Complete |
+| DATA-01 | Phase 6 | Pending |
+| DATA-02 | Phase 6 | Pending |
+| DATA-03 | Phase 6 | Pending |
+| DATA-04 | Phase 6 | Pending |
+| FRESH-01 | Phase 6 | Pending |
+| FRESH-02 | Phase 6 | Pending |
+| FRESH-03 | Phase 6 | Pending |
+| FRESH-04 | Phase 6 | Pending |
+| FRESH-05 | Phase 6 | Pending |
+| COMP-05 | Phase 6 | Pending |
+| COMP-06 | Phase 6 | Pending |
+| COMP-07 | Phase 6 | Pending |
+| COMP-08 | Phase 6 | Pending |
 
 **Coverage:**
 - v1 requirements: 17 total
-- Mapped to phases: 17
+- v2 requirements: 12 total
+- Mapped to phases: 29
 - Unmapped: 0 ✓
 
 ---
+
 *Requirements defined: 2026-04-11*
-*Last updated: 2026-04-11 after initial definition*
+*Last updated: 2026-04-19 after defining milestone v2.0 requirements*
