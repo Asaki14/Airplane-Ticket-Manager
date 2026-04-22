@@ -8,11 +8,10 @@ body {
   font-size: var(--font-size-body);
   line-height: var(--line-height-normal);
   font-weight: var(--font-weight-regular);
-   background:
-     radial-gradient(circle at 12% 0%, rgba(242, 228, 200, 0.45), transparent 36%),
-     radial-gradient(circle at 88% 10%, rgba(220, 232, 222, 0.42), transparent 34%),
-     linear-gradient(180deg, var(--color-spring-mist), var(--color-dominant));
-  color: #13211f;
+  background: var(--color-bg-base); /* Changed to solid cream base for Anthropic look */
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1,
@@ -22,8 +21,11 @@ h4,
 h5,
 h6 {
   margin: 0;
+  font-family: var(--font-display); /* Apply Serif font to headings */
   line-height: var(--line-height-tight);
   font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.015em;
+  color: var(--color-text-primary);
 }
 
 h1 {
@@ -124,13 +126,11 @@ select:focus-visible {
   justify-content: space-between;
   align-items: flex-start;
   gap: var(--space-lg);
-  background:
-    linear-gradient(140deg, rgba(220, 232, 222, 0.95) 0%, rgba(242, 228, 200, 0.9) 52%, rgba(220, 232, 222, 0.9) 100%),
-    radial-gradient(circle at 80% 18%, rgba(255, 255, 255, 0.42), transparent 42%);
-  border: 1px solid rgba(11, 122, 117, 0.18);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
   box-shadow: var(--shadow-soft);
-  border-radius: 16px;
-  padding: var(--space-xl) var(--space-lg);
+  border-radius: 12px;
+  padding: var(--space-xl) var(--space-xl);
 }
 
 .hero-main {
@@ -226,13 +226,11 @@ select:focus-visible {
 .compare-save,
 .detail-grid,
 .value-explain {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(248, 242, 229, 0.9) 100%),
-    var(--surface-card);
-  border: 1px solid rgba(18, 33, 31, 0.16);
-  border-radius: 16px;
-  padding: var(--space-lg) var(--space-md);
-  box-shadow: 0 12px 28px rgba(19, 33, 31, 0.08);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: var(--space-lg) var(--space-lg);
+  box-shadow: var(--shadow-soft);
 }
 
 .home-modes {
@@ -531,12 +529,10 @@ select:focus-visible {
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-sm);
   padding: var(--space-md);
-  border-radius: 16px;
-  border: 1px solid rgba(18, 33, 31, 0.16);
-  background:
-    linear-gradient(150deg, rgba(232, 240, 235, 0.94) 0%, rgba(250, 244, 232, 0.88) 55%, rgba(232, 240, 235, 0.9) 100%),
-    radial-gradient(circle at 92% 14%, rgba(255, 255, 255, 0.5), transparent 45%);
-  box-shadow: 0 8px 24px rgba(19, 33, 31, 0.08);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+  box-shadow: var(--shadow-soft);
 }
 
 .hero-carousel::before {
@@ -777,9 +773,12 @@ select:focus-visible {
 }
 
 .deal-card {
-  border-radius: 14px;
+  border-radius: 12px;
   padding: var(--space-md);
-  border: 1px solid rgba(18, 33, 31, 0.16);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-elevated);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
 }
 
 .deal-card-shell {
@@ -788,10 +787,11 @@ select:focus-visible {
   display: grid;
   grid-template-rows: auto 1fr auto;
   min-height: 320px;
-  border-radius: 14px;
-  border: 1px solid rgba(18, 33, 31, 0.14);
-  background: linear-gradient(180deg, var(--surface-card) 0%, var(--surface-elevated) 100%);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-elevated);
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
 .deal-card--atmosphere .deal-card__atmosphere-layer {
@@ -1272,8 +1272,9 @@ select:focus-visible {
 .deal-card-shell:hover,
 .deal-card:hover,
 .compare-column:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 14px 30px rgba(19, 33, 31, 0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  border-color: var(--color-border-hover);
 }
 
 .feed-filters button:hover,
@@ -1469,14 +1470,15 @@ select:focus-visible {
 
 .deal-actions button {
   min-height: 44px;
-  border: none;
-  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 8px;
   padding: 0 var(--space-md);
   background: var(--color-accent);
   color: #fff;
   font-size: var(--font-size-button);
   line-height: var(--line-height-snug);
-  font-weight: var(--font-weight-semibold);
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .eyebrow {
