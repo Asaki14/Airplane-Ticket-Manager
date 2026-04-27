@@ -74,36 +74,45 @@ export function HeroDealCarousel({ deals }: HeroDealCarouselProps) {
   const current = items[activeIndex]
 
   return (
-    <section className="hero-carousel hero-carousel--atmosphere" aria-label="首页特价轮换">
-      <span className="hero-carousel__atmosphere-layer" aria-hidden="true" />
+    <section className="hero-carousel" aria-label="首页特价轮换">
       <div className="hero-carousel__track" style={{ transform: `translateX(-${activeIndex * 100}%)` }}>
         {items.map((deal, index) => (
           <article className="hero-carousel__slide" key={deal.id} aria-current={index === activeIndex ? 'true' : undefined}>
-            <p className="hero-carousel__eyebrow">{deal.departureCity} · {deal.travelWindowLabel}</p>
+            <p className="hero-carousel__eyebrow mono-font">{deal.departureCity} · {deal.travelWindowLabel}</p>
             <h2 className="hero-carousel__title">{deal.title}</h2>
-            <p className="hero-carousel__route">{deal.departureCity} → {deal.destination} · {deal.airline}</p>
-            <p className="hero-carousel__price">¥{deal.headlinePrice.toLocaleString('zh-CN')}</p>
-            <p className="hero-carousel__meta text-clamp-2">价值分 {deal.valueScore} · 更新 {formatTime(deal.updatedAt)} · 失效 {formatTime(deal.expiresAt)}</p>
-            <a className="hero-carousel__cta" href={`/deals/${deal.id}`}>查看详情与票规</a>
+            <p className="hero-carousel__route led-font">
+              <span className="route-city">{deal.departureCity}</span> 
+              <span className="route-arrow">✈</span> 
+              <span className="route-city">{deal.destination}</span>
+              <span className="mono-font" style={{marginLeft: '12px', fontSize: '0.6em', color: 'var(--color-text-secondary)'}}>{deal.airline}</span>
+            </p>
+            <p className="hero-carousel__price accent-color led-font">¥{deal.headlinePrice.toLocaleString('zh-CN')}</p>
+            <p className="hero-carousel__meta text-clamp-2 mono-font">
+              VALUE {deal.valueScore} 
+              <span className="ascii-bar" style={{ marginLeft: '8px', color: 'var(--color-accent)'}}>
+                [{'█'.repeat(Math.round((deal.valueScore/100)*10)) + '░'.repeat(Math.max(0, 10 - Math.round((deal.valueScore/100)*10)))}]
+              </span> | UPD {formatTime(deal.updatedAt)} | EXP {formatTime(deal.expiresAt)}
+            </p>
+            <a className="hero-carousel__cta mono-font" href={`/deals/${deal.id}`}>查看详情与票规</a>
           </article>
         ))}
       </div>
 
-      <div className="hero-carousel__controls" aria-label="轮换控制">
+      <div className="hero-carousel__controls mono-font" aria-label="轮换控制">
         <button type="button" onClick={() => setActiveIndex((prev) => (prev - 1 + items.length) % items.length)} aria-label="上一张">
-          上一张
+          PREV
         </button>
         <button type="button" onClick={() => setIsPaused((prev) => !prev)} aria-label={isPaused ? '继续轮播' : '暂停轮播'}>
-          {isPaused ? '继续轮播' : '暂停轮播'}
+          {isPaused ? 'PLAY' : 'PAUSE'}
         </button>
         <button type="button" onClick={() => setActiveIndex((prev) => (prev + 1) % items.length)} aria-label="下一张">
-          下一张
+          NEXT
         </button>
       </div>
 
-      <p className="hero-carousel__status" aria-live="polite">
-        第 {activeIndex + 1} / {items.length} 张
-        {prefersReducedMotion ? '（已按系统偏好默认暂停）' : ''}
+      <p className="hero-carousel__status mono-font" aria-live="polite">
+        PAGE {activeIndex + 1} / {items.length}
+        {prefersReducedMotion ? ' (AUTO-PAUSED)' : ''}
       </p>
 
       <ol className="hero-carousel__indicators" aria-label="轮换页码">
@@ -121,9 +130,9 @@ export function HeroDealCarousel({ deals }: HeroDealCarouselProps) {
       </ol>
 
       <article className="hero-carousel__highlight" aria-label="当前特价概览">
-        <h3 className="hero-carousel__highlight-title">当前推荐</h3>
-        <p className="hero-carousel__highlight-route">{current.departureCity} → {current.destination}</p>
-        <p className="hero-carousel__highlight-price">¥{current.headlinePrice.toLocaleString('zh-CN')}</p>
+        <h3 className="hero-carousel__highlight-title mono-font blinking-cursor">NOW DEPARTING</h3>
+        <p className="hero-carousel__highlight-route led-font">{current.departureCity} <span className="route-arrow accent-color">✈</span> {current.destination}</p>
+        <p className="hero-carousel__highlight-price accent-color led-font">¥{current.headlinePrice.toLocaleString('zh-CN')}</p>
       </article>
     </section>
   )

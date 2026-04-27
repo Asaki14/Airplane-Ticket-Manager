@@ -1,5 +1,3 @@
-import { pickSceneImageByDeal } from '@/lib/deals/scene-image-map'
-
 type DealCardProps = {
   id: string
   title: string
@@ -36,38 +34,63 @@ export function DealCard({
   updatedAt,
   expiresAt
 }: DealCardProps) {
-  const sceneImageUrl = pickSceneImageByDeal({ id, destination, title })
+  const destCode = destination.substring(0, 3).toUpperCase()
+  
+  // Calculate ASCII progress bar based on value score
+  const barBlocks = 10
+  const filledBlocks = Math.round((valueScore / 100) * barBlocks)
+  const asciiBar = '[' + '█'.repeat(filledBlocks) + '░'.repeat(Math.max(0, barBlocks - filledBlocks)) + ']'
+  
+  // Determine if we show a "must buy" stamp
+  const isHotDeal = valueScore >= 85
 
   return (
-    <article className="deal-card-shell deal-card--atmosphere deal-card--scenic">
-      <span className="deal-card__atmosphere-layer" aria-hidden="true" />
-      <span className="deal-card__scene-layer" aria-hidden="true" role="presentation">
-        <img src={sceneImageUrl} alt="" loading="lazy" decoding="async" />
-      </span>
-      <span className="deal-card__scene-overlay" aria-hidden="true" role="presentation" />
+    <article className="deal-card-shell deal-card--boarding-pass">
+      <div className="watermark" aria-hidden="true">{destCode}</div>
+      <div className="barcode" aria-hidden="true"></div>
       
+      {isHotDeal && (
+        <div className="stamp-wrapper">
+          <span className="stamp">ALERT: LOW</span>
+        </div>
+      )}
+
       <header className="deal-card-shell__header">
-        <p className="deal-card-label">特价 #{id}</p>
+        <div className="deal-card-header__top">
+          <p className="deal-card-label">DEAL #{id}</p>
+          <p className="deal-score"><span className="deal-score-label">VALUE</span> {valueScore}</p>
+        </div>
         <h2 className="deal-card-shell__title text-clamp-2">
           <a href={`/deals/${id}`}>{title}</a>
         </h2>
-        <p className="deal-card-shell__route">{departureCity} → {destination} · {airline}</p>
       </header>
 
-      <div className="deal-card-shell__body">
-        <p className="deal-card-meta">
-          <span className="deal-card-shell__meta-item">{travelWindowLabel}</span>
+      <div className="deal-card-shell__route-section">
+        <p className="deal-card-shell__route led-font">
+          <span className="route-city">{departureCity}</span> 
+          <span className="route-arrow">✈</span> 
+          <span className="route-city">{destination}</span>
         </p>
-        <p className="deal-score">价值分 {valueScore}</p>
+        <p className="deal-card-meta">
+          <span className="deal-card-shell__meta-item mono-font">{airline}</span>
+          <span className="deal-card-shell__meta-item mono-font">| {travelWindowLabel}</span>
+        </p>
       </div>
 
       <footer className="deal-card-shell__footer">
-        <p className="deal-price-main">¥{headlinePrice}</p>
-        <p className="deal-price-reference">参考总成本 ¥{referenceTotalPrice}</p>
-        <ul className="deal-freshness">
-          <li>发布时间 {toDateLabel(publishedAt)}</li>
-          <li>更新时间 {toDateLabel(updatedAt)}</li>
-          <li>失效时间 {toDateLabel(expiresAt)}</li>
+        <div className="deal-price-wrapper">
+          <p className="deal-price-main led-font accent-color">¥{headlinePrice}</p>
+          <p className="deal-price-reference mono-font">
+            REF ¥{referenceTotalPrice}
+          </p>
+        </div>
+        <ul className="deal-freshness mono-font">
+          <li>PUB {toDateLabel(publishedAt)}</li>
+          <li>UPD {toDateLabel(updatedAt)}</li>
+          <li className="accent-color">
+            <span className="ascii-bar">{asciiBar}</span>
+            EXP {toDateLabel(expiresAt)}
+          </li>
         </ul>
       </footer>
     </article>

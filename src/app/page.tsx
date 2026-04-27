@@ -76,7 +76,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   const airlineOptions = buildOptions(mockDeals.map((deal) => deal.airline))
 
   return (
-    <main className="public-shell spring-atmosphere bg-slate-50 min-h-screen pb-20" style={{ backgroundColor: 'var(--color-dominant, #f8fafc)' }}>
+    <main className="public-shell bg-slate-50 min-h-screen pb-20" style={{ backgroundColor: 'var(--color-bg-base, #f4f4f4)' }}>
       <section className="public-hero" aria-label="travel-hero">
         <div className="hero-main">
           <p className="eyebrow">航易-找航班，更容易</p>

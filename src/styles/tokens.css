@@ -1,21 +1,22 @@
 :root {
-  /* Anthropic-inspired Palette */
-  --color-bg-base: #FAF9F6;
+  /* Airport Departure Board Palette */
+  --color-bg-base: #F4F4F4;
   --color-bg-elevated: #FFFFFF;
-  --color-bg-subtle: #F2F0EB;
+  --color-bg-subtle: #EBEBEB;
   
-  --color-text-primary: #1A1A1A;
-  --color-text-secondary: #5E5C58;
-  --color-text-tertiary: #8C8A86;
+  --color-text-primary: #0A0A0A;
+  --color-text-secondary: #4A4A4A;
+  --color-text-tertiary: #8A8A8A;
   
-  --color-accent: #D76B42; /* Refined rust/terracotta */
-  --color-accent-hover: #C05E38;
-  --color-destructive: #C44936;
+  --color-accent: #FF3300; /* Neon orange/red */
+  --color-accent-hover: #E62E00;
+  --color-destructive: #D90000;
   
-  --color-border: rgba(26, 26, 26, 0.08);
-  --color-border-hover: rgba(26, 26, 26, 0.16);
+  --color-border: #1A1A1A;
+  --color-border-hover: #000000;
+  --color-border-dashed: rgba(26, 26, 26, 0.4);
 
-  /* Legacy variable mappings to prevent breaking existing classes */
+  /* Legacy variable mappings */
   --color-dominant: var(--color-bg-base);
   --color-secondary: var(--color-bg-subtle);
   --color-spring-mist: var(--color-bg-base);
@@ -23,44 +24,46 @@
   --color-spring-warm: var(--color-bg-elevated);
   --surface-card: var(--color-bg-elevated);
   --surface-elevated: var(--color-bg-base);
-  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.03);
+  --shadow-soft: 4px 4px 0 rgba(10, 10, 10, 1);
 
-  --space-xs: 6px;
-  --space-sm: 12px;
-  --space-md: 20px;
+  --space-xs: 8px;
+  --space-sm: 16px;
+  --space-md: 24px;
   --space-lg: 32px;
   --space-xl: 48px;
   --space-2xl: 64px;
   --space-3xl: 96px;
 
   /* Typography */
-  --font-serif: 'EB Garamond', 'Georgia', serif;
+  --font-led: 'DotGothic16', monospace;
+  --font-mono: 'Space Mono', 'Courier New', monospace;
   --font-sans: 'Inter', -apple-system, system-ui, sans-serif;
+  
   --font-body: var(--font-sans);
-  --font-display: var(--font-serif);
+  --font-display: var(--font-mono);
 
   --font-size-xs: 12px;
-  --font-size-sm: 13px;
+  --font-size-sm: 14px;
   --font-size-label: 14px;
-  --font-size-body: 15px;
-  --font-size-body-lg: 16px;
+  --font-size-body: 16px;
+  --font-size-body-lg: 18px;
   --font-size-heading: 20px;
   --font-size-title-sm: 20px;
   --font-size-title-md: 24px;
-  --font-size-title-lg: 28px;
-  --font-size-display: 36px;
-  --font-size-price: 32px;
+  --font-size-title-lg: 32px;
+  --font-size-display: 42px;
+  --font-size-price: 48px;
   --font-size-button: 14px;
 
-  --line-height-tight: 1.15;
+  --line-height-tight: 1.1;
   --line-height-snug: 1.3;
-  --line-height-normal: 1.6;
-  --line-height-relaxed: 1.75;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.7;
 
   --font-weight-regular: 400;
   --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 600; /* Subtle bolding */
+  --font-weight-semibold: 700;
+  --font-weight-bold: 700;
 }
 
 @media (min-width: 768px) {
