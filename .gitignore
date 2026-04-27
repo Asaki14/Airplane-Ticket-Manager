@@ -2,7 +2,7 @@ node_modules/
 .next/
 .playwright-mcp/
 payload.db
-
+.DS_Store
 
 # Next.js build output
 .next/
