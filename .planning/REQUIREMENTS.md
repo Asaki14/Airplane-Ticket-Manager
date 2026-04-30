@@ -39,42 +39,36 @@
 
 ## v2 Requirements
 
-### Real Data Collection
+### Source Access & Normalization
 
-- [ ] **DATA-01**: System can collect real ticket data from at least one major OTA source (Ctrip, Qunar, or Fliggy)
-- [ ] **DATA-02**: Collected data includes essential flight information: airline, flight numbers, departure/arrival times, dates, and price
-- [ ] **DATA-03**: System validates collected data for reasonableness (positive prices, valid dates, etc.)
-- [ ] **DATA-04**: System normalizes data from different sources into a common format
+- [ ] **DATA-01**: Operator can configure at least one real flight source using an official API, authorized partner access, or a controlled browser-assisted collection flow
+- [ ] **DATA-02**: System stores normalized fare snapshots including source, airline, flight numbers, departure/arrival airports, times, cabin, baggage facts, price, currency, deep link, and collection timestamps
+- [ ] **DATA-03**: System validates collected results for required fields, sane prices, sane date/time order, and duplicate itinerary collisions before publishing them to user-facing surfaces
+- [ ] **DATA-04**: System preserves provenance for every displayed fare so operators can inspect exactly which source and collection run produced it
 
-### Data Freshness & Reliability
+### Real Search & Filtering
 
-- [ ] **FRESH-01**: Each deal displays clear collection timestamp indicating when data was fetched
-- [ ] **FRESH-02**: Each deal displays expiry time when data becomes stale
-- [ ] **FRESH-03**: System indicates data source (which OTA/airline provided the information)
-- [ ] **FRESH-04**: Operator can manually trigger data collection for specific sources
-- [ ] **FRESH-05**: System handles collection failures gracefully, showing last known good data with freshness warnings
+- [ ] **LIVE-01**: User can search real tickets by departure city, destination city, departure date, and trip type using source-backed results rather than mock deals
+- [ ] **LIVE-02**: User can filter and sort real results by price, departure time window, airline, stop pattern, baggage inclusion, and freshness
+- [ ] **LIVE-03**: User can open a result and jump to the originating OTA or airline booking page using a valid deep link tied to the observed fare
 
-### Accurate Comparison & Decision
+### Freshness, Trust & Degradation
 
-- [ ] **COMP-05**: Comparison panel uses real-time collected prices for accurate sorting and filtering
-- [ ] **COMP-06**: System flags potentially stale data in comparison view with visual indicators
-- [ ] **COMP-07**: Value score calculation incorporates real-time data freshness as a factor
-- [ ] **COMP-08**: Users can verify data freshness when comparing multiple deals
+- [ ] **TRUST-01**: User can see when each fare was collected, when it should be considered stale, and which source supplied it
+- [ ] **TRUST-02**: User sees explicit stale, partial, or failed-source warnings when the platform is showing older cached data or incomplete source coverage
+- [ ] **TRUST-03**: When a source refresh fails, the platform keeps the last known usable snapshot available if it is still within an operator-defined grace window
 
-### Alerts
+### Decision Support on Real Data
 
-- [ ] **ALRT-01**: User can subscribe to price-drop or new-deal alerts for saved routes
-- [ ] **ALRT-02**: User can receive notifications by WeChat, email, or browser push
+- [ ] **RULE-05**: User can view a detail page that translates real source facts into plain-language tradeoffs for baggage, refund/change, stopovers, and booking caveats
+- [ ] **COMP-05**: User can compare up to three real fares side by side with freshness, source, baggage, stop pattern, and total-cost context
+- [ ] **COMP-06**: User can distinguish duplicate-looking fares from materially different offers because the compare and list views show source and fare-condition differences
 
-### Automation
+### Operator Controls
 
-- [ ] **AUTO-01**: Operator can ingest deal candidates from configured OTA or airline sources with semi-automated extraction
-- [ ] **AUTO-02**: System can flag suspected stale or duplicated deals for review
-
-### Accounts
-
-- [ ] **AUTH-01**: User can create an account and sync favorites across devices
-- [ ] **AUTH-02**: User can manage saved preferences across multiple departure cities
+- [ ] **OPS-03**: Operator can manually trigger a refresh for a route/date/source and see whether the run succeeded, partially succeeded, or failed
+- [ ] **OPS-04**: Operator can review recent connector runs, validation failures, and anomaly flags before deciding whether to publish or suppress results
+- [ ] **OPS-05**: Operator can disable a degraded source connector without taking down the rest of the public discovery experience
 
 ## Out of Scope
 
@@ -110,29 +104,26 @@
 | DATA-02 | Phase 7 | Pending |
 | DATA-03 | Phase 7 | Pending |
 | DATA-04 | Phase 7 | Pending |
-| FRESH-01 | Phase 8 | Pending |
-| FRESH-02 | Phase 8 | Pending |
-| FRESH-03 | Phase 8 | Pending |
-| FRESH-04 | Phase 8 | Pending |
-| FRESH-05 | Phase 7 | Pending |
-| COMP-05 | Phase 9 | Pending |
-| COMP-06 | Phase 9 | Pending |
-| COMP-07 | Phase 9 | Pending |
-| COMP-08 | Phase 9 | Pending |
-| ALRT-01 | Phase 10 | Pending |
-| ALRT-02 | Phase 10 | Pending |
-| AUTO-01 | Phase 11 | Pending |
-| AUTO-02 | Phase 11 | Pending |
-| AUTH-01 | Phase 11 | Pending |
-| AUTH-02 | Phase 11 | Pending |
+| LIVE-01 | Phase 8 | Pending |
+| LIVE-02 | Phase 8 | Pending |
+| LIVE-03 | Phase 8 | Pending |
+| TRUST-01 | Phase 9 | Pending |
+| TRUST-02 | Phase 9 | Pending |
+| TRUST-03 | Phase 9 | Pending |
+| RULE-05 | Phase 10 | Pending |
+| COMP-05 | Phase 10 | Pending |
+| COMP-06 | Phase 10 | Pending |
+| OPS-03 | Phase 11 | Pending |
+| OPS-04 | Phase 11 | Pending |
+| OPS-05 | Phase 11 | Pending |
 
 **Coverage:**
 - v1 requirements: 17 total
-- v2 requirements: 12 total
-- Mapped to phases: 29
+- v2 requirements: 15 total
+- Mapped to phases: 32
 - Unmapped: 0 ✓
 
 ---
 
 *Requirements defined: 2026-04-11*
-*Last updated: 2026-04-19 after defining milestone v2.0 requirements*
+*Last updated: 2026-04-30 after redefining milestone v2.0 requirements*
