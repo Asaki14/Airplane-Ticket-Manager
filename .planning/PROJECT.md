@@ -103,10 +103,10 @@
 
 ## Current Milestone: v2.0 真实世界机票接入
 
-**Goal:** 让用户可以基于至少一个真实数据源进行真实航班搜索、筛选、比较和跳转购买验证。
+**Goal:** 接入一个尽量免费的官方/合作真实数据源，让用户完成真实航班搜索、筛选、比较与跳转购买的闭环验证。
 
 **Target features:**
-- 建立真实机票数据接入层，优先支持官方或合作 API，并为必要场景预留受控浏览器辅助采集流程
+- 建立真实机票数据接入层，优先支持单一官方/合作 API（尽量免费），并为必要场景预留受控浏览器辅助采集流程
 - 提供真实搜索结果页，支持出发地、目的地、日期等关键条件的真实筛选与排序
 - 在列表、详情和对比视图中展示真实票价、行程、舱位、行李、来源、采集时间和失效状态
 - 为运营提供刷新、失败回退、异常监控和来源开关，避免单一数据源失效导致前台不可用
@@ -129,4 +129,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-30 after redefining milestone v2.0*
+*Last updated: 2026-04-30 after confirming milestone v2.0 scope*

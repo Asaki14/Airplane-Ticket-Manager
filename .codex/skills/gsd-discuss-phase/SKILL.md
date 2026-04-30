@@ -1,8 +1,8 @@
 ---
 name: "gsd-discuss-phase"
-description: "Gather phase context through adaptive questioning before planning. Use --auto to skip interactive questions (the agent picks recommended defaults). Use --chain for interactive discuss followed by automatic plan+execute. Use --power for bulk question generation into a file-based UI (answer at your own pace)."
+description: "Gather phase context through adaptive questioning before planning. Use --all to skip area selection and discuss all gray areas interactively. Use --auto to skip interactive questions (the agent picks recommended defaults). Use --chain for interactive discuss followed by automatic plan+execute. Use --power for bulk question generation into a file-based UI (answer at your own pace)."
 metadata:
-  short-description: "Gather phase context through adaptive questioning before planning. Use --auto to skip interactive questions (the agent picks recommended defaults). Use --chain for interactive d..."
+  short-description: "Gather phase context through adaptive questioning before planning. Use --all to skip area selection and discuss all gray areas interactively. Use --auto to skip interactive ques..."
 ---
 
 <codex_skill_adapter>
@@ -34,8 +34,16 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
-- `Task(model="...")` → omit (Codex uses per-role config, not inline model selection)
+- `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
+  GSD embeds the resolved per-agent model directly into each agent's `.toml`
+  at install time so `model_overrides` from `.planning/config.json` and
+  `~/.gsd/defaults.json` are honored automatically by Codex's agent router.
 - `fork_context: false` by default — GSD agents load their own context via `<files_to_read>` blocks
+
+Spawn restriction:
+- Codex restricts `spawn_agent` to cases where the user has explicitly
+  requested sub-agents. When automatic spawning is not permitted, do the
+  work inline in the current agent rather than attempting to force a spawn.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -60,10 +68,10 @@ Extract implementation decisions that downstream agents need — researcher and 
 </objective>
 
 <execution_context>
-@/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/workflows/discuss-phase.md
-@/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/workflows/discuss-phase-assumptions.md
-@/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/workflows/discuss-phase-power.md
-@/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/templates/context.md
+@/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/workflows/discuss-phase.md
+@/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/workflows/discuss-phase-assumptions.md
+@/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/workflows/discuss-phase-power.md
+@/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/templates/context.md
 </execution_context>
 
 <runtime_note>
@@ -79,12 +87,12 @@ Context files are resolved in-workflow using `init phase-op` and roadmap/state t
 <process>
 **Mode routing:**
 ```bash
-DISCUSS_MODE=$(node "/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs" config-get workflow.discuss_mode 2>/dev/null || echo "discuss")
+DISCUSS_MODE=$(gsd-sdk query config-get workflow.discuss_mode 2>/dev/null || echo "discuss")
 ```
 
-If `DISCUSS_MODE` is `"assumptions"`: Read and execute @/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/workflows/discuss-phase-assumptions.md end-to-end.
+If `DISCUSS_MODE` is `"assumptions"`: Read and execute @/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/workflows/discuss-phase-assumptions.md end-to-end.
 
-If `DISCUSS_MODE` is `"discuss"` (or unset, or any other value): Read and execute @/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/workflows/discuss-phase.md end-to-end.
+If `DISCUSS_MODE` is `"discuss"` (or unset, or any other value): Read and execute @/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/workflows/discuss-phase.md end-to-end.
 
 **MANDATORY:** The execution_context files listed above ARE the instructions. Read the workflow file BEFORE taking any action. The objective and success_criteria sections in this command file are summaries — the workflow file contains the complete step-by-step process with all required behaviors, config checks, and interaction patterns. Do not improvise from the summary.
 </process>

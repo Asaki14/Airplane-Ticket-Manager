@@ -34,8 +34,16 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
-- `Task(model="...")` → omit (Codex uses per-role config, not inline model selection)
+- `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
+  GSD embeds the resolved per-agent model directly into each agent's `.toml`
+  at install time so `model_overrides` from `.planning/config.json` and
+  `~/.gsd/defaults.json` are honored automatically by Codex's agent router.
 - `fork_context: false` by default — GSD agents load their own context via `<files_to_read>` blocks
+
+Spawn restriction:
+- Codex restricts `spawn_agent` to cases where the user has explicitly
+  requested sub-agents. When automatic spawning is not permitted, do the
+  work inline in the current agent rather than attempting to force a spawn.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -60,18 +68,14 @@ the normal phase sequence and accumulate context over time.
 
 2. **Find next backlog number:**
    ```bash
-   NEXT=$(node "/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs" phase next-decimal 999 --raw)
+   NEXT=$(gsd-sdk query phase.next-decimal 999 --raw)
    ```
    If no 999.x phases exist, start at 999.1.
 
-3. **Create the phase directory:**
-   ```bash
-   SLUG=$(node "/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs" generate-slug "{{GSD_ARGS}}" --raw)
-   mkdir -p ".planning/phases/${NEXT}-${SLUG}"
-   touch ".planning/phases/${NEXT}-${SLUG}/.gitkeep"
-   ```
-
-4. **Add to ROADMAP.md** under a `## Backlog` section. If the section doesn't exist, create it at the end:
+3. **Add to ROADMAP.md** under a `## Backlog` section. If the section doesn't exist, create it at the end.
+   Write the ROADMAP entry BEFORE creating the directory — this ensures directory existence is always
+   a reliable indicator that the phase is already registered, which prevents false duplicate detection
+   in any hook that checks for existing 999.x directories (#2280):
 
    ```markdown
    ## Backlog
@@ -83,12 +87,19 @@ the normal phase sequence and accumulate context over time.
    **Plans:** 0 plans
 
    Plans:
-   - [ ] TBD (promote with /gsd-review-backlog when ready)
+   - [ ] TBD (promote with $gsd-review-backlog when ready)
+   ```
+
+4. **Create the phase directory:**
+   ```bash
+   SLUG=$(gsd-sdk query generate-slug "{{GSD_ARGS}}" --raw)
+   mkdir -p ".planning/phases/${NEXT}-${SLUG}"
+   touch ".planning/phases/${NEXT}-${SLUG}/.gitkeep"
    ```
 
 5. **Commit:**
    ```bash
-   node "/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs" commit "docs: add backlog item ${NEXT} — ${ARGUMENTS}" --files .planning/ROADMAP.md ".planning/phases/${NEXT}-${SLUG}/.gitkeep"
+   gsd-sdk query commit "docs: add backlog item ${NEXT} — ${ARGUMENTS}" .planning/ROADMAP.md ".planning/phases/${NEXT}-${SLUG}/.gitkeep"
    ```
 
 6. **Report:**
@@ -99,15 +110,15 @@ the normal phase sequence and accumulate context over time.
    Directory: .planning/phases/{NEXT}-{slug}/
 
    This item lives in the backlog parking lot.
-   Use /gsd-discuss-phase {NEXT} to explore it further.
-   Use /gsd-review-backlog to promote items to active milestone.
+   Use $gsd-discuss-phase {NEXT} to explore it further.
+   Use $gsd-review-backlog to promote items to active milestone.
    ```
 
 </process>
 
 <notes>
 - 999.x numbering keeps backlog items out of the active phase sequence
-- Phase directories are created immediately, so /gsd-discuss-phase and /gsd-plan-phase work on them
+- Phase directories are created immediately, so $gsd-discuss-phase and $gsd-plan-phase work on them
 - No `Depends on:` field — backlog items are unsequenced by definition
 - Sparse numbering is fine (999.1, 999.3) — always uses next-decimal
 </notes>

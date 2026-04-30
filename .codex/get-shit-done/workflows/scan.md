@@ -39,7 +39,7 @@ Exit.
 ## Step 2: Check for existing documents
 
 ```bash
-INIT=$(node "/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs" init map-codebase 2>/dev/null || echo "{}")
+INIT=$(gsd-sdk query init.map-codebase 2>/dev/null || echo "{}")
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
@@ -88,7 +88,7 @@ Task(
 **Documents produced:**
 {list of documents written with line counts}
 
-Use `/gsd-map-codebase` for a comprehensive 4-area parallel scan.
+Use `$gsd-map-codebase` for a comprehensive 4-area parallel scan.
 ```
 
 </process>

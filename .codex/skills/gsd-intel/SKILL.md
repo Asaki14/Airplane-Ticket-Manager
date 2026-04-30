@@ -34,8 +34,16 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
-- `Task(model="...")` → omit (Codex uses per-role config, not inline model selection)
+- `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
+  GSD embeds the resolved per-agent model directly into each agent's `.toml`
+  at install time so `model_overrides` from `.planning/config.json` and
+  `~/.gsd/defaults.json` are honored automatically by Codex's agent router.
 - `fork_context: false` by default — GSD agents load their own context via `<files_to_read>` blocks
+
+Spawn restriction:
+- Codex restricts `spawn_agent` to cases where the user has explicitly
+  requested sub-agents. When automatic spawning is not permitted, do the
+  work inline in the current agent rather than attempting to force a spawn.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -76,9 +84,9 @@ GSD > INTEL
 
 Intel system is disabled. To activate:
 
-  node /Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs config-set intel.enabled true
+  gsd-sdk query config-set intel.enabled true
 
-Then run /gsd-intel refresh to build the initial index.
+Then run $gsd-intel refresh to build the initial index.
 ```
 
 ---
@@ -100,7 +108,7 @@ Parse `{{GSD_ARGS}}` to determine the operation mode:
 ```
 GSD > INTEL
 
-Usage: /gsd-intel <mode>
+Usage: $gsd-intel <mode>
 
 Modes:
   query <term>  Search intel files for a term
@@ -114,12 +122,12 @@ Modes:
 Run:
 
 ```bash
-node /Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs intel query <term>
+gsd-sdk query intel.query <term>
 ```
 
 Parse the JSON output and display results:
 - If the output contains `"disabled": true`, display the disabled message from Step 1 and **STOP**
-- If no matches found, display: `No intel matches for '<term>'. Try /gsd-intel refresh to build the index.`
+- If no matches found, display: `No intel matches for '<term>'. Try $gsd-intel refresh to build the index.`
 - Otherwise, display matching entries grouped by intel file
 
 **STOP** after displaying results. Do not spawn an agent.
@@ -129,7 +137,7 @@ Parse the JSON output and display results:
 Run:
 
 ```bash
-node /Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs intel status
+gsd-sdk query intel.status
 ```
 
 Parse the JSON output and display each intel file with:
@@ -144,7 +152,7 @@ Parse the JSON output and display each intel file with:
 Run:
 
 ```bash
-node /Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs intel diff
+gsd-sdk query intel.diff
 ```
 
 Parse the JSON output and display:
@@ -174,15 +182,15 @@ Task(
   prompt="You are the gsd-intel-updater agent. Your job is to analyze this codebase and write/update intelligence files in .planning/intel/.
 
 Project root: ${CWD}
-gsd-tools path: /Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs
+Prefer: gsd-sdk query <subcommand> (installed gsd-sdk on PATH). Legacy: node /Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/bin/gsd-tools.cjs
 
 Instructions:
 1. Analyze the codebase structure, dependencies, APIs, and architecture
 2. Write JSON intel files to .planning/intel/ (stack.json, api-map.json, dependency-graph.json, file-roles.json, arch-decisions.json)
 3. Each file must have a _meta object with updated_at timestamp
-4. Use gsd-tools intel extract-exports <file> to analyze source files
-5. Use gsd-tools intel patch-meta <file> to update timestamps after writing
-6. Use gsd-tools intel validate to check your output
+4. Use `gsd-sdk query intel.extract-exports <file>` to analyze source files
+5. Use `gsd-sdk query intel.patch-meta <file>` to update timestamps after writing
+6. Use `gsd-sdk query intel.validate` to check your output
 
 When complete, output: ## INTEL UPDATE COMPLETE
 If something fails, output: ## INTEL UPDATE FAILED with details."
@@ -198,7 +206,7 @@ Wait for the agent to complete.
 After the agent completes, run:
 
 ```bash
-node /Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs intel status
+gsd-sdk query intel.status
 ```
 
 Display a summary showing:

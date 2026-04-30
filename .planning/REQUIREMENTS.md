@@ -1,6 +1,6 @@
 # Requirements: 特价机票发现平台
 
-**Defined:** 2026-04-11
+**Defined:** 2026-04-30
 **Core Value:** 用户能在几分钟内判断一张“看起来便宜”的机票到底值不值得买，并能立即采取下一步。
 
 ## v1 Requirements
@@ -100,22 +100,22 @@
 | COMP-02 | Phase 5 | Complete |
 | COMP-03 | Phase 5 | Complete |
 | COMP-04 | Phase 5 | Complete |
-| DATA-01 | Phase 7 | Pending |
-| DATA-02 | Phase 7 | Pending |
-| DATA-03 | Phase 7 | Pending |
-| DATA-04 | Phase 7 | Pending |
-| LIVE-01 | Phase 8 | Pending |
-| LIVE-02 | Phase 8 | Pending |
-| LIVE-03 | Phase 8 | Pending |
-| TRUST-01 | Phase 9 | Pending |
-| TRUST-02 | Phase 9 | Pending |
-| TRUST-03 | Phase 9 | Pending |
-| RULE-05 | Phase 10 | Pending |
-| COMP-05 | Phase 10 | Pending |
-| COMP-06 | Phase 10 | Pending |
-| OPS-03 | Phase 11 | Pending |
-| OPS-04 | Phase 11 | Pending |
-| OPS-05 | Phase 11 | Pending |
+| DATA-01 | Phase 6 | Pending |
+| DATA-02 | Phase 6 | Pending |
+| DATA-03 | Phase 6 | Pending |
+| DATA-04 | Phase 6 | Pending |
+| LIVE-01 | Phase 7 | Pending |
+| LIVE-02 | Phase 7 | Pending |
+| LIVE-03 | Phase 7 | Pending |
+| TRUST-01 | Phase 8 | Pending |
+| TRUST-02 | Phase 8 | Pending |
+| TRUST-03 | Phase 8 | Pending |
+| RULE-05 | Phase 9 | Pending |
+| COMP-05 | Phase 9 | Pending |
+| COMP-06 | Phase 9 | Pending |
+| OPS-03 | Phase 10 | Pending |
+| OPS-04 | Phase 10 | Pending |
+| OPS-05 | Phase 10 | Pending |
 
 **Coverage:**
 - v1 requirements: 17 total
@@ -125,5 +125,5 @@
 
 ---
 
-*Requirements defined: 2026-04-11*
-*Last updated: 2026-04-30 after redefining milestone v2.0 requirements*
+*Requirements defined: 2026-04-30*
+*Last updated: 2026-04-30 after confirming milestone v2.0 scope*

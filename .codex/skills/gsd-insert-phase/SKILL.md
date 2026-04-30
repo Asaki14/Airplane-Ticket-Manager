@@ -34,8 +34,16 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
-- `Task(model="...")` → omit (Codex uses per-role config, not inline model selection)
+- `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
+  GSD embeds the resolved per-agent model directly into each agent's `.toml`
+  at install time so `model_overrides` from `.planning/config.json` and
+  `~/.gsd/defaults.json` are honored automatically by Codex's agent router.
 - `fork_context: false` by default — GSD agents load their own context via `<files_to_read>` blocks
+
+Spawn restriction:
+- Codex restricts `spawn_agent` to cases where the user has explicitly
+  requested sub-agents. When automatic spawning is not permitted, do the
+  work inline in the current agent rather than attempting to force a spawn.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -54,7 +62,7 @@ Purpose: Handle urgent work discovered during execution without renumbering enti
 </objective>
 
 <execution_context>
-@/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/workflows/insert-phase.md
+@/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/workflows/insert-phase.md
 </execution_context>
 
 <context>
@@ -64,6 +72,6 @@ Roadmap and state are resolved in-workflow via `init phase-op` and targeted tool
 </context>
 
 <process>
-Execute the insert-phase workflow from @/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/workflows/insert-phase.md end-to-end.
+Execute the insert-phase workflow from @/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/workflows/insert-phase.md end-to-end.
 Preserve all validation gates (argument parsing, phase verification, decimal calculation, roadmap updates).
 </process>

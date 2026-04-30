@@ -1,8 +1,8 @@
 ---
 name: "gsd-research-phase"
-description: "Research how to implement a phase (standalone - usually use /gsd-plan-phase instead)"
+description: "Research how to implement a phase (standalone - usually use $gsd-plan-phase instead)"
 metadata:
-  short-description: "Research how to implement a phase (standalone - usually use /gsd-plan-phase instead)"
+  short-description: "Research how to implement a phase (standalone - usually use $gsd-plan-phase instead)"
 ---
 
 <codex_skill_adapter>
@@ -34,8 +34,16 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
-- `Task(model="...")` → omit (Codex uses per-role config, not inline model selection)
+- `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
+  GSD embeds the resolved per-agent model directly into each agent's `.toml`
+  at install time so `model_overrides` from `.planning/config.json` and
+  `~/.gsd/defaults.json` are honored automatically by Codex's agent router.
 - `fork_context: false` by default — GSD agents load their own context via `<files_to_read>` blocks
+
+Spawn restriction:
+- Codex restricts `spawn_agent` to cases where the user has explicitly
+  requested sub-agents. When automatic spawning is not permitted, do the
+  work inline in the current agent rather than attempting to force a spawn.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -48,7 +56,7 @@ Result parsing:
 <objective>
 Research how to implement a phase. Spawns gsd-phase-researcher agent with phase context.
 
-**Note:** This is a standalone research command. For most workflows, use `/gsd-plan-phase` which integrates research automatically.
+**Note:** This is a standalone research command. For most workflows, use `$gsd-plan-phase` which integrates research automatically.
 
 **Use this command when:**
 - You want to research without planning yet
@@ -76,7 +84,7 @@ Normalize phase input in step 1 before any directory lookups.
 ## 0. Initialize Context
 
 ```bash
-INIT=$(node "/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs" init phase-op "{{GSD_ARGS}}")
+INIT=$(gsd-sdk query init.phase-op "{{GSD_ARGS}}")
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
 ```
 
@@ -84,13 +92,13 @@ Extract from init JSON: `phase_dir`, `phase_number`, `phase_name`, `phase_found`
 
 Resolve researcher model:
 ```bash
-RESEARCHER_MODEL=$(node "/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs" resolve-model gsd-phase-researcher --raw)
+RESEARCHER_MODEL=$(gsd-sdk query resolve-model gsd-phase-researcher --raw)
 ```
 
 ## 1. Validate Phase
 
 ```bash
-PHASE_INFO=$(node "/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs" roadmap get-phase "${phase_number}")
+PHASE_INFO=$(gsd-sdk query roadmap.get-phase "${phase_number}")
 ```
 
 **If `found` is false:** Error and exit. **If `found` is true:** Extract `phase_number`, `phase_name`, `goal` from JSON.
@@ -152,7 +160,7 @@ Mode: ecosystem
 </additional_context>
 
 <downstream_consumer>
-Your RESEARCH.md will be loaded by `/gsd-plan-phase` which uses specific sections:
+Your RESEARCH.md will be loaded by `$gsd-plan-phase` which uses specific sections:
 - `## Standard Stack` → Plans use these libraries
 - `## Architecture Patterns` → Task structure follows these
 - `## Don't Hand-Roll` → Tasks NEVER build custom solutions for listed problems

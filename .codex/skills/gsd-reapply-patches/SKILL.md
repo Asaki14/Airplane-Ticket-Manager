@@ -34,8 +34,16 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
-- `Task(model="...")` → omit (Codex uses per-role config, not inline model selection)
+- `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
+  GSD embeds the resolved per-agent model directly into each agent's `.toml`
+  at install time so `model_overrides` from `.planning/config.json` and
+  `~/.gsd/defaults.json` are honored automatically by Codex's agent router.
 - `fork_context: false` by default — GSD agents load their own context via `<files_to_read>` blocks
+
+Spawn restriction:
+- Codex restricts `spawn_agent` to cases where the user has explicitly
+  requested sub-agents. When automatic spawning is not permitted, do the
+  work inline in the current agent rather than attempting to force a spawn.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -69,12 +77,12 @@ PATCHES_DIR=""
 
 # Env overrides first — covers custom config directories used with --config-dir
 if [ -n "$KILO_CONFIG_DIR" ]; then
-  candidate="$(expand_home "$KILO_CONFIG_DIR")/gsd-local-patches"
+  candidate="$(expand_home "$KILO_CONFIG_DIR")$gsd-local-patches"
   if [ -d "$candidate" ]; then
     PATCHES_DIR="$candidate"
   fi
 elif [ -n "$KILO_CONFIG" ]; then
-  candidate="$(dirname "$(expand_home "$KILO_CONFIG")")/gsd-local-patches"
+  candidate="$(dirname "$(expand_home "$KILO_CONFIG")")$gsd-local-patches"
   if [ -d "$candidate" ]; then
     PATCHES_DIR="$candidate"
   fi
@@ -86,12 +94,12 @@ elif [ -n "$XDG_CONFIG_HOME" ]; then
 fi
 
 if [ -z "$PATCHES_DIR" ] && [ -n "$OPENCODE_CONFIG_DIR" ]; then
-  candidate="$(expand_home "$OPENCODE_CONFIG_DIR")/gsd-local-patches"
+  candidate="$(expand_home "$OPENCODE_CONFIG_DIR")$gsd-local-patches"
   if [ -d "$candidate" ]; then
     PATCHES_DIR="$candidate"
   fi
 elif [ -z "$PATCHES_DIR" ] && [ -n "$OPENCODE_CONFIG" ]; then
-  candidate="$(dirname "$(expand_home "$OPENCODE_CONFIG")")/gsd-local-patches"
+  candidate="$(dirname "$(expand_home "$OPENCODE_CONFIG")")$gsd-local-patches"
   if [ -d "$candidate" ]; then
     PATCHES_DIR="$candidate"
   fi
@@ -103,21 +111,21 @@ elif [ -z "$PATCHES_DIR" ] && [ -n "$XDG_CONFIG_HOME" ]; then
 fi
 
 if [ -z "$PATCHES_DIR" ] && [ -n "$GEMINI_CONFIG_DIR" ]; then
-  candidate="$(expand_home "$GEMINI_CONFIG_DIR")/gsd-local-patches"
+  candidate="$(expand_home "$GEMINI_CONFIG_DIR")$gsd-local-patches"
   if [ -d "$candidate" ]; then
     PATCHES_DIR="$candidate"
   fi
 fi
 
 if [ -z "$PATCHES_DIR" ] && [ -n "$CODEX_HOME" ]; then
-  candidate="$(expand_home "$CODEX_HOME")/gsd-local-patches"
+  candidate="$(expand_home "$CODEX_HOME")$gsd-local-patches"
   if [ -d "$candidate" ]; then
     PATCHES_DIR="$candidate"
   fi
 fi
 
 if [ -z "$PATCHES_DIR" ] && [ -n "$CLAUDE_CONFIG_DIR" ]; then
-  candidate="$(expand_home "$CLAUDE_CONFIG_DIR")/gsd-local-patches"
+  candidate="$(expand_home "$CLAUDE_CONFIG_DIR")$gsd-local-patches"
   if [ -d "$candidate" ]; then
     PATCHES_DIR="$candidate"
   fi
@@ -136,7 +144,7 @@ if [ -z "$PATCHES_DIR" ]; then
   elif [ -d "$HOME/.codex/gsd-local-patches" ]; then
     PATCHES_DIR="$HOME/.codex/gsd-local-patches"
   else
-    PATCHES_DIR="/Users/wangyao/Desktop/美团AI Coding/.codex/gsd-local-patches"
+    PATCHES_DIR="/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/gsd-local-patches"
   fi
 fi
 # Local install fallback — check all runtime directories
@@ -156,7 +164,7 @@ Read `backup-meta.json` from the patches directory.
 ```
 No local patches found. Nothing to reapply.
 
-Local patches are automatically saved when you run /gsd-update
+Local patches are automatically saved when you run $gsd-update
 after modifying any GSD workflow, command, or agent files.
 ```
 Exit.
@@ -170,7 +178,7 @@ The quality of the merge depends on having a **pristine baseline** — the origi
 
 Check for baseline sources in priority order:
 
-### Option A: Git history (most reliable)
+### Option A: Pristine hash from backup-meta.json + git history (most reliable)
 If the config directory is a git repository:
 ```bash
 CONFIG_DIR=$(dirname "$PATCHES_DIR")
@@ -178,14 +186,34 @@ if git -C "$CONFIG_DIR" rev-parse --git-dir >/dev/null 2>&1; then
   HAS_GIT=true
 fi
 ```
-When `HAS_GIT=true`, use `git log` to find the commit where GSD was originally installed (before user edits). For each file, the pristine baseline can be extracted with:
+When `HAS_GIT=true`, use the `pristine_hashes` recorded in `backup-meta.json` to locate the correct baseline commit. For each file, iterate commits that touched it and find the one whose blob SHA-256 matches the recorded pristine hash:
 ```bash
-git -C "$CONFIG_DIR" log --diff-filter=A --format="%H" -- "{file_path}"
+# Get the expected pristine SHA-256 from backup-meta.json
+PRISTINE_HASH=$(jq -r ".pristine_hashes[\"${file_path}\"] // empty" "$PATCHES_DIR/backup-meta.json")
+
+BASELINE_COMMIT=""
+if [ -n "$PRISTINE_HASH" ]; then
+  # Walk commits that touched this file, pick the one matching the pristine hash
+  while IFS= read -r commit_hash; do
+    blob_hash=$(git -C "$CONFIG_DIR" show "${commit_hash}:${file_path}" 2>/dev/null | sha256sum | cut -d' ' -f1)
+    if [ "$blob_hash" = "$PRISTINE_HASH" ]; then
+      BASELINE_COMMIT="$commit_hash"
+      break
+    fi
+  done < <(git -C "$CONFIG_DIR" log --format="%H" -- "${file_path}")
+fi
+
+# Fallback: if no pristine hash in backup-meta (older installer), use first-add commit
+if [ -z "$BASELINE_COMMIT" ]; then
+  BASELINE_COMMIT=$(git -C "$CONFIG_DIR" log --diff-filter=A --format="%H" -- "${file_path}" | tail -1)
+fi
 ```
-This gives the commit that first added the file (the install commit). Extract the pristine version:
+Extract the pristine version from the matched commit:
 ```bash
-git -C "$CONFIG_DIR" show {install_commit}:{file_path}
+git -C "$CONFIG_DIR" show "${BASELINE_COMMIT}:${file_path}"
 ```
+
+**Why this matters:** `git log --diff-filter=A` returns the commit that *first added* the file, which is the wrong baseline on repos that have been through multiple GSD update cycles. The `pristine_hashes` field in `backup-meta.json` records the SHA-256 of the file as it existed in the pre-update GSD release — matching against it finds the correct baseline regardless of how many updates have occurred.
 
 ### Option B: Pristine snapshot directory
 Check if a `gsd-pristine/` directory exists alongside `gsd-local-patches/`:
@@ -242,7 +270,7 @@ When no pristine baseline is available, use these **strengthened heuristics**:
 For each file:
 a. Read both versions completely
 b. Identify ALL differences, then classify each as:
-   - **Mechanical drift** — path substitutions (e.g. `/Users/xxx/.claude/` → `/Users/wangyao/Desktop/美团AI Coding/.codex/`), variable additions (`${GSD_WS}`, `${AGENT_SKILLS_*}`), error handling additions (`|| true`)
+   - **Mechanical drift** — path substitutions (e.g. `/Users/xxx/.claude/` → `/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/`), variable additions (`${GSD_WS}`, `${AGENT_SKILLS_*}`), error handling additions (`|| true`)
    - **User customization** — added steps/sections, removed sections, reordered content, changed behavior, added frontmatter fields, modified instructions
 
 c. **If ANY differences remain after filtering out mechanical drift → those are user customizations. Merge them.**
@@ -271,22 +299,61 @@ After writing each merged file, verify that user modifications survived the merg
      - Missing hunk near line {N}: "{first_line_preview}..." ({line_count} lines)
      - Backup available: {patches_dir}/{file_path}
    ```
-4. **Track verification status** — add to per-file report: `Merged (verified)` vs `Merged (⚠ {N} hunks may be missing)`
+4. **Produce a Hunk Verification Table** — one row per hunk per file. This table is **mandatory output** and must be produced before Step 5 can proceed. Format:
 
-5. **Report status per file:**
+   | file | hunk_id | signature_line | line_count | verified |
+   |------|---------|----------------|------------|----------|
+   | {file_path} | {N} | {first_significant_line} | {count} | yes |
+   | {file_path} | {N} | {first_significant_line} | {count} | no |
+
+   - `hunk_id` — sequential integer per file (1, 2, 3…)
+   - `signature_line` — first non-blank, non-comment line of the user-added section
+   - `line_count` — total lines in the hunk
+   - `verified` — `yes` if the signature_line is present in the merged output, `no` otherwise
+
+5. **Track verification status** — add to per-file report: `Merged (verified)` vs `Merged (⚠ {N} hunks may be missing)`
+
+6. **Report status per file:**
    - `Merged` — user modifications applied cleanly (show summary of what was preserved)
    - `Conflict` — user reviewed and chose resolution
    - `Incorporated` — user's modification was already adopted upstream (only valid when pristine baseline confirms this)
 
 **Never report `Skipped — no custom content`.** If a file is in the backup, it has custom content.
 
-## Step 5: Cleanup option
+## Step 5: Hunk Verification Gate
+
+Before proceeding to cleanup, evaluate the Hunk Verification Table produced in Step 4.
+
+**If the Hunk Verification Table is absent** (Step 4 did not produce it), STOP immediately and report to the user:
+```
+ERROR: Hunk Verification Table is missing. Post-merge verification was not completed.
+Rerun $gsd-reapply-patches to retry with full verification.
+```
+
+**If any row in the Hunk Verification Table shows `verified: no`**, STOP and report to the user:
+```
+ERROR: {N} hunk(s) failed verification — content may have been dropped during merge.
+
+Unverified hunks:
+  {file} hunk {hunk_id}: signature line "{signature_line}" not found in merged output
+
+The backup is preserved at: {patches_dir}/{file}
+Review the merged file manually, then either:
+  (a) Re-merge the missing content by hand, or
+  (b) Restore from backup: cp {patches_dir}/{file} {installed_path}
+```
+
+Do not proceed to cleanup until the user confirms they have resolved all unverified hunks.
+
+**Only when all rows show `verified: yes`** (or when all files had zero user-added hunks) may execution continue to Step 6.
+
+## Step 6: Cleanup option
 
 Ask user:
 - "Keep patch backups for reference?" → preserve `gsd-local-patches/`
 - "Clean up patch backups?" → remove `gsd-local-patches/` directory
 
-## Step 6: Report
+## Step 7: Report
 
 ```
 ## Patches Reapplied

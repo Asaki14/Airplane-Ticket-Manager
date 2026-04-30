@@ -34,8 +34,16 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
-- `Task(model="...")` → omit (Codex uses per-role config, not inline model selection)
+- `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
+  GSD embeds the resolved per-agent model directly into each agent's `.toml`
+  at install time so `model_overrides` from `.planning/config.json` and
+  `~/.gsd/defaults.json` are honored automatically by Codex's agent router.
 - `fork_context: false` by default — GSD agents load their own context via `<files_to_read>` blocks
+
+Spawn restriction:
+- Codex restricts `spawn_agent` to cases where the user has explicitly
+  requested sub-agents. When automatic spawning is not permitted, do the
+  work inline in the current agent rather than attempting to force a spawn.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -51,13 +59,15 @@ No arguments needed — reads STATE.md, ROADMAP.md, and phase directories to det
 
 Designed for rapid multi-project workflows where remembering which phase/step you're on is overhead.
 
-Supports `--force` flag to bypass safety gates (checkpoint, error state, verification failures).
+Supports `--force` flag to bypass safety gates (checkpoint, error state, verification failures, and prior-phase completeness scan).
+
+Before routing to the next step, scans all prior phases for incomplete work: plans that ran without producing summaries, verification failures without overrides, and phases where discussion happened but planning never ran. When incomplete work is found, shows a structured report and offers three options: defer the gaps to the backlog and continue, stop and resolve manually, or force advance without recording. When prior phases are clean, routes silently with no interruption.
 </objective>
 
 <execution_context>
-@/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/workflows/next.md
+@/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/workflows/next.md
 </execution_context>
 
 <process>
-Execute the next workflow from @/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/workflows/next.md end-to-end.
+Execute the next workflow from @/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/workflows/next.md end-to-end.
 </process>

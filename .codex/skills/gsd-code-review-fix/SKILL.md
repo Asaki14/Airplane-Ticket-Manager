@@ -34,8 +34,16 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
-- `Task(model="...")` → omit (Codex uses per-role config, not inline model selection)
+- `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
+  GSD embeds the resolved per-agent model directly into each agent's `.toml`
+  at install time so `model_overrides` from `.planning/config.json` and
+  `~/.gsd/defaults.json` are honored automatically by Codex's agent router.
 - `fork_context: false` by default — GSD agents load their own context via `<files_to_read>` blocks
+
+Spawn restriction:
+- Codex restricts `spawn_agent` to cases where the user has explicitly
+  requested sub-agents. When automatic spawning is not permitted, do the
+  work inline in the current agent rather than attempting to force a spawn.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -57,7 +65,7 @@ Output: {padded_phase}-REVIEW-FIX.md in phase directory + inline summary of fixe
 </objective>
 
 <execution_context>
-@/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/workflows/code-review-fix.md
+@/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/workflows/code-review-fix.md
 </execution_context>
 
 <context>
@@ -67,13 +75,13 @@ Optional flags parsed from {{GSD_ARGS}}:
 - `--all` — Include Info findings in fix scope. Default behavior fixes Critical + Warning only.
 - `--auto` — Enable fix + re-review iteration loop. After applying fixes, re-run code-review at same depth. If new issues found, iterate. Cap at 3 iterations total. Without this flag, single fix pass only.
 
-Context files (AGENTS.md, REVIEW.md, phase state) are resolved inside the workflow via `gsd-tools init phase-op` and delegated to agent via config blocks.
+Context files (AGENTS.md, REVIEW.md, phase state) are resolved inside the workflow via `gsd-sdk query init.phase-op` and delegated to agent via config blocks.
 </context>
 
 <process>
 This command is a thin dispatch layer. It parses arguments and delegates to the workflow.
 
-Execute the code-review-fix workflow from @/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/workflows/code-review-fix.md end-to-end.
+Execute the code-review-fix workflow from @/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/workflows/code-review-fix.md end-to-end.
 
 The workflow (not this command) enforces these gates:
 - Phase validation (before config gate)

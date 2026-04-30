@@ -1,121 +1,172 @@
-# Architecture Research for 真实可用 Milestone
+# Architecture Research
 
-## EXISTING_CONTEXT
-Existing architecture:
-- Next.js 13+ App Router architecture
-- API routes in `/app/api/` directory structure
-- React components in `/app/` directory
-- CSS modules for styling
-- Basic data models for deals
-- Public/admin dual-surface structure
-- Deal CMS with manual entry capability
+**Domain:** 真实机票数据接入（单一官方/合作数据源）
+**Researched:** 2026-04-30
+**Confidence:** MEDIUM
 
-Existing validated capabilities:
-- Basic public/admin dual-surface shell with lightweight `/admin` gate
-- Deal CMS data model, backend CRUD shell, and migration pipeline
-- Public feed with freshness-based filtering and fixed display order
-- Admin Basic gate contract restored
+## Standard Architecture
 
-Existing features:
-- Public-facing deal discovery interface skeleton
-- Admin interface for deal lifecycle management
-- Basic feed filtering and display
-- Authentication gate for admin access
+### System Overview
 
-## QUESTION
-How do [real ticket data collection features] integrate with existing architecture?
+```
++-------------------------------------------------------------------+
+|                         Presentation Layer                         |
+|  Web UI (search, filters, list, detail, compare)                   |
++---------------------------+----------------+-----------------------+
+                            |                |
++---------------------------+----------------+-----------------------+
+|                          API Layer                                 |
+|  Search API  |  Detail API  |  Compare API  |  Admin Ops API        |
++---------------------------+----------------+-----------------------+
+                            |                |
++---------------------------+----------------+-----------------------+
+|                         Integration Layer                          |
+|  Provider Adapter  |  Normalizer  |  Rule Translator  |  Cache     |
++---------------------------+----------------+-----------------------+
+                            |                |
++---------------------------+----------------+-----------------------+
+|                         Data & Ops Layer                            |
+|  Provider API  |  Redis Cache  |  Jobs/Queue  |  Logs/Monitoring     |
++---------------------------+----------------+-----------------------+
+```
 
-## CONSUMER
-Integration points, new components, data flow changes, suggested build order:
-- **New Components Needed**:
-  - Data collection service/workers
-  - Enhanced data models with scraped fields
-  - Data validation and normalization layer
-  - Caching layer
-  - Enhanced API routes for serving real data
-  - UI components for displaying new data fields (rule translations, freshness indicators)
+### Component Responsibilities
 
-- **Data Flow Changes**:
-  1. **Collection Phase**: Workers/scrapers fetch data from OTA sources
-  2. **Processing Phase**: Raw data parsed, validated, normalized, enriched
-  3. **Storage Phase**: Processed data saved to enhanced deal model
-  4. **Serving Phase**: API routes serve processed data to frontend
-  5. **Presentation Phase**: UI displays enriched data with translations and value explanations
+| Component | Responsibility | Typical Implementation |
+|-----------|----------------|------------------------|
+| Provider Adapter | 调用官方/合作 API，处理鉴权与请求拼装 | SDK client + rate limiter |
+| Normalizer | 将不同字段映射到统一结构 | Zod schema + transform |
+| Rule Translator | 票规/行李/退改翻译与风险提示 | Mapping rules + template |
+| Cache | 缓存搜索结果与参考数据 | Redis + TTL strategy |
+| Jobs/Queue | 刷新、回填、失败重试 | BullMQ + retries |
+| Ops Controls | 来源开关、刷新策略、失败回退 | Admin endpoints + config |
 
-- **Suggested Build Order**:
-  1. Enhance deal data model to include scraped fields
-  2. Build basic data collection worker for one OTA source
-  3. Create data validation and normalization layer
-  4. Enhance existing CMS to accept/scrape data
-  5. Update API routes to serve real data
-  6. Add UI components for new data fields
-  7. Implement caching layer
-  8. Add multi-source capabilities
-  9. Implement rule translation and value explanation features
+## Recommended Project Structure
 
-## QUALITY_GATE
-- Integration points identified: Data collection → Processing → Storage → API → Presentation
-- New vs modified explicit: 
-  - New: Data collection workers, validation layer, caching service
-  - Modified: Deal model, CMS interface, API routes, UI components
-- Build order considers deps: Model → Collection → Validation → Storage → API → UI
-- Integration considered: All new components designed to work with existing Next.js App Router structure
+```
+src/
+├── api/                  # HTTP endpoints
+│   ├── search.ts         # flight search endpoints
+│   ├── detail.ts         # flight detail endpoints
+│   └── admin/            # ops controls
+├── integrations/
+│   ├── providers/        # provider adapters
+│   │   └── amadeus/       # provider-specific impl
+│   ├── normalize/        # normalization layer
+│   └── rules/            # rule translation
+├── services/
+│   ├── search/            # search orchestration
+│   ├── compare/           # compare orchestration
+│   └── pricing/           # price & freshness logic
+├── cache/
+│   └── redis.ts
+├── jobs/
+│   └── refresh.ts
+├── observability/
+│   ├── logger.ts
+│   └── metrics.ts
+└── types/
+    └── flight.ts
+```
 
-## OUTPUT
-Architecture recommendations for real ticket data implementation:
+### Structure Rationale
 
-### Enhanced Data Model
-Extend existing deal model with:
-- `source`: OTA or airline name (string)
-- `sourceId`: Unique ID from source system (string)
-- `rawData`: Original scraped data for debugging (JSON)
-- `collectedAt`: Timestamp of data collection (ISO string)
-- `expiresAt`: When data becomes stale (ISO string)
-- `isActive`: Whether deal is currently bookable (boolean)
-- `priceBreakdown`: Detailed pricing (base, taxes, fees) (object)
-- `ruleSummary`: Structured rule data for translation (object)
-- `valueScore`: Calculated worth-buying score (number)
+- **integrations/providers:** isolate vendor-specific logic to allow future swap.
+- **normalize/rules:** keep mapping and translation separate from API controllers.
 
-### Data Collection Layer
-- **Worker Service**: Node.js script that runs on schedule (via Vercel Cron Jobs or similar)
-- **Source Adapters**: Separate modules for each OTA/airline (CtripAdapter, QunarAdapter, etc.)
-- **Rate Limiting**: Built into each adapter to respect source limits
-- **Error Handling**: Retry logic, circuit breaker pattern, fallback to cached data
-- **Logging**: Structured logging of collection success/failure rates
+## Architectural Patterns
 
-### Processing Pipeline
-- **Validation Stage**: Check for required fields, reasonable values, date validity
-- **Normalization Stage**: Convert different source formats to common schema
-- **Enrichment Stage**: 
-  - Calculate total price with all mandatory fees
-  - Extract and structure fare rules for translation
-  - Generate value explanation based on price vs convenience factors
-  - Determine freshness score
-- **Deduplication Stage**: Identify same flight from multiple sources
+### Pattern 1: Provider Adapter + Normalizer
 
-### Storage Enhancement
-- **Write Path**: Collection workers write to enhanced deal model via API or direct DB access
-- **Read Path**: Existing CMS updated to show scraped deals alongside manually entered ones
-- **Migration**: Script to backfill existing deals with source metadata
+**What:** 上游返回与前端展示解耦，统一中间层字段。
+**When to use:** 任何外部数据源接入。
+**Trade-offs:** 多一层 transform 成本，但换来稳定字段与可扩展性。
 
-### API Layer
-- **Enhanced Feed Endpoint**: `/app/api/deals/feed` returns real scraped data
-- **Deal Detail Endpoint**: `/app/api/deals/[id]` shows complete data including rules
-- **Collection Trigger Endpoint**: `/app/api/collect` (protected) to manually start collection
-- **Status Endpoint**: `/app/api/collect/status` shows last collection times, success rates
+**Example:**
+```typescript
+// provider -> normalized offer
+const offer = normalizeAmadeusOffer(rawOffer)
+```
 
-### Presentation Layer Updates
-- **Deal Card**: Add source badge, freshness indicator, price breakdown toggle
-- **Deal Detail Page**: 
-  - Prominent display of collected/expires timestamps
-  - Rule translation card section
-  - Value explanation section
-  - Price breakdown details
-  - Source link with disclosure
-- **Comparison View**: Enhanced to show rule differences and value scores
+### Pattern 2: Stale-While-Revalidate Cache
 
-### Infrastructure Considerations
-- **Caching**: Use node-cache or Redis to reduce load on sources and improve response time
-- **Background Jobs**: Vercel Cron Jobs for scheduled collection, or simple Node.js cron
-- **Monitoring**: Track collection success rate, data freshness, error rates
-- **Fallback**: If collection fails, system degrades gracefully to last known good data or manual CMS entries
+**What:** 先返回可接受的缓存结果，同时后台刷新。
+**When to use:** 搜索成本高、配额有限、用户可接受轻微延迟。
+**Trade-offs:** 需要明确 freshness 提示，避免用户误解。
+
+### Pattern 3: Circuit Breaker + Retry Budget
+
+**What:** 外部 API 异常时快速熔断，避免级联故障。
+**When to use:** 上游波动明显或配额紧张。
+**Trade-offs:** 可能降低实时性，但提高可用性。
+
+## Data Flow
+
+### Request Flow
+
+```
+User Action
+    -> Search API
+        -> Provider Adapter
+            -> External API
+        -> Normalizer
+        -> Cache
+    -> Response (with freshness metadata)
+```
+
+### Key Data Flows
+
+1. **Search flow:** search request -> provider -> normalized offers -> cache -> response.
+2. **Detail flow:** offer id -> provider detail -> normalized detail -> rule translation.
+3. **Ops refresh flow:** job -> provider -> cache refresh -> health status update.
+
+## Scaling Considerations
+
+| Scale | Architecture Adjustments |
+|-------|--------------------------|
+| 0-1k users | 单体服务 + Redis 缓存足够 |
+| 1k-100k users | 增加队列与限流，分离 search 与 ops job |
+| 100k+ users | 分离 provider adapters 与 search service，扩展缓存层 |
+
+### Scaling Priorities
+
+1. **First bottleneck:** 外部 API 配额/限流 -> 加强缓存与队列刷新。
+2. **Second bottleneck:** 结果归一化与翻译耗时 -> 预处理与并发控制。
+
+## Anti-Patterns
+
+### Anti-Pattern 1: UI 直接调用外部 API
+
+**What people do:** 前端直接请求第三方 API。
+**Why it's wrong:** 暴露密钥，无法做限流与缓存。
+**Do this instead:** 后端代理 + 缓存 + 监控。
+
+### Anti-Pattern 2: 不标注时效
+
+**What people do:** 展示价格但不标明采集时间。
+**Why it's wrong:** 价格波动导致信任崩塌。
+**Do this instead:** 列表/详情统一标注 freshness。
+
+## Integration Points
+
+### External Services
+
+| Service | Integration Pattern | Notes |
+|---------|---------------------|-------|
+| Amadeus API | Server-to-server OAuth2 + SDK | 需缓存 token，注意配额 |
+
+### Internal Boundaries
+
+| Boundary | Communication | Notes |
+|----------|---------------|-------|
+| API -> integrations | direct service call | 保持接口稳定，便于换源 |
+| services -> cache | direct | TTL 与 stale 策略统一 |
+
+## Sources
+
+- https://developers.amadeus.com/self-service/apis-docs/guides/authorization-262
+- https://amadeus4dev.github.io/amadeus-node/
+
+---
+*Architecture research for: 真实机票数据接入（单一官方/合作数据源）*
+*Researched: 2026-04-30*

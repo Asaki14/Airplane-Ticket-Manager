@@ -1,126 +1,145 @@
-# Pitfalls Research for 真实可用 Milestone
+# Pitfalls Research
 
-## EXISTING_CONTEXT
-Focus on common mistakes when ADDING real ticket data collection features to existing system:
-- Existing system has basic CMS with manual deal entry
-- Existing architecture is Next.js 13+ App Router
-- Existing UI components are basic skeletons
-- Existing data model is simple deal structure
+**Domain:** 真实机票数据接入（单一官方/合作数据源）
+**Researched:** 2026-04-30
+**Confidence:** MEDIUM
 
-## QUESTION
-Common mistakes when adding [real ticket data collection from OTAs or airlines] to [domain]?
+## Critical Pitfalls
 
-## CONSUMER
-Warning signs, prevention strategy, which phase should address it:
-- **Warning signs**:
-  - Collecting data without checking robots.txt or terms of service
-  - Making requests too frequently and getting blocked by OTAs
-  - Displaying prices that don't match what users see on source sites
-  - Complex scraping code that breaks when sites change slightly
-  - No fallback when data collection fails
-  - Pushing scraping complexity to frontend (bad for performance and blocking)
-  - Not handling different date/time formats from various sources
-  - Assuming all OTAs have the same data structure
-  - Forgetting to handle pagination in search results
-  - Not validating scraped data before storing/displaying
+### Pitfall 1: 字段不一致导致筛选/对比失效
 
-- **Prevention strategy**:
-  - Start with manual verification: scrape one deal and verify all fields manually
-  - Implement respectful rate limiting from day one (1 request/second max per source)
-  - Build abstraction layer so UI doesn't know if data is scraped or manual
-  - Create comprehensive validation for all scraped fields
-  - Implement caching to reduce requests and improve speed
-  - Design modular source adapters that are easy to update when sites change
-  - Add monitoring and alerts for collection failure rates
-  - Build UI that gracefully handles missing or partial data
-  - Always show data freshness prominently so users know limitations
-  - Implement retry logic with exponential backoff for failed requests
+**What goes wrong:** 列表、详情、对比字段不一致，导致筛选无效或对比错误。
 
-- **Which phase should address it**:
-  - Rate respect and error handling: Collection phase
-  - Data validation: Processing phase  
-  - Fallback mechanisms: Storage/API phase
-  - UI graceful degradation: Presentation phase
-  - Monitoring: Ongoing operational concern
+**Why it happens:** 直接透传上游字段，未做统一字段定义与校验。
 
-## QUALITY_GATE
-- Pitfalls specific to adding these features: Focus on data collection pitfalls, not general web dev
-- Integration pitfalls covered: How new collection system integrates with existing CMS
-- Prevention actionable: Each pitfall has concrete prevention steps
+**How to avoid:** 建立统一字段模型与严格的 normalize + schema 校验。
 
-## OUTPUT
-Key pitfalls to avoid when implementing real ticket data collection:
+**Warning signs:** 前端出现“字段缺失”占位、对比栏无法对齐。
 
-### Legal and Ethical Pitfalls
-- **Pitfall**: Ignoring robots.txt, terms of service, or copyright restrictions
-- **Prevention**: 
-  - Check robots.txt before scraping any site
-  - Review terms of service for data usage restrictions
-  - Consider using official APIs where available and permitted
-  - Implement rate limiting that respects source site policies
-  - Consider attribution requirements if displaying source-branded data
+**Phase to address:** Phase 1（数据接入与字段标准化）
 
-### Technical Pitfalls
-- **Pitfall**: Fragile scraping that breaks with minor site changes
-- **Prevention**:
-  - Use multiple selectors for each element (fallback options)
-  - Implement data validation that catches missing/wrong data
-  - Log when expected elements aren't found to detect site changes early
-  - Consider using unofficial APIs if available (often more stable than HTML scraping)
-  - Create integration tests that verify scraping still works
+---
 
-- **Pitfall**: Getting IP blocked or rate limited by sources
-- **Prevention**:
-  - Implement strict rate limiting (start with 1 request every 2-3 seconds per source)
-  - Use rotating user agents if making many requests
-  - Consider using proxy services for IP rotation if scaling significantly
-  - Implement exponential backoff when getting HTTP 429 or similar errors
-  - Cache aggressively to minimize repeat requests for same data
+### Pitfall 2: 缓存与时效提示脱节
 
-- **Pitfall**: Inconsistent data quality from different sources
-- **Prevention**:
-  - Create field-by-field validation rules (price must be positive, dates must be valid, etc.)
-  - Normalize data to common format immediately after scraping
-  - Flag deals with missing critical information for manual review
-  - Implement data quality scoring and display confidence levels
-  - Allow manual overrides in CMS for problematic automated data
+**What goes wrong:** 用户看到价格，但点入后变价/无票，引发不信任。
 
-### Operational Pitfalls
-- **Pitfall**: No visibility into collection system health
-- **Prevention**:
-  - Build monitoring dashboard showing:
-    - Success/failure rates per source
-    - Average response times
-    - Data freshness metrics
-    - Number of deals collected per run
-  - Set up alerts for:
-    - Collection failure rate > 5%
-    - No successful collections in last hour
-    - Significant drop in deals collected vs historical average
-  - Log all collection attempts with sufficient detail for debugging
+**Why it happens:** 缓存策略与 UI 提示不一致，未明确展示采集时间与风险。
 
-- **Pitfall**: Poor user experience when data is stale or missing
-- **Prevention**:
-  - Always display "Last updated" timestamp prominently
-  - Show "Expires" time for time-sensitive deals
-  - Implement graceful degradation: show last good data with freshness warning
-  - Provide clear messaging when no deals are available for search criteria
-  - Allow users to manually trigger refresh for specific searches
-  - Consider showing placeholder/deals with clear "data unavailable" messaging
+**How to avoid:** 统一 freshness 字段，列表/详情/对比都展示更新时间。
 
-### Implementation Pitfalls
-- **Pitfall**: Over-engineering the initial solution
-- **Prevention**:
-  - Start with scraping just 1-2 major Chinese OTAs (Ctrip, Qunar)
-  - Focus on domestic flights first before international
-  - Implement basic functionality before adding complex features like price prediction
-  - Use existing Next.js API routes rather than adding separate backend services
-  - Reuse existing CMS infrastructure where possible rather than building parallel systems
+**Warning signs:** 用户反馈“价格不准”“点进去不一样”。
 
-- **Pitfall**: Performance degradation from adding data collection
-- **Prevention**:
-  - Run collection workers separately from web server processes
-  - Use caching layer (Redis or in-memory) to serve data quickly
-  - Implement pagination/limits on API responses
-  - Consider static regeneration for popular routes if data doesn't change seconds-by-second
-  - Monitor bundle size and server response times after adding new dependencies
+**Phase to address:** Phase 2（真实展示与信任提示）
+
+---
+
+### Pitfall 3: 外部 API 波动导致前台不可用
+
+**What goes wrong:** 数据源失败时页面直接报错或空白。
+
+**Why it happens:** 缺少熔断、回退与错误提示。
+
+**How to avoid:** 熔断 + 缓存回退 + 失败状态设计。
+
+**Warning signs:** 失败率上升时用户端无清晰提示。
+
+**Phase to address:** Phase 2（可靠性与回退机制）
+
+---
+
+### Pitfall 4: 票规翻译不完整导致误导
+
+**What goes wrong:** 规则翻译遗漏关键限制，用户决策被误导。
+
+**Why it happens:** 票规字段缺失或翻译规则不完整。
+
+**How to avoid:** 明确“可用字段清单 + 不确定性提示”。
+
+**Warning signs:** 规则翻译字段频繁为空或不一致。
+
+**Phase to address:** Phase 3（规则翻译与解释能力）
+
+---
+
+### Pitfall 5: 运营开关缺失导致全站受影响
+
+**What goes wrong:** 单一来源故障时无法快速降级。
+
+**Why it happens:** 未提供数据源开关与运维控制。
+
+**How to avoid:** 提供来源开关、刷新策略与健康监控。
+
+**Warning signs:** 需要紧急改代码才能恢复服务。
+
+**Phase to address:** Phase 2（运营保障）
+
+## Technical Debt Patterns
+
+| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
+|----------|-------------------|----------------|-----------------|
+| 直接透传上游字段 | 开发快 | 前端字段混乱、难以对比 | MVP 原型阶段，必须在 Phase 1 结束前替换 |
+| 无缓存直连 | 实时性高 | 配额耗尽、失败率高 | 仅用于内部调试 |
+| 忽略失败状态 | 视觉更“干净” | 用户信任崩塌 | 从不接受 |
+
+## Integration Gotchas
+
+| Integration | Common Mistake | Correct Approach |
+|-------------|----------------|------------------|
+| OAuth2 | 频繁换 token | 缓存 token，统一刷新 |
+| Provider API | 未限流 | 限流 + 重试预算 |
+| Redis cache | 无 TTL | TTL + stale 策略 |
+
+## Performance Traps
+
+| Trap | Symptoms | Prevention | When It Breaks |
+|------|----------|------------|----------------|
+| 无缓存/无队列 | 搜索慢、失败率高 | 缓存 + 异步刷新 | 1k+ 日活 |
+| 过多同步翻译 | API 响应变慢 | 预处理或懒加载 | 5k+ 日活 |
+
+## Security Mistakes
+
+| Mistake | Risk | Prevention |
+|---------|------|------------|
+| 前端暴露 API Key | 被滥用、封禁 | 后端代理 + 环境变量 |
+| 未脱敏日志 | 泄露用户查询信息 | 日志脱敏 + 采样 |
+
+## UX Pitfalls
+
+| Pitfall | User Impact | Better Approach |
+|---------|-------------|-----------------|
+| 不解释变价原因 | 用户不信任 | 明确提示时效与变动风险 |
+| 规则翻译过长 | 用户看不懂 | 摘要 + 展开原文 |
+
+## "Looks Done But Isn't" Checklist
+
+- [ ] **真实搜索：** 没有展示采集时间 — 验证所有列表项包含 freshness。
+- [ ] **筛选：** 仅前端过滤 — 验证与来源筛选能力一致。
+- [ ] **详情页：** 退改/行李字段为空 — 验证规则翻译覆盖率。
+- [ ] **跳转购买：** 无来源标识 — 验证跳转前声明来源责任。
+
+## Recovery Strategies
+
+| Pitfall | Recovery Cost | Recovery Steps |
+|---------|---------------|----------------|
+| 上游失效 | MEDIUM | 启用缓存回退 + 显示“数据延迟”提示 |
+| 票规缺失 | LOW | 标记“未知”并提示风险 |
+| 配额耗尽 | HIGH | 限流降级 + 延迟刷新 |
+
+## Pitfall-to-Phase Mapping
+
+| Pitfall | Prevention Phase | Verification |
+|---------|------------------|--------------|
+| 字段不一致 | Phase 1 | 样本搜索结果字段一致性检查 |
+| 缓存与时效脱节 | Phase 2 | UI 全面展示 freshness |
+| 上游波动 | Phase 2 | 失败时仍可返回缓存 |
+| 规则翻译不完整 | Phase 3 | 覆盖率统计与风险提示 |
+
+## Sources
+
+- https://developers.amadeus.com/self-service/apis-docs/guides/authorization-262
+- https://amadeus4dev.github.io/amadeus-node/
+
+---
+*Pitfalls research for: 真实机票数据接入（单一官方/合作数据源）*
+*Researched: 2026-04-30*

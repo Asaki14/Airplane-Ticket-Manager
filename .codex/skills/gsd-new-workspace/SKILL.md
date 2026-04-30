@@ -34,8 +34,16 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
-- `Task(model="...")` → omit (Codex uses per-role config, not inline model selection)
+- `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
+  GSD embeds the resolved per-agent model directly into each agent's `.toml`
+  at install time so `model_overrides` from `.planning/config.json` and
+  `~/.gsd/defaults.json` are honored automatically by Codex's agent router.
 - `fork_context: false` by default — GSD agents load their own context via `<files_to_read>` blocks
+
+Spawn restriction:
+- Codex restricts `spawn_agent` to cases where the user has explicitly
+  requested sub-agents. When automatic spawning is not permitted, do the
+  work inline in the current agent rather than attempting to force a spawn.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -49,7 +57,7 @@ Result parsing:
 **Flags:**
 - `--name` (required) — Workspace name
 - `--repos` — Comma-separated repo paths or names. If omitted, interactive selection from child git repos in cwd
-- `--path` — Target directory. Defaults to `~/gsd-workspaces/<name>`
+- `--path` — Target directory. Defaults to `~$gsd-workspaces/<name>`
 - `--strategy` — `worktree` (default, lightweight) or `clone` (fully independent)
 - `--branch` — Branch to checkout. Defaults to `workspace/<name>`
 - `--auto` — Skip interactive questions, use defaults
@@ -67,15 +75,15 @@ Create a physical workspace directory containing copies of specified git repos (
 - `<path>/.planning/` — independent planning directory
 - `<path>/<repo>/` — git worktree or clone for each specified repo
 
-**After this command:** `cd` into the workspace and run `/gsd-new-project` to initialize GSD.
+**After this command:** `cd` into the workspace and run `$gsd-new-project` to initialize GSD.
 </objective>
 
 <execution_context>
-@/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/workflows/new-workspace.md
-@/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/references/ui-brand.md
+@/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/workflows/new-workspace.md
+@/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/references/ui-brand.md
 </execution_context>
 
 <process>
-Execute the new-workspace workflow from @/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/workflows/new-workspace.md end-to-end.
+Execute the new-workspace workflow from @/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/workflows/new-workspace.md end-to-end.
 Preserve all workflow gates (validation, approvals, commits, routing).
 </process>

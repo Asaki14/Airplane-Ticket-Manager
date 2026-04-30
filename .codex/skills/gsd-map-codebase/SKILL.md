@@ -34,8 +34,16 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
-- `Task(model="...")` → omit (Codex uses per-role config, not inline model selection)
+- `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
+  GSD embeds the resolved per-agent model directly into each agent's `.toml`
+  at install time so `model_overrides` from `.planning/config.json` and
+  `~/.gsd/defaults.json` are honored automatically by Codex's agent router.
 - `fork_context: false` by default — GSD agents load their own context via `<files_to_read>` blocks
+
+Spawn restriction:
+- Codex restricts `spawn_agent` to cases where the user has explicitly
+  requested sub-agents. When automatic spawning is not permitted, do the
+  work inline in the current agent rather than attempting to force a spawn.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -54,7 +62,7 @@ Output: .planning/codebase/ folder with 7 structured documents about the codebas
 </objective>
 
 <execution_context>
-@/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/workflows/map-codebase.md
+@/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/workflows/map-codebase.md
 </execution_context>
 
 <context>
@@ -64,8 +72,8 @@ Focus area: {{GSD_ARGS}} (optional - if provided, tells agents to focus on speci
 Check for .planning/STATE.md - loads context if project already initialized
 
 **This command can run:**
-- Before /gsd-new-project (brownfield codebases) - creates codebase map first
-- After /gsd-new-project (greenfield codebases) - updates codebase map as code evolves
+- Before $gsd-new-project (brownfield codebases) - creates codebase map first
+- After $gsd-new-project (greenfield codebases) - updates codebase map as code evolves
 - Anytime to refresh codebase understanding
 </context>
 
@@ -93,7 +101,7 @@ Check for .planning/STATE.md - loads context if project already initialized
 4. Wait for agents to complete, collect confirmations (NOT document contents)
 5. Verify all 7 documents exist with line counts
 6. Commit codebase map
-7. Offer next steps (typically: /gsd-new-project or /gsd-plan-phase)
+7. Offer next steps (typically: $gsd-new-project or $gsd-plan-phase)
 </process>
 
 <success_criteria>

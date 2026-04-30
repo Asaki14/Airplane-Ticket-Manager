@@ -3,7 +3,7 @@ Verify threat mitigations for a completed phase. Confirm PLAN.md threat register
 </purpose>
 
 <required_reading>
-@/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/references/ui-brand.md
+@/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/references/ui-brand.md
 </required_reading>
 
 <available_agent_types>
@@ -16,19 +16,19 @@ Valid GSD subagent types (use exact names — do not fall back to 'general-purpo
 ## 0. Initialize
 
 ```bash
-INIT=$(node "/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs" init phase-op "${PHASE_ARG}")
+INIT=$(gsd-sdk query init.phase-op "${PHASE_ARG}")
 if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
-AGENT_SKILLS_AUDITOR=$(node "/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs" agent-skills gsd-security-auditor 2>/dev/null)
+AGENT_SKILLS_AUDITOR=$(gsd-sdk query agent-skills gsd-security-auditor)
 ```
 
 Parse: `phase_dir`, `phase_number`, `phase_name`, `phase_slug`, `padded_phase`.
 
 ```bash
-AUDITOR_MODEL=$(node "/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs" resolve-model gsd-security-auditor --raw)
-SECURITY_CFG=$(node "/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs" config-get workflow.security_enforcement --raw 2>/dev/null || echo "true")
+AUDITOR_MODEL=$(gsd-sdk query resolve-model gsd-security-auditor --raw)
+SECURITY_CFG=$(gsd-sdk query config-get workflow.security_enforcement --raw 2>/dev/null || echo "true")
 ```
 
-If `SECURITY_CFG` is `false`: exit with "Security enforcement disabled. Enable via /gsd-settings."
+If `SECURITY_CFG` is `false`: exit with "Security enforcement disabled. Enable via $gsd-settings."
 
 Display banner: `GSD > SECURE PHASE {N}: {name}`
 
@@ -42,7 +42,7 @@ SUMMARY_FILES=$(ls "${PHASE_DIR}"/*-SUMMARY.md 2>/dev/null)
 
 - **State A** (`SECURITY_FILE` non-empty): Audit existing
 - **State B** (`SECURITY_FILE` empty, `PLAN_FILES` and `SUMMARY_FILES` non-empty): Run from artifacts
-- **State C** (`SUMMARY_FILES` empty): Exit — "Phase {N} not executed. Run /gsd-execute-phase {N} first."
+- **State C** (`SUMMARY_FILES` empty): Exit — "Phase {N} not executed. Run $gsd-execute-phase {N} first."
 
 ## 2. Discovery
 
@@ -73,6 +73,8 @@ If `threats_open: 0` → skip to Step 6 directly.
 
 ## 4. Present Threat Plan
 
+
+**Text mode (`workflow.text_mode: true` in config or `--text` flag):** Set `TEXT_MODE=true` if `--text` is present in `{{GSD_ARGS}}` OR `text_mode` from init JSON is `true`. When TEXT_MODE is active, replace every `AskUserQuestion` call with a plain-text numbered list and ask the user to type their choice number. This is required for non-the agent runtimes (OpenAI Codex, Gemini CLI, etc.) where `AskUserQuestion` is not available.
 Call AskUserQuestion with threat table and options:
 1. "Verify all open threats" → Step 5
 2. "Accept all open — document in accepted risks log" → add to SECURITY.md accepted risks, set all CLOSED, Step 6
@@ -82,7 +84,7 @@ Call AskUserQuestion with threat table and options:
 
 ```
 Task(
-  prompt="Read /Users/wangyao/Desktop/美团AI Coding/.codex/agents/gsd-security-auditor.md for instructions.\n\n" +
+  prompt="Read /Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/agents/gsd-security-auditor.md for instructions.\n\n" +
     "<files_to_read>{PLAN, SUMMARY, impl files, SECURITY.md}</files_to_read>" +
     "<threat_register>{threat register}</threat_register>" +
     "<config>asvs_level: {SECURITY_ASVS}, block_on: {SECURITY_BLOCK_ON}</config>" +
@@ -102,7 +104,7 @@ Handle return:
 ## 6. Write/Update SECURITY.md
 
 **State B (create):**
-1. Read template from `/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/templates/SECURITY.md`
+1. Read template from `/Users/wangyao/Desktop/Vibe-coding/Airplane-Ticket-Manager/.codex/get-shit-done/templates/SECURITY.md`
 2. Fill: frontmatter, threat register, accepted risks, audit trail
 3. Write to `${PHASE_DIR}/${PADDED_PHASE}-SECURITY.md`
 
@@ -123,7 +125,7 @@ Handle return:
 ```
 GSD > PHASE {N} SECURITY BLOCKED
 {K} threats open — phase advancement blocked until threats_open: 0
-▶ Fix mitigations then re-run: /gsd-secure-phase {N}
+▶ Fix mitigations then re-run: $gsd-secure-phase {N}
 ▶ Or document accepted risks in SECURITY.md and re-run.
 ```
 
@@ -132,7 +134,7 @@ Do NOT emit next-phase routing. Stop here.
 ## 7. Commit
 
 ```bash
-node "/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.cjs" commit "docs(phase-${PHASE}): add/update security threat verification"
+gsd-sdk query commit "docs(phase-${PHASE}): add/update security threat verification"
 ```
 
 ## 8. Results + Routing
@@ -141,8 +143,8 @@ node "/Users/wangyao/Desktop/美团AI Coding/.codex/get-shit-done/bin/gsd-tools.
 ```
 GSD > PHASE {N} THREAT-SECURE
 threats_open: 0 — all threats have dispositions.
-▶ /gsd-validate-phase {N}    validate test coverage
-▶ /gsd-verify-work {N}       run UAT
+▶ $gsd-validate-phase {N}    validate test coverage
+▶ $gsd-verify-work {N}       run UAT
 ```
 
 Display `/clear` reminder.
