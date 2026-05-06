@@ -1,266 +1,364 @@
-import { cookies } from 'next/headers'
-import { DealCard } from '@/components/deals/DealCard'
+import { SearchBar } from '@/components/search/SearchBar'
+import { SearchResultCard } from '@/components/search/SearchResultCard'
+import { SearchFilters } from '@/components/search/SearchFilters'
+import { EmptySearchState } from '@/components/search/EmptySearchState'
 import { CompareAndSavePanel } from '@/components/deals/CompareAndSavePanel'
-import { DiscoveryPreferences } from '@/components/deals/DiscoveryPreferences'
-import { HeroDealCarousel } from '@/components/home/HeroDealCarousel'
-import { filterPublicFeedDeals, mapPublicFeedResponse, sortPublicFeedDeals, type FeedFilters, type FeedSort } from '@/lib/deals/feed-query'
-import { mockDeals } from '@/lib/deals/mock-data'
+import type { SearchFilterState } from '@/components/search/SearchFilters'
+import type { EmptySearchStateVariant } from '@/components/search/EmptySearchState'
+import type { SearchFareResultItem, SearchFareResponse } from '@/lib/fares/search'
+import { popularRoutes } from '@/lib/fares/city-map'
 
 type SearchParams = Record<string, string | string[] | undefined>
+
+type SearchSort = 'priceAsc' | 'departureTime' | 'freshness'
 
 function firstValue(value: string | string[] | undefined) {
   if (!value) return undefined
   return Array.isArray(value) ? value[0] : value
 }
 
-function parseSearchFilters(searchParams: SearchParams, preferredDepartureCity?: string): FeedFilters {
+function toDateLabel(value: string | null) {
+  if (!value) return '-'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return '-'
+  return date.toLocaleString('zh-CN', { hour12: false })
+}
+
+/** Parse search-specific URL params (search criteria + filters + sort). */
+function parseSearchParams(searchParams: SearchParams): {
+  from?: string
+  to?: string
+  date?: string
+  returnDate?: string
+  tripType: 'one-way' | 'round-trip'
+  sort: SearchSort
+  filters: SearchFilterState
+} {
+  const from = firstValue(searchParams.from)
+  const to = firstValue(searchParams.to)
+  const date = firstValue(searchParams.date)
+  const returnDate = firstValue(searchParams.returnDate)
+  const tripTypeRaw = firstValue(searchParams.tripType)
+  const tripType = tripTypeRaw === 'round-trip' ? 'round-trip' : 'one-way'
+
+  const sortRaw = firstValue(searchParams.sort)
+  let sort: SearchSort = 'priceAsc'
+  if (sortRaw === 'priceAsc' || sortRaw === 'departureTime' || sortRaw === 'freshness') {
+    sort = sortRaw
+  }
+
   const maxPriceRaw = firstValue(searchParams.maxPrice)
   const maxPrice = maxPriceRaw ? Number(maxPriceRaw) : undefined
+
+  // Airlines can be multi-valued via repeated ?airline= param
+  const airlinesRaw = searchParams.airline
+  const airlines = airlinesRaw
+    ? Array.isArray(airlinesRaw)
+      ? airlinesRaw
+      : [airlinesRaw]
+    : undefined
+
+  const stopsRaw = firstValue(searchParams.stops)
+  let stops: SearchFilterState['stops']
+  if (stopsRaw === 'direct' || stopsRaw === 'oneOrLess' || stopsRaw === 'any') {
+    stops = stopsRaw
+  }
+
+  const depTimeRaw = firstValue(searchParams.departureTimeWindow)
+  let departureTimeWindow: SearchFilterState['departureTimeWindow']
+  if (depTimeRaw === 'morning' || depTimeRaw === 'afternoon' || depTimeRaw === 'evening' || depTimeRaw === 'any') {
+    departureTimeWindow = depTimeRaw
+  }
+
+  const cabinRaw = firstValue(searchParams.cabin)
+  let cabin: SearchFilterState['cabin']
+  if (cabinRaw === 'ECONOMY' || cabinRaw === 'PREMIUM_ECONOMY' || cabinRaw === 'BUSINESS' || cabinRaw === 'FIRST' || cabinRaw === 'any') {
+    cabin = cabinRaw
+  }
+
+  const baggageRaw = firstValue(searchParams.baggageIncluded)
+  const baggageIncluded = baggageRaw === 'true' ? true : undefined
+
   return {
-    departureCity: firstValue(searchParams.departureCity) ?? preferredDepartureCity,
-    region: firstValue(searchParams.region),
-    travelWindowLabel: firstValue(searchParams.travelWindowLabel),
-    airline: firstValue(searchParams.airline),
-    maxPrice: Number.isFinite(maxPrice) ? maxPrice : undefined,
-    q: firstValue(searchParams.q)
+    from,
+    to,
+    date,
+    returnDate,
+    tripType,
+    sort,
+    filters: {
+      maxPrice: Number.isFinite(maxPrice) ? maxPrice : undefined,
+      airlines,
+      stops,
+      departureTimeWindow,
+      cabin,
+      baggageIncluded,
+    },
   }
 }
 
-function parseSort(searchParams: SearchParams): FeedSort {
-  const sort = firstValue(searchParams.sort)
-  if (sort === 'priceAsc' || sort === 'valueDesc' || sort === 'publishedAtDesc') {
-    return sort
-  }
-  return 'publishedAtDesc'
-}
-
-function buildOptions(values: (string | undefined)[]) {
-  return [...new Set(values.filter(Boolean) as string[])].sort((a, b) => a.localeCompare(b, 'zh-CN'))
-}
-
-async function loadDeals(filters: FeedFilters, sort: FeedSort) {
-  const params = new URLSearchParams()
-  if (filters.departureCity) params.set('departureCity', filters.departureCity)
-  if (filters.region) params.set('region', filters.region)
-  if (filters.travelWindowLabel) params.set('travelWindowLabel', filters.travelWindowLabel)
-  if (filters.airline) params.set('airline', filters.airline)
-  if (typeof filters.maxPrice === 'number') params.set('maxPrice', String(filters.maxPrice))
-  if (filters.q) params.set('q', filters.q)
-  params.set('sort', sort)
+/** Fetch search results from the search API. */
+async function loadSearchResults(
+  from: string,
+  to: string,
+  date: string,
+  returnDate?: string,
+): Promise<SearchFareResponse | null> {
+  const params = new URLSearchParams({ from, to, date })
+  if (returnDate) params.set('returnDate', returnDate)
 
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
-  const response = await fetch(`${base}/api/deals/feed?${params.toString()}`, { cache: 'no-store' }).catch(() => null)
+  const response = await fetch(`${base}/api/fares/search?${params.toString()}`, {
+    cache: 'no-store',
+  }).catch(() => null)
 
-  if (!response || !response.ok) {
-    const fallback = filterPublicFeedDeals(mockDeals, new Date(), filters)
-    return mapPublicFeedResponse(sortPublicFeedDeals(fallback, sort))
+  if (!response || !response.ok) return null
+  return response.json() as Promise<SearchFareResponse>
+}
+
+/** Client-side filtering on top of API results. */
+function applyClientFilters(
+  results: SearchFareResultItem[],
+  filters: SearchFilterState,
+): SearchFareResultItem[] {
+  return results.filter((fare) => {
+    if (filters.maxPrice !== undefined && fare.priceAmount > filters.maxPrice) return false
+    if (filters.airlines && filters.airlines.length > 0 && !filters.airlines.includes(fare.airline))
+      return false
+    if (filters.stops === 'direct' && fare.stopCount !== undefined && fare.stopCount > 0)
+      return false
+    if (filters.stops === 'oneOrLess' && fare.stopCount !== undefined && fare.stopCount > 1)
+      return false
+    if (filters.departureTimeWindow && filters.departureTimeWindow !== 'any') {
+      const hour = new Date(fare.departureTime).getHours()
+      if (filters.departureTimeWindow === 'morning' && (hour < 6 || hour >= 12))
+        return false
+      if (filters.departureTimeWindow === 'afternoon' && (hour < 12 || hour >= 18))
+        return false
+      if (filters.departureTimeWindow === 'evening' && (hour < 18 || hour >= 24))
+        return false
+    }
+    if (filters.cabin && filters.cabin !== 'any' && fare.cabin !== filters.cabin) return false
+    if (filters.baggageIncluded === true && !fare.baggageFacts) return false
+    return true
+  })
+}
+
+/** Client-side sort. */
+function applyClientSort(results: SearchFareResultItem[], sort: SearchSort): SearchFareResultItem[] {
+  const sorted = [...results]
+  switch (sort) {
+    case 'priceAsc':
+      sorted.sort((a, b) => a.priceAmount - b.priceAmount)
+      break
+    case 'departureTime':
+      sorted.sort((a, b) => new Date(a.departureTime).getTime() - new Date(b.departureTime).getTime())
+      break
+    case 'freshness':
+      sorted.sort((a, b) => new Date(b.collectedAt).getTime() - new Date(a.collectedAt).getTime())
+      break
   }
+  return sorted
+}
 
-  const payload = (await response.json()) as { data?: ReturnType<typeof mapPublicFeedResponse> }
-  return payload.data ?? []
+/** Determine which empty-state variant to show based on response metadata. */
+function determineEmptyVariant(searchResponse: SearchFareResponse | null): EmptySearchStateVariant {
+  if (!searchResponse) return 'no-inventory'
+  if (searchResponse.message?.includes('未覆盖') || searchResponse.message?.includes('未知')) {
+    return 'no-coverage'
+  }
+  if (searchResponse.source === 'cache' && searchResponse.results.length === 0) return 'no-coverage'
+  return 'no-inventory'
+}
+
+/**
+ * Adapt SearchFareResultItem[] to the DealLite shape expected by CompareAndSavePanel.
+ * Value score defaults to 0 for real fares (no ML scoring in v2.0).
+ */
+function adaptResultsToDealLite(fares: SearchFareResultItem[]) {
+  return fares.map((fare) => ({
+    id: fare.id,
+    title: `${fare.airline} ${fare.departureAirport} → ${fare.arrivalAirport}`,
+    departureCity: fare.departureAirport,
+    destination: fare.arrivalAirport,
+    headlinePrice: fare.priceAmount,
+    referenceTotalPrice: fare.priceAmount,
+    valueScore: 0,
+    baggageInfo: fare.baggageFacts,
+    refundChangeSummary: fare.refundChangePolicy ?? '',
+    stopSummary:
+      fare.stopCount !== undefined
+        ? fare.stopCount === 0
+          ? '直达'
+          : `经停 ${fare.stopCount} 次`
+        : '',
+    travelWindowLabel: fare.departureTime
+      ? new Date(fare.departureTime).toLocaleDateString('zh-CN')
+      : '',
+  }))
 }
 
 export default async function HomePage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const params = await searchParams
-  const cookieStore = await cookies()
-  const preferredDepartureCity = cookieStore.get('preferredDepartureCity')?.value
 
-  const filters = parseSearchFilters(params, preferredDepartureCity)
-  const sort = parseSort(params)
+  const { from, to, date, returnDate, tripType, sort, filters } =
+    parseSearchParams(params)
 
-  const deals = await loadDeals(filters, sort)
+  // Determine if a real search should be triggered
+  const hasSearchParams = !!(from && to && date)
 
-  const departureOptions = buildOptions(mockDeals.map((deal) => deal.departureCity))
-  const regionOptions = buildOptions(mockDeals.map((deal) => deal.region))
-  const travelWindowOptions = buildOptions(mockDeals.map((deal) => deal.travelWindowLabel))
-  const airlineOptions = buildOptions(mockDeals.map((deal) => deal.airline))
+  // Fetch and process search results
+  let searchResponse: SearchFareResponse | null = null
+  let results: SearchFareResultItem[] = []
+  let airlineOptions: string[] = []
+
+  if (hasSearchParams) {
+    searchResponse = await loadSearchResults(from!, to!, date!, returnDate)
+
+    if (searchResponse && searchResponse.results.length > 0) {
+      const filtered = applyClientFilters(searchResponse.results, filters)
+      results = applyClientSort(filtered, sort)
+      airlineOptions = [...new Set(searchResponse.results.map((f) => f.airline))].sort()
+    }
+  }
+
+  // Pre-compute popular routes for default state
+  const routes = popularRoutes()
+  const todayStr = new Date().toISOString().slice(0, 10)
 
   return (
-    <main className="public-shell bg-slate-50 min-h-screen pb-20" style={{ backgroundColor: 'var(--color-bg-base, #f4f4f4)' }}>
+    <main
+      className="public-shell bg-slate-50 min-h-screen pb-20"
+      style={{ backgroundColor: 'var(--color-bg-base, #f4f4f4)' }}
+    >
+      {/* Hero section — preserved brand per D-01 and Specifics */}
       <section className="public-hero" aria-label="travel-hero">
         <div className="hero-main">
           <p className="eyebrow">航易-找航班，更容易</p>
           <h1 className="hero-title">更快判断这张机票值不值得买</h1>
-
-          <section className="hero-mvp-guide" aria-label="MVP 审核使用说明">
-            <h2>审核使用说明（MVP）</h2>
-            <p>
-              本站用于集中展示特价机票，帮助快速判断是否值得买。每条特价都会提供价格、发布时间、失效时间、基础票规与购买建议。
-            </p>
-            <p>
-              使用方式：先浏览轮播和下方列表获取候选，再点击「查看详情与票规」进入决策页，最后结合时效与规则决定是否下单。
-            </p>
-            <p>
-              <strong>对比功能重点：</strong>可将候选加入「对比/收藏」，并排比较价格、时效、规则和购买建议后再决策。
-            </p>
-            <p>
-              <strong>运营后台入口在页面底部导航</strong>，请通过底部「运营后台」进入；口令：<code>admin / 123456</code>。
-            </p>
-            <ul>
-              <li>未来计划增加价格变动提醒，减少错过低价的风险。</li>
-              <li>持续优化票规结构化展示，提升规则理解效率。</li>
-              <li>补充历史趋势与更多对比维度，支持更稳健的购买判断。</li>
-            </ul>
-          </section>
         </div>
       </section>
 
-      <HeroDealCarousel deals={deals.slice(0, 5)} />
-
-      <section className="home-modes max-w-5xl mx-auto px-4 py-12" aria-label="双模式浏览">
-        <header className="section-header">
-          <p className="section-header__kicker">探索方式</p>
-          <h2 className="section-header__title">先定约束，再找灵感</h2>
-          <p className="section-header__description">借鉴旅行平台的信息分层逻辑，先让你判断策略，再进入具体筛选与场景入口。</p>
-        </header>
-        <article className="mode-card mode-card--goal">
-          <div className="mode-card__top">
-            <span className="mode-card__badge">效率优先</span>
-            <span className="mode-card__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M12 3a9 9 0 1 0 9 9" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-                <path d="M12 7v5l3 2" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </span>
-          </div>
-          <p className="mode-card__description">先定约束：出发地、预算、时间窗口，快速收敛候选。</p>
-          <p className="mode-card__trend">近 7 天中，低价票在工作日 10:00-15:00 更常出现。</p>
-          <a className="mode-card__action" href="#default-departure-panel">
-            先按预算找低价
-            <span className="mode-card__action-arrow" aria-hidden="true">&gt;</span>
-          </a>
-        </article>
-        <article className="mode-card mode-card--inspire">
-          <div className="mode-card__top">
-            <span className="mode-card__badge">灵感发现</span>
-            <span className="mode-card__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M12 4 14.7 9.3 20.5 10.1 16.2 14.2 17.2 20 12 17.3 6.8 20 7.8 14.2 3.5 10.1 9.3 9.3z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
-              </svg>
-            </span>
-          </div>
-          <p className="mode-card__description">从周末捡漏、节假日前后、海岛和周边国际入口启发下一次出行。</p>
-          <p className="mode-card__trend">近 7 天中，海岛与周边国际目的地的折扣波动更明显。</p>
-          <a className="mode-card__action" href="/?travelWindowLabel=周末捡漏#deal-feed">
-            看看本周末灵感
-            <span className="mode-card__action-arrow" aria-hidden="true">&gt;</span>
-          </a>
-        </article>
+      {/* Search bar section */}
+      <section className="search-hero" aria-label="航班搜索">
+        <SearchBar
+          defaultFrom={from}
+          defaultTo={to}
+          defaultDate={date}
+          defaultReturnDate={returnDate}
+          defaultTripType={tripType}
+          defaultSort={sort}
+          currentFilters={filters}
+        />
       </section>
 
-      <section className="quick-scenes max-w-5xl mx-auto px-4 py-12" aria-label="高频探索入口">
-        <header className="section-header section-header--compact">
-          <p className="section-header__kicker">高频场景</p>
-          <h2 className="section-header__title">一键进入常见捡漏路径</h2>
-        </header>
-        <div className="quick-scenes__chips">
-          <a href="/?travelWindowLabel=周末捡漏">周末捡漏</a>
-          <a href="/?travelWindowLabel=节假日前后">节假日前后</a>
-          <a href="/?region=海岛/东南亚">海岛</a>
-          <a href="/?region=周边国际">周边国际</a>
-        </div>
-      </section>
-
-      <DiscoveryPreferences id="default-departure-panel" departureOptions={departureOptions} currentDepartureCity={filters.departureCity} />
-
-      <form className="feed-filters max-w-5xl mx-auto px-4 py-12 bg-white shadow-sm border border-slate-200 rounded-xl mb-12" aria-label="发现筛选" action="/" method="get">
-        <header className="section-header section-header--compact feed-filters__intro">
-          <p className="section-header__kicker">筛选面板</p>
-          <h2 className="section-header__title">逐步缩小候选范围</h2>
-          <p className="section-header__description">先选硬约束，再按关键词补充，最后按发布时间或价格排序。</p>
-        </header>
-        <label>
-          出发地
-          <select name="departureCity" defaultValue={filters.departureCity ?? ''}>
-            <option value="">全部</option>
-            {departureOptions.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          目的地区域
-          <select name="region" defaultValue={filters.region ?? ''}>
-            <option value="">全部</option>
-            {regionOptions.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          日期窗口
-          <select name="travelWindowLabel" defaultValue={filters.travelWindowLabel ?? ''}>
-            <option value="">全部</option>
-            {travelWindowOptions.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          航司
-          <select name="airline" defaultValue={filters.airline ?? ''}>
-            <option value="">全部</option>
-            {airlineOptions.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          价格上限
-          <input type="number" name="maxPrice" min={0} defaultValue={filters.maxPrice ?? ''} placeholder="例如 2000" />
-        </label>
-        <label>
-          关键词
-          <input type="search" name="q" defaultValue={filters.q ?? ''} placeholder="城市 / 航司 / 目的地" />
-        </label>
-        <label>
-          排序
-          <select name="sort" defaultValue={sort}>
-            <option value="publishedAtDesc">发布时间</option>
-            <option value="priceAsc">价格</option>
-            <option value="valueDesc">价值分</option>
-          </select>
-        </label>
-        <button type="submit">应用筛选</button>
-      </form>
-
-      <section id="deal-feed" className="public-deal-feed max-w-5xl mx-auto px-4 py-8 grid gap-8" aria-label="公开 deal 列表">
-        <header className="section-header section-header--compact public-deal-feed__intro">
-          <p className="section-header__kicker">可用候选</p>
-          <h2 className="section-header__title">当前筛选下的特价列表</h2>
-        </header>
-        {deals.length === 0 ? <p className="feed-empty">当前筛选下暂无可用特价，试试放宽条件或切换出发地/日期窗口。</p> : null}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {deals.map((deal) => (
-            <DealCard
-              key={deal.id}
-              id={deal.id}
-              title={deal.title}
-              departureCity={deal.departureCity}
-              destination={deal.destination}
-              travelWindowLabel={deal.travelWindowLabel}
-              airline={deal.airline}
-              headlinePrice={deal.headlinePrice}
-              referenceTotalPrice={deal.referenceTotalPrice}
-              valueScore={deal.valueScore}
-              publishedAt={deal.publishedAt}
-              updatedAt={deal.updatedAt}
-              expiresAt={deal.expiresAt}
+      {/* Results layout or default landing state */}
+      {hasSearchParams ? (
+        <section className="search-results-layout" aria-label="搜索结果">
+          {/* Filters sidebar */}
+          <aside className="search-filters-sidebar">
+            <SearchFilters
+              currentFilters={filters}
+              airlineOptions={airlineOptions}
+              currentFrom={from}
+              currentTo={to}
+              currentDate={date}
+              currentReturnDate={returnDate}
+              currentTripType={tripType}
+              currentSort={sort}
             />
-          ))}
-        </div>
-      </section>
+          </aside>
 
-      <CompareAndSavePanel deals={deals} />
+          {/* Results main area */}
+          <div className="search-results-main">
+            {/* Sort controls per D-15 */}
+            <form className="search-sort-controls" action="/" method="get">
+              <label>排序：</label>
+              <select name="sort" defaultValue={sort}>
+                <option value="priceAsc">价格（低到高）</option>
+                <option value="departureTime">出发时间</option>
+                <option value="freshness">采集时间/新鲜度</option>
+              </select>
+              {/* Hidden inputs to preserve all other params */}
+              {from && <input type="hidden" name="from" value={from} />}
+              {to && <input type="hidden" name="to" value={to} />}
+              {date && <input type="hidden" name="date" value={date} />}
+              {returnDate && <input type="hidden" name="returnDate" value={returnDate} />}
+              <input type="hidden" name="tripType" value={tripType} />
+              {filters.maxPrice !== undefined && (
+                <input type="hidden" name="maxPrice" value={filters.maxPrice} />
+              )}
+              {filters.stops && filters.stops !== 'any' && (
+                <input type="hidden" name="stops" value={filters.stops} />
+              )}
+              {filters.departureTimeWindow && filters.departureTimeWindow !== 'any' && (
+                <input type="hidden" name="departureTimeWindow" value={filters.departureTimeWindow} />
+              )}
+              {filters.cabin && filters.cabin !== 'any' && (
+                <input type="hidden" name="cabin" value={filters.cabin} />
+              )}
+              {filters.baggageIncluded === true && (
+                <input type="hidden" name="baggageIncluded" value="true" />
+              )}
+              <button type="submit">应用</button>
+            </form>
 
+            {/* Results grid */}
+            {results.length > 0 ? (
+              <div className="search-results-grid">
+                {results.map((fare) => (
+                  <SearchResultCard key={fare.id} {...fare} />
+                ))}
+              </div>
+            ) : (
+              <EmptySearchState
+                variant={determineEmptyVariant(searchResponse)}
+                originCity={from}
+                destinationCity={to}
+                date={date}
+              />
+            )}
+
+            {/* Freshness indicator per success criteria 3 */}
+            {searchResponse && (
+              <p className="search-freshness-note">
+                数据来源: {searchResponse.source === 'live' ? '实时查询' : '缓存'}
+                {' | '}
+                采集时间: {toDateLabel(searchResponse.collectedAt)}
+                {searchResponse.message && ` | ${searchResponse.message}`}
+              </p>
+            )}
+          </div>
+        </section>
+      ) : (
+        /* Default landing state — engaging prompt + popular destinations */
+        <section className="search-default-state" aria-label="搜索引导">
+          <p>输入出发地和目的地，搜索真实航班票价</p>
+          {routes.length > 0 && (
+            <div className="search-default-state__popular">
+              {routes.map((route) => {
+                const [cityFrom, cityTo] = route.label.split(' → ')
+                return (
+                  <a
+                    key={`${route.from}-${route.to}`}
+                    className="search-default-state__chip"
+                    href={`/?from=${encodeURIComponent(cityFrom)}&to=${encodeURIComponent(cityTo)}&date=${todayStr}`}
+                  >
+                    {route.label}
+                  </a>
+                )
+              })}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* Compare & Save Panel with adapted search results */}
+      {results.length > 0 && (
+        <CompareAndSavePanel deals={adaptResultsToDealLite(results)} />
+      )}
+
+      {/* Nav footer — preserved */}
       <nav className="public-nav" aria-label="主导航">
         <a href="/">公开首页</a>
         <a href="/admin">运营后台</a>
