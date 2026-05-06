@@ -1,8 +1,8 @@
 ---
 name: "gsd-plan-review-convergence"
-description: "Cross-AI plan convergence loop — replan with review feedback until no HIGH concerns remain (max 3 cycles)"
+description: "Cross-AI plan convergence loop — replan with review feedback until no HIGH concerns remain."
 metadata:
-  short-description: "Cross-AI plan convergence loop — replan with review feedback until no HIGH concerns remain (max 3 cycles)"
+  short-description: "Cross-AI plan convergence loop — replan with review feedback until no HIGH concerns remain."
 ---
 
 <codex_skill_adapter>

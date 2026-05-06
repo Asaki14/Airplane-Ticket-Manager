@@ -1,8 +1,8 @@
 ---
 name: "gsd-ultraplan-phase"
-description: "[BETA] Offload plan phase to Claude Code's ultraplan cloud — drafts remotely while terminal stays free, review in browser with inline comments, import back via $gsd-import. Claude Code only."
+description: "[BETA] Offload plan phase to Claude Code's ultraplan cloud; review in browser and import back."
 metadata:
-  short-description: "[BETA] Offload plan phase to Claude Code's ultraplan cloud — drafts remotely while terminal stays free, review in browser with inline comments, import back via $gsd-import. Clau..."
+  short-description: "[BETA] Offload plan phase to Claude Code's ultraplan cloud; review in browser and import back."
 ---
 
 <codex_skill_adapter>

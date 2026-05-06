@@ -81,6 +81,7 @@ Phase number: {{GSD_ARGS}} (optional — auto-detects next unplanned phase if om
 - `--prd <file>` — Use a PRD/acceptance criteria file instead of discuss-phase. Parses requirements into CONTEXT.md automatically. Skips discuss-phase entirely.
 - `--reviews` — Replan incorporating cross-AI review feedback from REVIEWS.md (produced by `$gsd-review`)
 - `--text` — Use plain-text numbered lists instead of TUI menus (required for `/rc` remote sessions)
+- `--mvp` — Vertical MVP mode. Planner organizes tasks as feature slices (UI→API→DB) instead of horizontal layers. On Phase 1 of a new project, also emits `SKELETON.md` (Walking Skeleton). Can be persisted on a phase via `**Mode:** mvp` in ROADMAP.md.
 
 Normalize phase input in step 2 before any directory lookups.
 </context>

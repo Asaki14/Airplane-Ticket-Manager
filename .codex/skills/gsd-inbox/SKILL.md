@@ -1,8 +1,8 @@
 ---
 name: "gsd-inbox"
-description: "Triage and review all open GitHub issues and PRs against project templates and contribution guidelines"
+description: "Triage and review open GitHub issues and PRs against project templates and contribution guidelines."
 metadata:
-  short-description: "Triage and review all open GitHub issues and PRs against project templates and contribution guidelines"
+  short-description: "Triage and review open GitHub issues and PRs against project templates and contribution guidelines."
 ---
 
 <codex_skill_adapter>

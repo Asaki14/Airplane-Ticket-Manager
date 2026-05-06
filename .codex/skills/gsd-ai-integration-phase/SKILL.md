@@ -1,8 +1,8 @@
 ---
 name: "gsd-ai-integration-phase"
-description: "Generate AI design contract (AI-SPEC.md) for phases that involve building AI systems — framework selection, implementation guidance from official docs, and evaluation strategy"
+description: "Generate an AI-SPEC.md design contract for phases that involve building AI systems."
 metadata:
-  short-description: "Generate AI design contract (AI-SPEC.md) for phases that involve building AI systems — framework selection, implementation guidance from official docs, and evaluation strategy"
+  short-description: "Generate an AI-SPEC.md design contract for phases that involve building AI systems."
 ---
 
 <codex_skill_adapter>

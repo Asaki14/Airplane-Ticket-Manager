@@ -1,8 +1,8 @@
 ---
 name: "gsd-forensics"
-description: "Post-mortem investigation for failed GSD workflows — analyzes git history, artifacts, and state to diagnose what went wrong"
+description: "Post-mortem investigation for failed GSD workflows — diagnoses what went wrong."
 metadata:
-  short-description: "Post-mortem investigation for failed GSD workflows — analyzes git history, artifacts, and state to diagnose what went wrong"
+  short-description: "Post-mortem investigation for failed GSD workflows — diagnoses what went wrong."
 ---
 
 <codex_skill_adapter>
