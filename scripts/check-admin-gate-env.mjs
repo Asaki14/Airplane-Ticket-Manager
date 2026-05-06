@@ -14,3 +14,11 @@ if (missing.length > 0) {
 }
 
 console.log('[admin-gate] Environment variables are configured')
+
+// Amadeus API credentials (optional — mock mode works without them)
+if (process.env.AMADEUS_CLIENT_ID && !process.env.AMADEUS_CLIENT_SECRET) {
+  console.error('  WARNING: AMADEUS_CLIENT_ID set but AMADEUS_CLIENT_SECRET missing')
+}
+if (!process.env.AMADEUS_CLIENT_ID) {
+  console.log('  INFO: AMADEUS_CLIENT_ID not set — will use mock adapter')
+}

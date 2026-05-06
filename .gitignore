@@ -3,6 +3,4 @@ node_modules/
 .playwright-mcp/
 payload.db
 .DS_Store
-
-# Next.js build output
-.next/
+tsconfig.tsbuildinfo
