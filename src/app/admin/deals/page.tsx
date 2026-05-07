@@ -1,6 +1,8 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AdminDealsPage() {
   const payload = await getPayload({ config: configPromise })
   const result = await payload.find({

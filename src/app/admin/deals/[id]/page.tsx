@@ -1,6 +1,8 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
+export const dynamic = 'force-dynamic'
+
 type DealEditPageProps = {
   params: Promise<{ id: string }>
 }
