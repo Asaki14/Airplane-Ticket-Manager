@@ -11,7 +11,7 @@
 import type { CanonicalFare } from '@/types/canonical-fare'
 import { resolveCityToIata } from '@/lib/fares/city-map'
 import { runCollectionPipeline } from '@/integrations/pipeline'
-import { createAmadeusOrMockAdapter } from '@/integrations/providers/amadeus'
+import { createIgnavOrMockAdapter } from '@/integrations/providers/ignav'
 
 /** Input parameters for a fare search (Chinese city names). */
 export type SearchFareParams = {
@@ -44,6 +44,8 @@ export type SearchFareResultItem = {
   fareClass?: string
   returnDepartureTime?: string
   returnArrivalTime?: string
+  /** ignav_id for fetching booking links (live results only) */
+  ignavId?: string
 }
 
 /** Standard API response envelope. */
@@ -135,7 +137,7 @@ export async function searchFares(
     }
 
     // Step 4: Cache empty or stale — trigger live pipeline
-    const adapter = createAmadeusOrMockAdapter()
+    const adapter = createIgnavOrMockAdapter()
 
     if (!adapter.isConfigured()) {
       return {
@@ -143,7 +145,7 @@ export async function searchFares(
         total: 0,
         source: 'live',
         collectedAt: now,
-        message: '数据源未配置，暂时无法查询实时票价'
+        message: 'IGNAV API 未配置，暂时无法查询实时票价'
       }
     }
 
@@ -215,11 +217,27 @@ export async function searchFares(
 /**
  * Map a CanonicalFare to the public API result shape.
  */
+function normalizeFlightNumbers(
+  fn: string[] | Array<{ flightNumber: string }> | undefined
+): string[] {
+  if (!fn) return []
+  if (typeof fn[0] === 'string') return fn as string[]
+  return (fn as Array<{ flightNumber: string }>).map((f) => f.flightNumber)
+}
+
+function normalizeStopAirports(
+  sa: string[] | Array<{ airport: string }> | undefined
+): string[] | undefined {
+  if (!sa) return undefined
+  if (typeof sa[0] === 'string') return sa as string[]
+  return (sa as Array<{ airport: string }>).map((s) => s.airport)
+}
+
 function mapToResultItem(fare: CanonicalFare): SearchFareResultItem {
   return {
     id: fare.id,
     airline: fare.airline,
-    flightNumbers: fare.flightNumbers,
+    flightNumbers: normalizeFlightNumbers(fare.flightNumbers),
     departureAirport: fare.departureAirport,
     arrivalAirport: fare.arrivalAirport,
     departureTime: fare.departureTime,
@@ -232,11 +250,12 @@ function mapToResultItem(fare: CanonicalFare): SearchFareResultItem {
     collectedAt: fare.collectedAt,
     expiresAt: fare.expiresAt,
     stopCount: fare.stopCount,
-    stopAirports: fare.stopAirports,
+    stopAirports: normalizeStopAirports(fare.stopAirports),
     refundChangePolicy: fare.refundChangePolicy,
     bookingRestrictions: fare.bookingRestrictions,
     fareClass: fare.fareClass,
     returnDepartureTime: fare.returnDepartureTime,
-    returnArrivalTime: fare.returnArrivalTime
+    returnArrivalTime: fare.returnArrivalTime,
+    ignavId: fare.rawPayloadRef
   }
 }

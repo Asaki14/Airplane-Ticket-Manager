@@ -6,16 +6,16 @@ describe('resolveCityToIata', () => {
     expect(resolveCityToIata('上海')).toBe('SHA')
   })
 
-  it('resolves 北京 to BJS (legacy multi-airport metro code)', () => {
-    expect(resolveCityToIata('北京')).toBe('BJS')
+  it('resolves 北京 to PEK (primary airport code)', () => {
+    expect(resolveCityToIata('北京')).toBe('PEK')
   })
 
-  it('resolves 东京 to TYO (multi-airport metro code)', () => {
-    expect(resolveCityToIata('东京')).toBe('TYO')
+  it('resolves 东京 to NRT (primary airport code)', () => {
+    expect(resolveCityToIata('东京')).toBe('NRT')
   })
 
-  it('resolves 纽约 to NYC (metro code)', () => {
-    expect(resolveCityToIata('纽约')).toBe('NYC')
+  it('resolves 纽约 to JFK (primary airport code)', () => {
+    expect(resolveCityToIata('纽约')).toBe('JFK')
   })
 
   it('returns undefined for unknown city', () => {
@@ -33,9 +33,9 @@ describe('fuzzyResolveCity', () => {
     expect(result).toEqual(['CAN'])
   })
 
-  it('partial match 东 returns matches with 东 in name/alias [TYO]', () => {
+  it('partial match 东 returns matches with 东 in name/alias', () => {
     const result = fuzzyResolveCity('东')
-    expect(result).toContain('TYO')  // 东京
+    expect(result).toContain('NRT')  // 东京 alias
     expect(result).toContain('SHA')  // via alias 上海浦东
     expect(result).not.toContain('DLC')  // 大连不含"东"
   })
@@ -47,9 +47,9 @@ describe('fuzzyResolveCity', () => {
 
   it('fuzzy match 京 returns multiple cities (北京、南京、东京)', () => {
     const result = fuzzyResolveCity('京')
-    expect(result).toContain('BJS')  // 北京
+    expect(result).toContain('PEK')  // 北京 alias
     expect(result).toContain('NKG')  // 南京
-    expect(result).toContain('TYO')  // 东京
+    expect(result).toContain('NRT')  // 东京 alias
     expect(result.length).toBeGreaterThanOrEqual(3)
   })
 

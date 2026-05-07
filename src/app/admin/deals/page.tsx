@@ -1,23 +1,15 @@
-const mockDeals = [
-  {
-    id: 'deal-001',
-    title: '上海-曼谷 国庆前后往返',
-    status: 'draft',
-    headlinePrice: 1299,
-    departureCity: '上海',
-    destination: '曼谷'
-  },
-  {
-    id: 'deal-002',
-    title: '广州-大阪 樱花季直飞',
-    status: 'published',
-    headlinePrice: 1680,
-    departureCity: '广州',
-    destination: '大阪'
-  }
-]
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 
-export default function AdminDealsPage() {
+export default async function AdminDealsPage() {
+  const payload = await getPayload({ config: configPromise })
+  const result = await payload.find({
+    collection: 'deals',
+    sort: '-createdAt',
+    limit: 100,
+  })
+  const deals = result.docs as unknown as Record<string, unknown>[]
+
   return (
     <main className="admin-shell">
       <header>
@@ -26,17 +18,17 @@ export default function AdminDealsPage() {
       </header>
 
       <section className="mobile-card-list" aria-label="mobile card list">
-        {mockDeals.map((deal) => (
-          <article key={deal.id} className="deal-card-mobile">
+        {deals.map((deal) => (
+          <article key={String(deal.id)} className="deal-card-mobile">
             <header className="deal-card-mobile__header">
-              <h2>{deal.title}</h2>
-              <p className="deal-card-mobile__status">状态：{deal.status}</p>
+              <h2>{String(deal.title ?? '')}</h2>
+              <p className="deal-card-mobile__status">状态：{String(deal.status ?? '')}</p>
             </header>
             <div className="deal-card-mobile__body">
               <p>
-                {deal.departureCity} → {deal.destination}
+                {String(deal.departureCity ?? '')} → {String(deal.destination ?? '')}
               </p>
-              <p>¥{deal.headlinePrice}</p>
+              <p>¥{String(deal.headlinePrice ?? '')}</p>
             </div>
             <footer className="deal-card-mobile__footer">
               <a href={`/admin/deals/${deal.id}`}>编辑</a>
@@ -57,14 +49,14 @@ export default function AdminDealsPage() {
             </tr>
           </thead>
           <tbody>
-            {mockDeals.map((deal) => (
-              <tr key={deal.id}>
-                <td>{deal.title}</td>
+            {deals.map((deal) => (
+              <tr key={String(deal.id)}>
+                <td>{String(deal.title ?? '')}</td>
                 <td>
-                  {deal.departureCity} → {deal.destination}
+                  {String(deal.departureCity ?? '')} → {String(deal.destination ?? '')}
                 </td>
-                <td>¥{deal.headlinePrice}</td>
-                <td>{deal.status}</td>
+                <td>¥{String(deal.headlinePrice ?? '')}</td>
+                <td>{String(deal.status ?? '')}</td>
                 <td>
                   <a href={`/admin/deals/${deal.id}`}>编辑</a>
                 </td>

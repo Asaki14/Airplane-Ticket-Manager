@@ -1,5 +1,5 @@
 import type { ProviderAdapter, ProviderSearchParams, ProviderSearchResult } from './provider'
-import { normalizeAmadeusFare } from './normalize/amadeus'
+import { normalizeIgnavFare } from './normalize/ignav'
 import { validateCanonicalFare } from '../lib/fares/validation'
 import { dedupKey } from '../lib/fares/dedup'
 import type { CanonicalFare } from '../types/canonical-fare'
@@ -72,7 +72,7 @@ export async function runCollectionPipeline(
     // Step 2: Normalize
     let normalized: Partial<CanonicalFare>
     try {
-      normalized = normalizeAmadeusFare(rawFare, searchResult.runId)
+      normalized = normalizeIgnavFare(rawFare, searchResult.runId)
     } catch (error) {
       result.errors.push({
         stage: 'normalize',

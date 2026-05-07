@@ -35,12 +35,11 @@
   --space-3xl: 96px;
 
   /* Typography */
-  --font-led: 'DotGothic16', monospace;
-  --font-mono: 'Space Mono', 'Courier New', monospace;
-  --font-sans: 'Inter', -apple-system, system-ui, sans-serif;
-  
+  --font-led: 'DotGothic16', 'Space Mono', 'Courier New', BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'Space Mono', 'Courier New', BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', 'WenQuanYi Micro Hei', sans-serif;
   --font-body: var(--font-sans);
-  --font-display: var(--font-mono);
+  --font-display: var(--font-sans);
 
   --font-size-xs: 12px;
   --font-size-sm: 14px;

@@ -4,7 +4,7 @@ import type { CanonicalFare } from '../src/types/canonical-fare'
 
 function validFare(overrides?: Partial<CanonicalFare>): Partial<CanonicalFare> {
   return {
-    sourceId: 'amadeus',
+    sourceId: 'ignav',
     collectionRunId: 'run-1',
     airline: 'MU',
     flightNumbers: ['MU1234'],

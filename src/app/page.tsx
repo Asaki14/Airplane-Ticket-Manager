@@ -228,7 +228,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 
   return (
     <main
-      className="public-shell bg-slate-50 min-h-screen pb-20"
+      className="public-shell"
       style={{ backgroundColor: 'var(--color-bg-base, #f4f4f4)' }}
     >
       {/* Hero section — preserved brand per D-01 and Specifics */}

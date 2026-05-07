@@ -13,14 +13,14 @@ vi.mock('../src/integrations/pipeline', () => ({
   runCollectionPipeline: vi.fn()
 }))
 
-// Mock amadeus adapter
-vi.mock('../src/integrations/providers/amadeus', () => ({
-  createAmadeusOrMockAdapter: vi.fn()
+// Mock ignav adapter
+vi.mock('../src/integrations/providers/ignav', () => ({
+  createIgnavOrMockAdapter: vi.fn()
 }))
 
 import { resolveCityToIata } from '../src/lib/fares/city-map'
 import { runCollectionPipeline } from '../src/integrations/pipeline'
-import { createAmadeusOrMockAdapter } from '../src/integrations/providers/amadeus'
+import { createIgnavOrMockAdapter } from '../src/integrations/providers/ignav'
 import { searchFares } from '../src/lib/fares/search'
 import type { SearchFareParams } from '../src/lib/fares/search'
 
@@ -31,7 +31,7 @@ describe('searchFares', () => {
   }
 
   const mockAdapter = {
-    name: 'amadeus-test',
+    name: 'ignav-test',
     isConfigured: vi.fn(() => true),
     search: vi.fn(),
     healthCheck: vi.fn()
@@ -49,10 +49,10 @@ describe('searchFares', () => {
 
     // No cached results — will trigger pipeline
     mockPayload.find.mockResolvedValue({ docs: [] })
-    vi.mocked(createAmadeusOrMockAdapter).mockReturnValue(mockAdapter as any)
+    vi.mocked(createIgnavOrMockAdapter).mockReturnValue(mockAdapter as any)
     vi.mocked(runCollectionPipeline).mockResolvedValue({
       runId: 'run-1',
-      sourceId: 'amadeus-test',
+      sourceId: 'ignav-test',
       totalRaw: 0,
       normalized: 0,
       validationPassed: 0,
@@ -72,9 +72,9 @@ describe('searchFares', () => {
     const result = await searchFares(params, { payload: mockPayload as any })
 
     // The pipeline was called with proper ProviderSearchParams
-    expect(createAmadeusOrMockAdapter).toHaveBeenCalled()
+    expect(createIgnavOrMockAdapter).toHaveBeenCalled()
     expect(runCollectionPipeline).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'amadeus-test' }),
+      expect.objectContaining({ name: 'ignav-test' }),
       expect.objectContaining({
         origin: 'SHA',
         destination: 'BJS',
@@ -95,7 +95,7 @@ describe('searchFares', () => {
       docs: [
         {
           id: 'fare-1',
-          sourceId: 'amadeus',
+          sourceId: 'ignav',
           collectionRunId: 'run-1',
           airline: 'MU',
           flightNumbers: ['MU1234'],
@@ -129,7 +129,7 @@ describe('searchFares', () => {
     expect(result.results).toHaveLength(1)
     expect(result.results[0].id).toBe('fare-1')
     // Pipeline should NOT be called for cached results
-    expect(createAmadeusOrMockAdapter).not.toHaveBeenCalled()
+    expect(createIgnavOrMockAdapter).not.toHaveBeenCalled()
     expect(runCollectionPipeline).not.toHaveBeenCalled()
   })
 
@@ -141,10 +141,10 @@ describe('searchFares', () => {
 
     // Empty cache
     mockPayload.find.mockResolvedValue({ docs: [] })
-    vi.mocked(createAmadeusOrMockAdapter).mockReturnValue(mockAdapter as any)
+    vi.mocked(createIgnavOrMockAdapter).mockReturnValue(mockAdapter as any)
     vi.mocked(runCollectionPipeline).mockResolvedValue({
       runId: 'run-2',
-      sourceId: 'amadeus-test',
+      sourceId: 'ignav-test',
       totalRaw: 2,
       normalized: 2,
       validationPassed: 2,
@@ -164,7 +164,7 @@ describe('searchFares', () => {
     const result = await searchFares(params, { payload: mockPayload as any })
 
     expect(result.source).toBe('live')
-    expect(createAmadeusOrMockAdapter).toHaveBeenCalled()
+    expect(createIgnavOrMockAdapter).toHaveBeenCalled()
     expect(runCollectionPipeline).toHaveBeenCalled()
   })
 
@@ -180,7 +180,7 @@ describe('searchFares', () => {
       docs: [
         {
           id: 'fare-stale',
-          sourceId: 'amadeus',
+          sourceId: 'ignav',
           collectionRunId: 'run-1',
           airline: 'MU',
           flightNumbers: ['MU5678'],
@@ -201,10 +201,10 @@ describe('searchFares', () => {
     }
 
     mockPayload.find.mockResolvedValue(staleFares)
-    vi.mocked(createAmadeusOrMockAdapter).mockReturnValue(mockAdapter as any)
+    vi.mocked(createIgnavOrMockAdapter).mockReturnValue(mockAdapter as any)
     vi.mocked(runCollectionPipeline).mockResolvedValue({
       runId: 'run-3',
-      sourceId: 'amadeus-test',
+      sourceId: 'ignav-test',
       totalRaw: 1,
       normalized: 1,
       validationPassed: 1,
@@ -225,7 +225,7 @@ describe('searchFares', () => {
 
     // Should use live source when cache is stale
     expect(result.source).toBe('live')
-    expect(createAmadeusOrMockAdapter).toHaveBeenCalled()
+    expect(createIgnavOrMockAdapter).toHaveBeenCalled()
     expect(runCollectionPipeline).toHaveBeenCalled()
   })
 
@@ -236,10 +236,10 @@ describe('searchFares', () => {
     })
 
     mockPayload.find.mockResolvedValue({ docs: [] })
-    vi.mocked(createAmadeusOrMockAdapter).mockReturnValue(mockAdapter as any)
+    vi.mocked(createIgnavOrMockAdapter).mockReturnValue(mockAdapter as any)
     vi.mocked(runCollectionPipeline).mockResolvedValue({
       runId: 'run-4',
-      sourceId: 'amadeus-test',
+      sourceId: 'ignav-test',
       totalRaw: 0,
       normalized: 0,
       validationPassed: 0,

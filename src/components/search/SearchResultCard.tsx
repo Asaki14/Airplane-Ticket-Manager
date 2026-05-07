@@ -8,15 +8,13 @@
 
 'use client'
 
+import { useState } from 'react'
 import type { SearchFareResultItem } from '@/lib/fares/search'
 
 export type SearchResultCardProps = SearchFareResultItem & {
   /** Optional CSS class override */
   className?: string
 }
-
-/** Track recent navigation timestamps to prevent double-click. */
-let lastNav = 0
 
 /**
  * Format an ISO datetime string as a relative freshness label in Chinese.
@@ -74,6 +72,7 @@ export function SearchResultCard(props: SearchResultCardProps) {
     fareClass,
     returnDepartureTime,
     returnArrivalTime,
+    ignavId,
     className = '',
   } = props
 
@@ -83,27 +82,35 @@ export function SearchResultCard(props: SearchResultCardProps) {
     : airline
   const cabinLabel = CABIN_LABELS[cabin] ?? cabin
 
-  const handleClick = () => {
-    const now = Date.now()
-    if (now - lastNav < 300) return
-    lastNav = now
-    window.open(deepLink, '_blank', 'noopener,noreferrer')
-  }
+  const [loadingLinks, setLoadingLinks] = useState(false)
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      handleClick()
+  const handleBookingClick = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!ignavId || loadingLinks) return
+    setLoadingLinks(true)
+    try {
+      const res = await fetch('/api/fares/booking-links', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ignav_id: ignavId }),
+      })
+      if (!res.ok) return
+      const data = await res.json()
+      const urls: string[] = data?.booking_options?.flatMap(
+        (opt: { links: { url: string }[] }) => opt.links.map((l: { url: string }) => l.url)
+      ) ?? []
+      if (urls.length > 0) {
+        window.open(urls[0], '_blank', 'noopener,noreferrer')
+      }
+    } finally {
+      setLoadingLinks(false)
     }
   }
 
   return (
     <article
       className={`deal-card-shell deal-card--boarding-pass search-result-card ${className}`}
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      role="link"
-      tabIndex={0}
+      role="article"
       aria-label={`${airline} ${departureAirport} → ${arrivalAirport} ¥${priceAmount} — ${cabinLabel}`}
     >
       <div className="watermark" aria-hidden="true">{destCode}</div>
@@ -186,16 +193,27 @@ export function SearchResultCard(props: SearchResultCardProps) {
           EXP {new Date(expiresAt).toLocaleString('zh-CN', { hour12: false })}
         </span>
 
-        {/* Visible deep link anchor per LIVE-03 */}
-        <a
-          href={deepLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="search-result-card__buylink"
-          onClick={(e) => e.stopPropagation()}
-        >
-          查看详情 →
-        </a>
+        {/* Booking link button */}
+        {ignavId ? (
+          <button
+            type="button"
+            className="search-result-card__buylink"
+            onClick={handleBookingClick}
+            disabled={loadingLinks}
+          >
+            {loadingLinks ? '获取中…' : '预订直链 →'}
+          </button>
+        ) : deepLink ? (
+          <a
+            href={deepLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="search-result-card__buylink"
+            onClick={(e) => e.stopPropagation()}
+          >
+            查看详情 →
+          </a>
+        ) : null}
       </footer>
     </article>
   )

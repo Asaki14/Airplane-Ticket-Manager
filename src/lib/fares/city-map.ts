@@ -22,9 +22,9 @@ export type CityEntry = {
 }
 
 export const CITY_MAP: CityEntry[] = [
-  // --- Domestic ---
+  // --- Domestic (use primary airport IATA codes for Ignav compatibility) ---
   { name: '上海', iata: 'SHA', aliases: ['上海浦东', 'PVG', '上海虹桥'] },
-  { name: '北京', iata: 'BJS', aliases: ['北京首都', 'PEK', '北京大兴', 'PKX'] },
+  { name: '北京', iata: 'PEK', aliases: ['北京首都', '北京大兴', 'PKX', 'BJS'] },
   { name: '广州', iata: 'CAN' },
   { name: '深圳', iata: 'SZX' },
   { name: '成都', iata: 'CTU', aliases: ['成都天府', 'TFU'] },
@@ -40,19 +40,19 @@ export const CITY_MAP: CityEntry[] = [
   { name: '大连', iata: 'DLC' },
   { name: '三亚', iata: 'SYX' },
 
-  // --- International ---
-  { name: '东京', iata: 'TYO', aliases: ['成田', 'NRT', '羽田', 'HND'] },
+  // --- International (use primary airport IATA codes) ---
+  { name: '东京', iata: 'NRT', aliases: ['成田', '羽田', 'HND', 'TYO'] },
   { name: '大阪', iata: 'KIX', aliases: ['关西', '伊丹', 'ITM'] },
-  { name: '首尔', iata: 'SEL', aliases: ['仁川', 'ICN', '金浦', 'GMP'] },
+  { name: '首尔', iata: 'ICN', aliases: ['仁川', '金浦', 'GMP', 'SEL'] },
   { name: '曼谷', iata: 'BKK' },
   { name: '新加坡', iata: 'SIN' },
   { name: '香港', iata: 'HKG' },
   { name: '台北', iata: 'TPE', aliases: ['桃园', '松山', 'TSA'] },
-  { name: '纽约', iata: 'NYC', aliases: ['JFK', '肯尼迪', '拉瓜迪亚', 'LGA'] },
+  { name: '纽约', iata: 'JFK', aliases: ['肯尼迪', '拉瓜迪亚', 'LGA', 'NYC'] },
   { name: '洛杉矶', iata: 'LAX' },
   { name: '旧金山', iata: 'SFO' },
-  { name: '伦敦', iata: 'LON', aliases: ['希思罗', 'LHR', '盖特威克', 'LGW'] },
-  { name: '巴黎', iata: 'PAR', aliases: ['戴高乐', 'CDG', '奥利', 'ORY'] },
+  { name: '伦敦', iata: 'LHR', aliases: ['希思罗', '盖特威克', 'LGW', 'LON'] },
+  { name: '巴黎', iata: 'CDG', aliases: ['戴高乐', '奥利', 'ORY', 'PAR'] },
 ]
 
 /**

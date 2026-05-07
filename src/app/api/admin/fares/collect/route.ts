@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createAmadeusOrMockAdapter } from '@/integrations/providers/amadeus'
+import { createIgnavOrMockAdapter } from '@/integrations/providers/ignav'
 import { runCollectionPipeline, type PipelineResult } from '@/integrations/pipeline'
 import type { ProviderSearchParams } from '@/integrations/provider'
 import { getPayload } from 'payload'
@@ -19,11 +19,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   // Initialize Payload and adapter
   const payload = await getPayload({ config: configPromise })
-  const adapter = createAmadeusOrMockAdapter()
+  const adapter = createIgnavOrMockAdapter()
 
   if (!adapter.isConfigured()) {
     return NextResponse.json(
-      { error: 'No data source configured. Set AMADEUS_CLIENT_ID or enable mock mode.' },
+      { error: 'No data source configured. Set IGNAV_API_KEY or enable mock mode.' },
       { status: 503 }
     )
   }
@@ -53,9 +53,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const existingKeys = new Set<string>()
     for (const fare of recentFares.docs) {
-      // Build dedup keys similar to dedup.ts
-      const flightNums = (fare.flightNumbers ?? []) as Array<{ flightNumber: string }>
-      const key = [fare.airline, flightNums.map((f: { flightNumber: string }) => f.flightNumber).sort().join(','), fare.departureTime, fare.priceAmount]
+      const flightNums = Array.isArray(fare.flightNumbers)
+        ? (fare.flightNumbers as Array<string | { flightNumber: string }>).map((f) =>
+            typeof f === 'string' ? f : (f as { flightNumber: string }).flightNumber
+          )
+        : []
+      const key = [fare.airline, [...flightNums].sort().join(','), fare.departureTime, fare.priceAmount]
         .filter(Boolean)
         .join('|')
       if (key) existingKeys.add(key)

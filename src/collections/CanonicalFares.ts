@@ -22,7 +22,6 @@ export function validateCanonicalFareInput(input: CanonicalFareInput) {
     'cabin',
     'baggageFacts',
     'priceAmount',
-    'deepLink',
     'collectedAt',
     'expiresAt',
     'rawPayloadRef'
@@ -92,11 +91,8 @@ export const CanonicalFaresCollection: CollectionConfig = {
     { name: 'airline', type: 'text', required: true },
     {
       name: 'flightNumbers',
-      type: 'array',
-      required: true,
-      fields: [
-        { name: 'flightNumber', type: 'text', required: true }
-      ]
+      type: 'json',
+      required: true
     },
     { name: 'departureAirport', type: 'text', required: true },
     { name: 'arrivalAirport', type: 'text', required: true },
@@ -111,7 +107,7 @@ export const CanonicalFaresCollection: CollectionConfig = {
     { name: 'baggageFacts', type: 'textarea', required: true },
     { name: 'priceAmount', type: 'number', required: true },
     { name: 'currency', type: 'text', required: true, defaultValue: 'CNY' },
-    { name: 'deepLink', type: 'text', required: true },
+    { name: 'deepLink', type: 'text' },
     { name: 'collectedAt', type: 'date', required: true },
     { name: 'expiresAt', type: 'date', required: true },
     { name: 'rawPayloadRef', type: 'text', required: true },
@@ -124,10 +120,7 @@ export const CanonicalFaresCollection: CollectionConfig = {
     { name: 'stopCount', type: 'number', min: 0 },
     {
       name: 'stopAirports',
-      type: 'array',
-      fields: [
-        { name: 'airport', type: 'text' }
-      ]
+      type: 'json'
     },
     { name: 'refundChangePolicy', type: 'textarea' },
     { name: 'bookingRestrictions', type: 'textarea' },
