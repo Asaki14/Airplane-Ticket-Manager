@@ -11,7 +11,7 @@
 import type { CanonicalFare } from '@/types/canonical-fare'
 import { resolveCityToIata } from '@/lib/fares/city-map'
 import { runCollectionPipeline } from '@/integrations/pipeline'
-import { createIgnavOrMockAdapter } from '@/integrations/providers/ignav'
+import { IgnavAdapter } from '@/integrations/providers/ignav'
 
 /** Input parameters for a fare search (Chinese city names). */
 export type SearchFareParams = {
@@ -136,19 +136,18 @@ export async function searchFares(
       }
     }
 
-    // Step 4: Cache empty or stale — trigger live pipeline
-    const adapter = createIgnavOrMockAdapter()
-
-    if (!adapter.isConfigured()) {
+    // Step 4: Cache empty or stale — check data source
+    if (!process.env.IGNAV_API_KEY) {
       return {
         results: [],
         total: 0,
         source: 'live',
         collectedAt: now,
-        message: 'IGNAV API 未配置，暂时无法查询实时票价'
+        message: '航班数据源尚未配置，暂时无法查询实时票价'
       }
     }
 
+    const adapter = new IgnavAdapter()
     const pipelineResult = await runCollectionPipeline(
       adapter,
       {

@@ -10,6 +10,8 @@ import { popularRoutes } from '@/lib/fares/city-map'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
+export const dynamic = 'force-dynamic'
+
 type SearchParams = Record<string, string | string[] | undefined>
 
 type SearchSort = 'priceAsc' | 'departureTime' | 'freshness'

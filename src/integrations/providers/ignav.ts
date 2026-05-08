@@ -162,11 +162,12 @@ export function createIgnavAdapter(): ProviderAdapter {
   return new IgnavAdapter()
 }
 
+/** Mock adapter for development/testing — NOT used in production search flow. */
 export class MockIgnavAdapter implements ProviderAdapter {
   readonly name = 'ignav-mock'
 
   isConfigured(): boolean {
-    return true
+    return false
   }
 
   async search(params: ProviderSearchParams): Promise<ProviderSearchResult> {

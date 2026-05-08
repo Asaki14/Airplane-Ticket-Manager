@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest'
 
 // Mock the city-map module
 vi.mock('../src/lib/fares/city-map', () => ({
@@ -13,14 +13,8 @@ vi.mock('../src/integrations/pipeline', () => ({
   runCollectionPipeline: vi.fn()
 }))
 
-// Mock ignav adapter
-vi.mock('../src/integrations/providers/ignav', () => ({
-  createIgnavOrMockAdapter: vi.fn()
-}))
-
 import { resolveCityToIata } from '../src/lib/fares/city-map'
 import { runCollectionPipeline } from '../src/integrations/pipeline'
-import { createIgnavOrMockAdapter } from '../src/integrations/providers/ignav'
 import { searchFares } from '../src/lib/fares/search'
 import type { SearchFareParams } from '../src/lib/fares/search'
 
@@ -30,15 +24,16 @@ describe('searchFares', () => {
     create: vi.fn()
   }
 
-  const mockAdapter = {
-    name: 'ignav-test',
-    isConfigured: vi.fn(() => true),
-    search: vi.fn(),
-    healthCheck: vi.fn()
-  }
+  const ORIG_API_KEY = process.env.IGNAV_API_KEY
 
   beforeEach(() => {
     vi.clearAllMocks()
+    // Default: set a test API key so pipeline path is exercised
+    process.env.IGNAV_API_KEY = 'test-key'
+  })
+
+  afterAll(() => {
+    process.env.IGNAV_API_KEY = ORIG_API_KEY
   })
 
   it('builds ProviderSearchParams from city codes + date', async () => {
@@ -49,7 +44,6 @@ describe('searchFares', () => {
 
     // No cached results — will trigger pipeline
     mockPayload.find.mockResolvedValue({ docs: [] })
-    vi.mocked(createIgnavOrMockAdapter).mockReturnValue(mockAdapter as any)
     vi.mocked(runCollectionPipeline).mockResolvedValue({
       runId: 'run-1',
       sourceId: 'ignav-test',
@@ -69,12 +63,11 @@ describe('searchFares', () => {
       departureDate: '2026-07-01'
     }
 
-    const result = await searchFares(params, { payload: mockPayload as any })
+    await searchFares(params, { payload: mockPayload as any })
 
     // The pipeline was called with proper ProviderSearchParams
-    expect(createIgnavOrMockAdapter).toHaveBeenCalled()
     expect(runCollectionPipeline).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'ignav-test' }),
+      expect.objectContaining({ name: 'ignav' }),
       expect.objectContaining({
         origin: 'SHA',
         destination: 'BJS',
@@ -129,7 +122,6 @@ describe('searchFares', () => {
     expect(result.results).toHaveLength(1)
     expect(result.results[0].id).toBe('fare-1')
     // Pipeline should NOT be called for cached results
-    expect(createIgnavOrMockAdapter).not.toHaveBeenCalled()
     expect(runCollectionPipeline).not.toHaveBeenCalled()
   })
 
@@ -141,7 +133,6 @@ describe('searchFares', () => {
 
     // Empty cache
     mockPayload.find.mockResolvedValue({ docs: [] })
-    vi.mocked(createIgnavOrMockAdapter).mockReturnValue(mockAdapter as any)
     vi.mocked(runCollectionPipeline).mockResolvedValue({
       runId: 'run-2',
       sourceId: 'ignav-test',
@@ -164,7 +155,6 @@ describe('searchFares', () => {
     const result = await searchFares(params, { payload: mockPayload as any })
 
     expect(result.source).toBe('live')
-    expect(createIgnavOrMockAdapter).toHaveBeenCalled()
     expect(runCollectionPipeline).toHaveBeenCalled()
   })
 
@@ -201,7 +191,6 @@ describe('searchFares', () => {
     }
 
     mockPayload.find.mockResolvedValue(staleFares)
-    vi.mocked(createIgnavOrMockAdapter).mockReturnValue(mockAdapter as any)
     vi.mocked(runCollectionPipeline).mockResolvedValue({
       runId: 'run-3',
       sourceId: 'ignav-test',
@@ -225,18 +214,40 @@ describe('searchFares', () => {
 
     // Should use live source when cache is stale
     expect(result.source).toBe('live')
-    expect(createIgnavOrMockAdapter).toHaveBeenCalled()
     expect(runCollectionPipeline).toHaveBeenCalled()
   })
 
-  it('returns empty results when both cache and pipeline return nothing', async () => {
+  it('returns "not configured" when IGNAV_API_KEY is missing and cache empty', async () => {
+    delete process.env.IGNAV_API_KEY
+    vi.mocked(resolveCityToIata).mockImplementation((name: string) => {
+      const map: Record<string, string> = { '上海': 'SHA', '东京': 'NRT' }
+      return map[name]
+    })
+
+    mockPayload.find.mockResolvedValue({ docs: [] })
+
+    const params: SearchFareParams = {
+      originCity: '上海',
+      destinationCity: '东京',
+      departureDate: '2026-07-01'
+    }
+
+    const result = await searchFares(params, { payload: mockPayload as any })
+
+    expect(result.results).toHaveLength(0)
+    expect(result.total).toBe(0)
+    expect(result.source).toBe('live')
+    expect(result.message).toContain('尚未配置')
+    expect(runCollectionPipeline).not.toHaveBeenCalled()
+  })
+
+  it('returns empty results when pipeline returns nothing', async () => {
     vi.mocked(resolveCityToIata).mockImplementation((name: string) => {
       const map: Record<string, string> = { '上海': 'SHA', '纽约': 'NYC' }
       return map[name]
     })
 
     mockPayload.find.mockResolvedValue({ docs: [] })
-    vi.mocked(createIgnavOrMockAdapter).mockReturnValue(mockAdapter as any)
     vi.mocked(runCollectionPipeline).mockResolvedValue({
       runId: 'run-4',
       sourceId: 'ignav-test',
