@@ -4,8 +4,11 @@ import { EmptySearchState } from '@/components/search/EmptySearchState'
 import { SearchResultsWithCompare } from '@/components/search/SearchResultsWithCompare'
 import type { SearchFilterState } from '@/components/search/SearchFilters'
 import type { EmptySearchStateVariant } from '@/components/search/EmptySearchState'
+import { searchFares } from '@/lib/fares/search'
 import type { SearchFareResultItem, SearchFareResponse } from '@/lib/fares/search'
 import { popularRoutes } from '@/lib/fares/city-map'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 
 type SearchParams = Record<string, string | string[] | undefined>
 
@@ -93,34 +96,6 @@ function parseSearchParams(searchParams: SearchParams): {
       cabin,
       baggageIncluded,
     },
-  }
-}
-
-/** Fetch search results from the search API. */
-const SEARCH_TIMEOUT_MS = 15_000
-
-async function loadSearchResults(
-  from: string,
-  to: string,
-  date: string,
-  returnDate?: string,
-): Promise<SearchFareResponse | null> {
-  const params = new URLSearchParams({ from, to, date })
-  if (returnDate) params.set('returnDate', returnDate)
-
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
-  const controller = new AbortController()
-  const timeout = setTimeout(() => controller.abort(), SEARCH_TIMEOUT_MS)
-  try {
-    const response = await fetch(`${base}/api/fares/search?${params.toString()}`, {
-      cache: 'no-store',
-      signal: controller.signal,
-    }).catch(() => null)
-
-    if (!response || !response.ok) return null
-    return response.json() as Promise<SearchFareResponse>
-  } finally {
-    clearTimeout(timeout)
   }
 }
 
@@ -221,9 +196,28 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   let airlineOptions: string[] = []
 
   if (hasSearchParams) {
-    searchResponse = await loadSearchResults(from!, to!, date!, returnDate)
+    try {
+      const payload = await getPayload({ config: configPromise })
+      searchResponse = await searchFares(
+        {
+          originCity: from!,
+          destinationCity: to!,
+          departureDate: date!,
+          returnDate: returnDate || undefined,
+        },
+        { payload }
+      )
+    } catch (error) {
+      searchResponse = {
+        results: [],
+        total: 0,
+        source: 'live',
+        collectedAt: new Date().toISOString(),
+        message: error instanceof Error ? error.message : String(error),
+      }
+    }
 
-    if (searchResponse && searchResponse.results.length > 0) {
+    if (searchResponse.results.length > 0) {
       const filtered = applyClientFilters(searchResponse.results, filters)
       results = applyClientSort(filtered, sort)
       airlineOptions = [...new Set(searchResponse.results.map((f) => f.airline))].sort()

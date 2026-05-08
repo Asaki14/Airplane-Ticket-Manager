@@ -166,7 +166,7 @@ export class MockIgnavAdapter implements ProviderAdapter {
   readonly name = 'ignav-mock'
 
   isConfigured(): boolean {
-    return false
+    return true
   }
 
   async search(params: ProviderSearchParams): Promise<ProviderSearchResult> {
