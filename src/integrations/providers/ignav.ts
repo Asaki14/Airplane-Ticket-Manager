@@ -6,25 +6,34 @@ function getApiKey(): string | undefined {
   return process.env.IGNAV_API_KEY
 }
 
+const IGNAV_TIMEOUT_MS = 10_000
+
 async function ignavPost<T>(path: string, body: Record<string, unknown>): Promise<T> {
   const apiKey = getApiKey()
   if (!apiKey) {
     throw new Error('IgnavAdapter: IGNAV_API_KEY not configured')
   }
-  const res = await fetch(`${IGNAV_BASE}${path}`, {
-    method: 'POST',
-    headers: {
-      'X-Api-Key': apiKey,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body),
-  })
-  if (!res.ok) {
-    const errBody = await res.json().catch(() => ({}))
-    const msg = errBody?.error?.message ?? `HTTP ${res.status}`
-    throw new Error(`Ignav API error: ${msg}`)
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), IGNAV_TIMEOUT_MS)
+  try {
+    const res = await fetch(`${IGNAV_BASE}${path}`, {
+      method: 'POST',
+      headers: {
+        'X-Api-Key': apiKey,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    })
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({}))
+      const msg = errBody?.error?.message ?? `HTTP ${res.status}`
+      throw new Error(`Ignav API error: ${msg}`)
+    }
+    return res.json() as Promise<T>
+  } finally {
+    clearTimeout(timeout)
   }
-  return res.json() as Promise<T>
 }
 
 type IgnavSegment = {

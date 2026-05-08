@@ -7,7 +7,7 @@ export type DedupConfig = {
 
 /** Default dedup config: airline + flightNumbers sorted + departureTime + priceAmount */
 export const DEFAULT_DEDUP_CONFIG: DedupConfig = {
-  keyFields: ['airline', 'flightNumbers', 'departureTime', 'priceAmount']
+  keyFields: ['airline', 'flightNumbers', 'departureTime', 'priceAmount', 'cabin']
 }
 
 /**

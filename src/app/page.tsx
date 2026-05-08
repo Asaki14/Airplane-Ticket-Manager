@@ -1,8 +1,7 @@
 import { SearchBar } from '@/components/search/SearchBar'
-import { SearchResultCard } from '@/components/search/SearchResultCard'
 import { SearchFilters } from '@/components/search/SearchFilters'
 import { EmptySearchState } from '@/components/search/EmptySearchState'
-import { CompareAndSavePanel } from '@/components/deals/CompareAndSavePanel'
+import { SearchResultsWithCompare } from '@/components/search/SearchResultsWithCompare'
 import type { SearchFilterState } from '@/components/search/SearchFilters'
 import type { EmptySearchStateVariant } from '@/components/search/EmptySearchState'
 import type { SearchFareResultItem, SearchFareResponse } from '@/lib/fares/search'
@@ -98,6 +97,8 @@ function parseSearchParams(searchParams: SearchParams): {
 }
 
 /** Fetch search results from the search API. */
+const SEARCH_TIMEOUT_MS = 15_000
+
 async function loadSearchResults(
   from: string,
   to: string,
@@ -108,12 +109,19 @@ async function loadSearchResults(
   if (returnDate) params.set('returnDate', returnDate)
 
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
-  const response = await fetch(`${base}/api/fares/search?${params.toString()}`, {
-    cache: 'no-store',
-  }).catch(() => null)
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), SEARCH_TIMEOUT_MS)
+  try {
+    const response = await fetch(`${base}/api/fares/search?${params.toString()}`, {
+      cache: 'no-store',
+      signal: controller.signal,
+    }).catch(() => null)
 
-  if (!response || !response.ok) return null
-  return response.json() as Promise<SearchFareResponse>
+    if (!response || !response.ok) return null
+    return response.json() as Promise<SearchFareResponse>
+  } finally {
+    clearTimeout(timeout)
+  }
 }
 
 /** Client-side filtering on top of API results. */
@@ -172,7 +180,7 @@ function determineEmptyVariant(searchResponse: SearchFareResponse | null): Empty
 }
 
 /**
- * Adapt SearchFareResultItem[] to the DealLite shape expected by CompareAndSavePanel.
+ * Adapt SearchFareResultItem[] to the DealLite shape for comparison.
  * Value score defaults to 0 for real fares (no ML scoring in v2.0).
  */
 function adaptResultsToDealLite(fares: SearchFareResultItem[]) {
@@ -273,6 +281,9 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           <div className="search-results-main">
             {/* Sort controls per D-15 */}
             <form className="search-sort-controls" action="/" method="get">
+              <span className="search-sort-controls__count">
+                找到 {results.length} 个结果
+              </span>
               <label>排序：</label>
               <select name="sort" defaultValue={sort}>
                 <option value="priceAsc">价格（低到高）</option>
@@ -303,13 +314,12 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               <button type="submit">应用</button>
             </form>
 
-            {/* Results grid */}
+            {/* Results grid + compare */}
             {results.length > 0 ? (
-              <div className="search-results-grid">
-                {results.map((fare) => (
-                  <SearchResultCard key={fare.id} {...fare} />
-                ))}
-              </div>
+              <SearchResultsWithCompare
+                results={results}
+                deals={adaptResultsToDealLite(results)}
+              />
             ) : (
               <EmptySearchState
                 variant={determineEmptyVariant(searchResponse)}
@@ -336,12 +346,13 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           <p>输入出发地和目的地，搜索真实航班票价</p>
           {routes.length > 0 && (
             <div className="search-default-state__popular">
-              {routes.map((route) => {
+              {routes.map((route, chipIndex) => {
                 const [cityFrom, cityTo] = route.label.split(' → ')
                 return (
                   <a
                     key={`${route.from}-${route.to}`}
-                    className="search-default-state__chip"
+                    className="search-default-state__chip chip-entrance"
+                    style={{ '--chip-index': chipIndex } as React.CSSProperties}
                     href={`/?from=${encodeURIComponent(cityFrom)}&to=${encodeURIComponent(cityTo)}&date=${todayStr}`}
                   >
                     {route.label}
@@ -351,11 +362,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             </div>
           )}
         </section>
-      )}
-
-      {/* Compare & Save Panel with adapted search results */}
-      {results.length > 0 && (
-        <CompareAndSavePanel deals={adaptResultsToDealLite(results)} />
       )}
 
       {/* Nav footer — preserved */}

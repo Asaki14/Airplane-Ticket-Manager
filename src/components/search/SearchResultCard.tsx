@@ -14,6 +14,10 @@ import type { SearchFareResultItem } from '@/lib/fares/search'
 export type SearchResultCardProps = SearchFareResultItem & {
   /** Optional CSS class override */
   className?: string
+  /** Compare mode: is this card selected for comparison */
+  isCompareSelected?: boolean
+  /** Called when user toggles compare selection */
+  onCompareToggle?: () => void
 }
 
 /**
@@ -74,6 +78,8 @@ export function SearchResultCard(props: SearchResultCardProps) {
     returnArrivalTime,
     ignavId,
     className = '',
+    isCompareSelected = false,
+    onCompareToggle,
   } = props
 
   const destCode = arrivalAirport.substring(0, 3).toUpperCase()
@@ -83,6 +89,7 @@ export function SearchResultCard(props: SearchResultCardProps) {
   const cabinLabel = CABIN_LABELS[cabin] ?? cabin
 
   const [loadingLinks, setLoadingLinks] = useState(false)
+  const [bookingWarning, setBookingWarning] = useState<string | null>(null)
 
   const handleBookingClick = async (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -92,7 +99,12 @@ export function SearchResultCard(props: SearchResultCardProps) {
       const res = await fetch('/api/fares/booking-links', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ignav_id: ignavId }),
+        body: JSON.stringify({
+          ignav_id: ignavId,
+          displayed_price: priceAmount,
+          currency,
+          cabin
+        }),
       })
       if (!res.ok) return
       const data = await res.json()
@@ -101,6 +113,7 @@ export function SearchResultCard(props: SearchResultCardProps) {
       ) ?? []
       if (urls.length > 0) {
         window.open(urls[0], '_blank', 'noopener,noreferrer')
+        setBookingWarning('价格可能已更新，请以预订页面显示为准')
       }
     } finally {
       setLoadingLinks(false)
@@ -109,7 +122,7 @@ export function SearchResultCard(props: SearchResultCardProps) {
 
   return (
     <article
-      className={`deal-card-shell deal-card--boarding-pass search-result-card ${className}`}
+      className={`deal-card-shell deal-card--boarding-pass search-result-card${isCompareSelected ? ' search-result-card--selected' : ''} ${className}`}
       role="article"
       aria-label={`${airline} ${departureAirport} → ${arrivalAirport} ¥${priceAmount} — ${cabinLabel}`}
     >
@@ -171,7 +184,7 @@ export function SearchResultCard(props: SearchResultCardProps) {
         <div className="search-result-card__meta-row mono-font">
           {baggageFacts && (
             <span className="search-result-card__baggage" title={baggageFacts}>
-              {baggageFacts.length > 20 ? baggageFacts.slice(0, 20) + '…' : baggageFacts}
+              {baggageFacts}
             </span>
           )}
           <span className="search-result-card__freshness" title={`采集时间: ${collectedAt}`}>
@@ -193,7 +206,13 @@ export function SearchResultCard(props: SearchResultCardProps) {
           EXP {new Date(expiresAt).toLocaleString('zh-CN', { hour12: false })}
         </span>
 
-        {/* Booking link button */}
+        {/* Booking link + Compare toggle */}
+        <div className="search-result-card__actions">
+        {/* Price change warning */}
+        {bookingWarning && (
+          <p className="search-result-card__price-warning mono-font">{bookingWarning}</p>
+        )}
+
         {ignavId ? (
           <button
             type="button"
@@ -209,11 +228,25 @@ export function SearchResultCard(props: SearchResultCardProps) {
             target="_blank"
             rel="noopener noreferrer"
             className="search-result-card__buylink"
+            title="价格可能已更新，请以预订页面显示为准"
             onClick={(e) => e.stopPropagation()}
           >
             查看详情 →
           </a>
         ) : null}
+
+          {/* Compare toggle */}
+          {onCompareToggle && (
+            <button
+              type="button"
+              className={`search-result-card__compare-btn ${isCompareSelected ? 'search-result-card__compare-btn--active' : ''}`}
+              onClick={(e) => { e.stopPropagation(); onCompareToggle() }}
+              aria-label={isCompareSelected ? '移出比较' : '加入比较'}
+            >
+              {isCompareSelected ? '✓ 已比较' : '+ 比较'}
+            </button>
+          )}
+        </div>
       </footer>
     </article>
   )

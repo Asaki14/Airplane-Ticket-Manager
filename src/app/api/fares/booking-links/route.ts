@@ -12,7 +12,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   const body = await request.json().catch(() => ({}))
-  const { ignav_id } = body
+  const { ignav_id, displayed_price, currency: priceCurrency, cabin } = body
 
   if (!ignav_id || typeof ignav_id !== 'string') {
     return NextResponse.json(
@@ -28,7 +28,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         'X-Api-Key': apiKey,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ignav_id }),
+      body: JSON.stringify({
+        ignav_id,
+        ...(displayed_price != null && { displayed_price }),
+        ...(priceCurrency && { currency: priceCurrency }),
+        ...(cabin && { cabin }),
+      }),
     })
 
     if (!res.ok) {

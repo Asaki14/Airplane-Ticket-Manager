@@ -4,3 +4,6 @@ node_modules/
 payload.db
 .DS_Store
 tsconfig.tsbuildinfo
+dev.log
+.opencode/
+.env.local

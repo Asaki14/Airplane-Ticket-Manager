@@ -68,6 +68,9 @@ export interface Config {
   blocks: {};
   collections: {
     deals: Deal;
+    'canonical-fares': CanonicalFare;
+    'collection-runs': CollectionRun;
+    'pending-raw-payloads': PendingRawPayload;
     'payload-kv': PayloadKv;
     users: User;
     'payload-locked-documents': PayloadLockedDocument;
@@ -77,6 +80,9 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     deals: DealsSelect<false> | DealsSelect<true>;
+    'canonical-fares': CanonicalFaresSelect<false> | CanonicalFaresSelect<true>;
+    'collection-runs': CollectionRunsSelect<false> | CollectionRunsSelect<true>;
+    'pending-raw-payloads': PendingRawPayloadsSelect<false> | PendingRawPayloadsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -153,6 +159,120 @@ export interface Deal {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "canonical-fares".
+ */
+export interface CanonicalFare {
+  id: number;
+  sourceId: string;
+  collectionRunId: string;
+  airline: string;
+  flightNumbers:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  departureAirport: string;
+  arrivalAirport: string;
+  departureTime: string;
+  arrivalTime: string;
+  cabin: 'ECONOMY' | 'PREMIUM_ECONOMY' | 'BUSINESS' | 'FIRST';
+  baggageFacts: string;
+  priceAmount: number;
+  currency: string;
+  deepLink?: string | null;
+  collectedAt: string;
+  expiresAt: string;
+  rawPayloadRef: string;
+  returnDepartureAirport?: string | null;
+  returnArrivalAirport?: string | null;
+  returnDepartureTime?: string | null;
+  returnArrivalTime?: string | null;
+  stopCount?: number | null;
+  stopAirports?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  refundChangePolicy?: string | null;
+  bookingRestrictions?: string | null;
+  taxAmount?: number | null;
+  fareClass?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collection-runs".
+ */
+export interface CollectionRun {
+  id: number;
+  sourceId: string;
+  status: 'running' | 'success' | 'partial' | 'failed';
+  startedAt: string;
+  completedAt?: string | null;
+  searchParams:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  totalFaresCollected?: number | null;
+  totalValidationPassed?: number | null;
+  totalValidationFailed?: number | null;
+  totalDuplicatesSkipped?: number | null;
+  totalPersisted?: number | null;
+  persistedFareIds?:
+    | {
+        fareId?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  errorMessages?:
+    | {
+        message?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pending-raw-payloads".
+ */
+export interface PendingRawPayload {
+  id: number;
+  sourceId: string;
+  collectionRunId: string;
+  providerFareId: string;
+  rawPayload:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  collectedAt: string;
+  expiresAt: string;
+  canonicalFareRef?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -203,6 +323,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'deals';
         value: number | Deal;
+      } | null)
+    | ({
+        relationTo: 'canonical-fares';
+        value: number | CanonicalFare;
+      } | null)
+    | ({
+        relationTo: 'collection-runs';
+        value: number | CollectionRun;
+      } | null)
+    | ({
+        relationTo: 'pending-raw-payloads';
+        value: number | PendingRawPayload;
       } | null)
     | ({
         relationTo: 'users';
@@ -281,6 +413,85 @@ export interface DealsSelect<T extends boolean = true> {
         id?: T;
       };
   status?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "canonical-fares_select".
+ */
+export interface CanonicalFaresSelect<T extends boolean = true> {
+  sourceId?: T;
+  collectionRunId?: T;
+  airline?: T;
+  flightNumbers?: T;
+  departureAirport?: T;
+  arrivalAirport?: T;
+  departureTime?: T;
+  arrivalTime?: T;
+  cabin?: T;
+  baggageFacts?: T;
+  priceAmount?: T;
+  currency?: T;
+  deepLink?: T;
+  collectedAt?: T;
+  expiresAt?: T;
+  rawPayloadRef?: T;
+  returnDepartureAirport?: T;
+  returnArrivalAirport?: T;
+  returnDepartureTime?: T;
+  returnArrivalTime?: T;
+  stopCount?: T;
+  stopAirports?: T;
+  refundChangePolicy?: T;
+  bookingRestrictions?: T;
+  taxAmount?: T;
+  fareClass?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collection-runs_select".
+ */
+export interface CollectionRunsSelect<T extends boolean = true> {
+  sourceId?: T;
+  status?: T;
+  startedAt?: T;
+  completedAt?: T;
+  searchParams?: T;
+  totalFaresCollected?: T;
+  totalValidationPassed?: T;
+  totalValidationFailed?: T;
+  totalDuplicatesSkipped?: T;
+  totalPersisted?: T;
+  persistedFareIds?:
+    | T
+    | {
+        fareId?: T;
+        id?: T;
+      };
+  errorMessages?:
+    | T
+    | {
+        message?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pending-raw-payloads_select".
+ */
+export interface PendingRawPayloadsSelect<T extends boolean = true> {
+  sourceId?: T;
+  collectionRunId?: T;
+  providerFareId?: T;
+  rawPayload?: T;
+  collectedAt?: T;
+  expiresAt?: T;
+  canonicalFareRef?: T;
+  updatedAt?: T;
   createdAt?: T;
 }
 /**
