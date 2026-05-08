@@ -199,7 +199,12 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 
   if (hasSearchParams) {
     try {
-      const payload = await getPayload({ config: configPromise })
+      let payload
+      try {
+        payload = await getPayload({ config: configPromise })
+      } catch {
+        payload = null  // DB unavailable — search still works
+      }
       searchResponse = await searchFares(
         {
           originCity: from!,

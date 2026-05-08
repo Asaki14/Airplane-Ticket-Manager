@@ -91,48 +91,42 @@ export async function searchFares(
   }
 
   try {
-    // Step 2: Query cached results from Payload
     const payload = context.payload
-    const cacheQuery: Record<string, unknown> = {
-      collection: 'canonical-fares',
-      where: {
-        and: [
-          {
-            departureAirport: {
-              equals: originCode
-            }
+
+    // Step 2-3: Try cache query (may fail if Payload DB unavailable, e.g. SQLite in serverless)
+    if (payload) {
+      try {
+        const cacheQuery: Record<string, unknown> = {
+          collection: 'canonical-fares',
+          where: {
+            and: [
+              { departureAirport: { equals: originCode } },
+              { arrivalAirport: { equals: destCode } },
+              { departureTime: { like: `${params.departureDate}%` } }
+            ]
           },
-          {
-            arrivalAirport: {
-              equals: destCode
-            }
-          },
-          {
-            departureTime: {
-              like: `${params.departureDate}%`
+          sort: '-collectedAt',
+          limit: 100
+        }
+
+        const cachedDocs = await payload.find(cacheQuery)
+        const fares = cachedDocs.docs as unknown as CanonicalFare[]
+
+        if (fares.length > 0) {
+          const latestCollectedAt = new Date(fares[0].collectedAt).getTime()
+          const age = Date.now() - latestCollectedAt
+
+          if (age < CACHE_FRESHNESS_MS) {
+            return {
+              results: fares.map(mapToResultItem),
+              total: fares.length,
+              source: 'cache',
+              collectedAt: fares[0].collectedAt
             }
           }
-        ]
-      },
-      sort: '-collectedAt',
-      limit: 100
-    }
-
-    const cachedDocs = await payload.find(cacheQuery)
-    const fares = cachedDocs.docs as unknown as CanonicalFare[]
-
-    // Step 3: Check freshness of most recent result
-    if (fares.length > 0) {
-      const latestCollectedAt = new Date(fares[0].collectedAt).getTime()
-      const age = Date.now() - latestCollectedAt
-
-      if (age < CACHE_FRESHNESS_MS) {
-        return {
-          results: fares.map(mapToResultItem),
-          total: fares.length,
-          source: 'cache',
-          collectedAt: fares[0].collectedAt
         }
+      } catch {
+        // Payload DB unavailable (e.g., SQLite in serverless) — skip cache
       }
     }
 
@@ -157,15 +151,24 @@ export async function searchFares(
         returnDate: params.returnDate
       },
       {
-        create: async (collection: string, data: Record<string, unknown>) => {
-          return payload.create
-            ? await payload.create({ collection, data })
-            : { id: '' }
-        }
+        create: payload
+          ? async (collection: string, data: Record<string, unknown>) => {
+              try {
+                return await payload.create({ collection, data })
+              } catch {
+                return { id: '' }
+              }
+            }
+          : async () => ({ id: '' })
       }
     )
 
-    if (pipelineResult.errors.length > 0 && pipelineResult.persisted === 0) {
+    // If no fares were normalized at all (real search failure), show error
+    const searchFailed =
+      pipelineResult.normalized === 0 &&
+      pipelineResult.errors.some(e => e.stage !== 'persist')
+
+    if (searchFailed) {
       return {
         results: [],
         total: 0,
@@ -175,30 +178,43 @@ export async function searchFares(
       }
     }
 
-    // Fetch freshly persisted fares
-    const freshDocs = await payload.find({
-      collection: 'canonical-fares',
-      where: {
-        and: [
-          { departureAirport: { equals: originCode } },
-          { arrivalAirport: { equals: destCode } },
-          { departureTime: { like: `${params.departureDate}%` } }
-        ]
-      },
-      sort: '-collectedAt',
-      limit: 100
-    })
+    // Build result items — prefer DB fetch for full objects, fall back to pipeline data
+    let resultItems: SearchFareResultItem[] = []
 
-    const freshFares = freshDocs.docs as unknown as CanonicalFare[]
+    if (payload && pipelineResult.persisted > 0) {
+      try {
+        const freshDocs = await payload.find({
+          collection: 'canonical-fares',
+          where: {
+            and: [
+              { departureAirport: { equals: originCode } },
+              { arrivalAirport: { equals: destCode } },
+              { departureTime: { like: `${params.departureDate}%` } }
+            ]
+          },
+          sort: '-collectedAt',
+          limit: 100
+        })
+        resultItems = (freshDocs.docs as unknown as CanonicalFare[]).map(mapToResultItem)
+      } catch {
+        // DB unavailable — fall through to pipeline normalizedFares
+      }
+    }
+
+    // Fallback: build results from pipeline data (DB unavailable or persist failed)
+    if (resultItems.length === 0 && pipelineResult.normalizedFares.length > 0) {
+      resultItems = pipelineResult.normalizedFares.map(f => mapToResultItem(f as unknown as CanonicalFare))
+    }
 
     return {
-      results: freshFares.map(mapToResultItem),
-      total: freshFares.length,
+      results: resultItems,
+      total: resultItems.length,
       source: 'live',
-      collectedAt: freshFares.length > 0 ? freshFares[0].collectedAt : now,
-      message: pipelineResult.errors.length > 0 && pipelineResult.persisted > 0
-        ? `部分数据获取失败: ${pipelineResult.errors.map(e => e.message).join('; ')}`
-        : undefined
+      collectedAt: now,
+      message:
+        pipelineResult.errors.length > 0
+          ? pipelineResult.errors.map(e => e.message).join('; ')
+          : undefined
     }
 
   } catch (error) {

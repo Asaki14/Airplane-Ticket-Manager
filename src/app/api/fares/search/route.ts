@@ -49,8 +49,13 @@ export async function GET(request: Request): Promise<NextResponse> {
       )
     }
 
-    // Initialize Payload
-    const payload = await getPayload({ config: configPromise })
+    // Initialize Payload (may fail in serverless — handled gracefully)
+    let payload
+    try {
+      payload = await getPayload({ config: configPromise })
+    } catch {
+      payload = null
+    }
 
     // Execute search
     const result: SearchFareResponse = await searchFares(

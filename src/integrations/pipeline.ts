@@ -16,6 +16,8 @@ export type PipelineResult = {
   errors: PipelineError[]
   /** CanonicalFare IDs that were created */
   persistedFareIds: string[]
+  /** Normalized fares (available even if persist fails, e.g. SQLite in serverless) */
+  normalizedFares: Array<Record<string, unknown>>
 }
 
 export type PipelineError = {
@@ -48,7 +50,8 @@ export async function runCollectionPipeline(
     duplicatesSkipped: 0,
     persisted: 0,
     errors: [],
-    persistedFareIds: []
+    persistedFareIds: [],
+    normalizedFares: []
   }
 
   // Step 1: Fetch
@@ -103,6 +106,9 @@ export async function runCollectionPipeline(
       continue
     }
     seenKeys.add(key)
+
+    // Collect normalized fare data (available even if persist fails)
+    result.normalizedFares.push(normalized as Record<string, unknown>)
 
     // Step 5: Persist
     try {

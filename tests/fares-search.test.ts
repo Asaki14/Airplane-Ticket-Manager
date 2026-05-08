@@ -54,7 +54,8 @@ describe('searchFares', () => {
       duplicatesSkipped: 0,
       persisted: 0,
       errors: [],
-      persistedFareIds: []
+      persistedFareIds: [],
+      normalizedFares: []
     })
 
     const params: SearchFareParams = {
@@ -143,7 +144,8 @@ describe('searchFares', () => {
       duplicatesSkipped: 0,
       persisted: 2,
       errors: [],
-      persistedFareIds: ['fare-2', 'fare-3']
+      persistedFareIds: ['fare-2', 'fare-3'],
+      normalizedFares: []
     })
 
     const params: SearchFareParams = {
@@ -201,7 +203,8 @@ describe('searchFares', () => {
       duplicatesSkipped: 0,
       persisted: 1,
       errors: [],
-      persistedFareIds: ['fare-fresh']
+      persistedFareIds: ['fare-fresh'],
+      normalizedFares: []
     })
 
     const params: SearchFareParams = {
@@ -258,7 +261,8 @@ describe('searchFares', () => {
       duplicatesSkipped: 0,
       persisted: 0,
       errors: [{ stage: 'normalize', message: 'No results from provider' }],
-      persistedFareIds: []
+      persistedFareIds: [],
+      normalizedFares: []
     })
 
     const params: SearchFareParams = {
