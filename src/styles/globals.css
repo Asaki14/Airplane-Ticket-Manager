@@ -168,10 +168,11 @@ select:focus-visible {
 .hero-main > *:nth-child(2) { animation-delay: 0.2s; }
 
 .hero-title {
-  font-size: clamp(var(--font-size-title-lg), 4vw, var(--font-size-display));
-  line-height: var(--line-height-tight);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
+  font-size: var(--font-size-body-lg);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+  max-width: 36ch;
 }
 
 .hero-description {
@@ -1535,12 +1536,11 @@ select:focus-visible {
 }
 
 .eyebrow {
-  font-size: var(--font-size-title-sm);
+  font-size: clamp(var(--font-size-title-lg), 4vw, var(--font-size-display));
   line-height: var(--line-height-tight);
-  font-weight: var(--font-weight-semibold);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin: 0 0 var(--space-sm) 0;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--space-xs) 0;
   color: var(--color-accent);
 }
 
