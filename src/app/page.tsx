@@ -7,8 +7,6 @@ import type { EmptySearchStateVariant } from '@/components/search/EmptySearchSta
 import { searchFares } from '@/lib/fares/search'
 import type { SearchFareResultItem, SearchFareResponse } from '@/lib/fares/search'
 import { popularRoutes } from '@/lib/fares/city-map'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
 
 export const dynamic = 'force-dynamic'
 
@@ -201,6 +199,10 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     try {
       let payload
       try {
+        const [{ getPayload }, { default: configPromise }] = await Promise.all([
+          import('payload'),
+          import('@payload-config'),
+        ])
         payload = await getPayload({ config: configPromise })
       } catch {
         payload = null  // DB unavailable — search still works

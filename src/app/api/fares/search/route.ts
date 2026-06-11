@@ -11,8 +11,6 @@
  */
 
 import { NextResponse } from 'next/server'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
 import { searchFares } from '@/lib/fares/search'
 import type { SearchFareResponse } from '@/lib/fares/search'
 
@@ -52,6 +50,10 @@ export async function GET(request: Request): Promise<NextResponse> {
     // Initialize Payload (may fail in serverless — handled gracefully)
     let payload
     try {
+      const [{ getPayload }, { default: configPromise }] = await Promise.all([
+        import('payload'),
+        import('@payload-config'),
+      ])
       payload = await getPayload({ config: configPromise })
     } catch {
       payload = null
