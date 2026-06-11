@@ -1,0 +1,27 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "name": "airplane",
+  "compatibility_date": "2026-06-11",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "global_fetch_strictly_public"
+  ],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "airplane"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "D1",
+      "database_name": "airplane-db",
+      "database_id": "755bce4d-4745-4193-9ea7-fe0de3dca168"
+    }
+  ]
+}

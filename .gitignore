@@ -1,5 +1,7 @@
 node_modules/
 .next/
+.open-next/
+.wrangler/
 .playwright-mcp/
 payload.db
 .DS_Store
